@@ -1,1 +1,1 @@
-ip, port, protocol, vulnerability, cvss 
+ip, port, vulnID, vulnType, cvss 
