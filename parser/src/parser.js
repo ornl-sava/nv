@@ -27,4 +27,10 @@ var parseNessusResult = function(nessStr){
         "port":port};
 }
 
+var parseNessusTimeStamp = function(stampString){
+    var moment = require("moment")
+    var splitInput = stampString.split("|")
+
+}
 module.exports.parseNessusResult = parseNessusResult;
+module.exports.parseNessusTimeStamp = parseNessusTimeStamp;
