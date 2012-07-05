@@ -42,6 +42,16 @@ suite('Nessus Parse', function(){
         assert(obj["cvss"] === 9.3)
     });
 
+    test("Nessus4", function(){
+        var n4 = "results|192.168.2|192.168.2.175|cifs (445/tcp)|"
+        var obj = parseNessusResult(n4)
+        assert(obj["port"] === 445)
+        assert(obj["ip"] === "192.168.2.175")
+        assert(obj["vulntype"] === "")
+        assert(obj["vulnid"] === 0)
+        assert(obj["cvss"] === 0)
+    });
+
 });
 
 
@@ -57,8 +67,6 @@ suite('Parse NBE', function(){
         var fs = require('fs');
         var data = fs.readFileSync("../data/20110411_VAST11MiC2_Nessus.nbe", "ascii");
         var results = parseNBEFile(data)
-        //sys.print(parseNBEFile(data))
-        sys.print(results.length)
     });
 });
 

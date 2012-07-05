@@ -21,10 +21,10 @@ var parseNessusResult = function(nessStr){
         var port = -1;
     }
     
-    return {"ip":ip,
-        "vulnid":code,
-        "vulntype":holeNote,
-        "cvss":score,
+    return {"ip": (ip === undefined ? "" : ip),
+        "vulnid": (isNaN(code) ? 0 : code),
+        "vulntype":(holeNote === undefined ? "" : holeNote),
+        "cvss": score,
         "port":port};
 }
 
