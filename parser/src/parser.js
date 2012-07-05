@@ -34,8 +34,25 @@ var parseNessusTimeStamp = function(stampString){
     var splitInput = stampString.split("|")
     
     var time = moment(splitInput[splitInput.length - 2], timeFormat)
+    sys.print(splitInput)
+    sys.print(splitInput.length)
     //var time = splitInput[splitInput.length - 2]
     return time.valueOf()
 }
+
+var isStart = function(line){
+    return "host_start" == line.split("\n")[3]
+}
+
+var parseNBEFile = function(nbe){
+    lines = nbe.split("\n")
+
+    for(var i = 0; i < lines.length; i++){
+        
+    }
+
+}
+
 module.exports.parseNessusResult = parseNessusResult;
 module.exports.parseNessusTimeStamp = parseNessusTimeStamp;
+module.exports.parseNBEFile = parseNBEFile;
