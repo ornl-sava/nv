@@ -22,9 +22,9 @@ var parseNessusResult = function(nessStr){
     }
     
     return {"ip":ip,
-        "code":code,
-        "holeNote":holeNote,
-        "cvssScore":score,
+        "vulnid":code,
+        "vulntype":holeNote,
+        "cvss":score,
         "port":port};
 }
 
@@ -34,23 +34,30 @@ var parseNessusTimeStamp = function(stampString){
     var splitInput = stampString.split("|")
     
     var time = moment(splitInput[splitInput.length - 2], timeFormat)
-    sys.print(splitInput)
-    sys.print(splitInput.length)
     //var time = splitInput[splitInput.length - 2]
     return time.valueOf()
 }
 
-var isStart = function(line){
-    return "host_start" == line.split("\n")[3]
+var hasTime = function(line){
+    var splits = line.split("|")
+    return (splits[splits.length - 2].length > 0 && splits[0] == "timestamps")
+}
+
+var isResult = function(line){
+    return(line.split("|")[0] === "results")
 }
 
 var parseNBEFile = function(nbe){
-    lines = nbe.split("\n")
+    var lines = nbe.split("\n")
+    var currentTime = 0
+    var returnArray = new Array(2)
 
     for(var i = 0; i < lines.length; i++){
-        
+        if(isResult(lines[i])){
+            returnArray.push(parseNessusResult(lines[i]))
+        }
     }
-
+    return returnArray
 }
 
 module.exports.parseNessusResult = parseNessusResult;
