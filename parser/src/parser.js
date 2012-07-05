@@ -1,3 +1,4 @@
+var sys = require("util")
 
 var parseNessusResult = function(nessStr){
     var scoreReg = /CVSS Base Score : (\d\.\d)/;
@@ -29,8 +30,12 @@ var parseNessusResult = function(nessStr){
 
 var parseNessusTimeStamp = function(stampString){
     var moment = require("moment")
+    var timeFormat = "ddd MMM DD HH:mm:ss YYYY"
     var splitInput = stampString.split("|")
-
+    
+    var time = moment(splitInput[splitInput.length - 2], timeFormat)
+    //var time = splitInput[splitInput.length - 2]
+    return time.valueOf()
 }
 module.exports.parseNessusResult = parseNessusResult;
 module.exports.parseNessusTimeStamp = parseNessusTimeStamp;
