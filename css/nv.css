@@ -1,0 +1,95 @@
+td{
+  border-bottom-color: #CCC;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-collapse: separate;
+  border-left-color: #CCC;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: #CCC;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: #CCC;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+tr{
+  color: black;
+  cursor: default;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding-bottom: 0px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 0px;
+  vertical-align: bottom;
+  white-space: normal;
+  height:16px
+}
+
+table{
+  background-color: white;
+  display: table-cell;
+  table-layout: auto;
+}
+
+textarea{
+  width:100%;
+}
+
+.boxsizingBorder {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+.header{
+  width: 120px;
+}
+
+.nav-tabs{
+  margin-bottom: 0px;
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: 0px;
+}
+
+.tab-content{
+  padding-bottom: 0px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 0px;
+}
+
+.tab-pane{
+  padding-bottom: 0px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 0px;
+  border-bottom-color: #CCC;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-collapse: separate;
+  border-left-color: #CCC;
+  border-left-style: solid;
+  border-left-width: 0px;
+  border-right-color: #CCC;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: #CCC;
+  border-top-style: solid;
+  border-top-width: 0px;
+  background-color: white;
+  height: 425px;
+}

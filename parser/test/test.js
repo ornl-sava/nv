@@ -1,4 +1,5 @@
 var parseNessusResult = require("../src/parser").parseNessusResult
+var parseNessusTimeStamp = require("../src/parser").parseNessusTimeStamp
 var assert = require("assert")
 var sys = require("util")
 
@@ -40,4 +41,13 @@ suite('Nessus Parse', function(){
         assert(obj["cvssScore"] === 9.3)
     });
 
+});
+
+
+suite('TimeStamp Parse', function(){
+    test("TimeStamp Test 1", function(){
+        var n1 = "timestamps|||scan_start|Mon Apr 11 10:16:19 2011|"
+                  parseNessusTimeStamp
+        sys.print(parseNessusTimeStamp(n1))
+    });
 });
