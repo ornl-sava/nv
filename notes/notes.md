@@ -6,7 +6,7 @@ Nessus data - VAST 2011
 Visualization of state of a network in terms of vulnerabilities.
 Zoomable treemap
 * Hierarchy - network, groupings, IPs, port, vulnerability
-* Size - leaf nodes number of vulnerabilities, optionally weighted by user-defined machine criticality or CVSS severity score
+* Size - leaf nodes number of vulnerabilities, optionally weighted by user-defined machine criticality, CVSS severity score, or event counts
 * Color - open port, security note (no score), vulnerable port (scale for max cvss score)
 
 User defined groupings: label, nodes, importance/criticality score. If a machine is not in a group, put it in the default 'other' group. Ideally, should be able to drag/drop a node onto another node or group to put into that group. For now, ok to just have a text box like: group - subnet
@@ -14,24 +14,30 @@ User defined groupings: label, nodes, importance/criticality score. If a machine
 ### Interaction:
 * Zoom - click on interior node to zoom to next level
 * Details - click on leaf node to get details [using nessus API](http://www.nessus.org/plugins/index.php?view=single&id=42118/)
+* Marking - change certain types of entries (click to highlight entry; change via right bar)
+* Filtering - re-compute the treemap layout based on 
 
 ### UI Widgets: Size 
 * Weight by Severity (cvss scores)
 * Weight by Criticality
 * Weight by number of notes/holes per port
 
+### Nessus ID view
+Borrows html from the nessus site and displays beside the treemap. Triggered by a click on the leaf node.
+
 ### Filters:
 * Security Hole Vulnerability Type
 * Security Note Vulnerability Type
 * Severity
 
-Filters will remove nodes that do not match the current filter. When removing nodes, try animate transitions.
+Filters will remove nodes that do not match the current filter. When removing nodes, try to animate transitions.
 
 
 ### Design decisions
 
 * use count/severity for size/color - why? 
 * how to color groupings???
+* add more space between groups
 
 ### CVSS
 [CVSS](https://nvd.nist.gov/cvss.cfm)
@@ -44,7 +50,7 @@ but these qualitative rankings are simply mapped from the numeric CVSS scores:
 
 
 ## Use Case 2: Change between scans
-Visualization of changes between two scans.
+Visualization of changes between two scans. This will be done by processing two files and computing the changes listed in the Changes section. These will then be visualized in the treemap as various colors and color scales.
 
 ### Changes
 From: http://seccubus.com/seccubus/about-seccubus
@@ -57,7 +63,12 @@ From: http://seccubus.com/seccubus/about-seccubus
 * Fixed - The finding has been fixed and should not reappear. If this finding reappears it will be marked as changed.
 * Hard Masked - The finding is bogus and will not leave this status unless the user changes it.
 
-Which of these should be included in interaction?
+Several of these should be editable by the user:
+Any -> Non-Issue
+Any -> Fixed
+
+Similarly, the processing algorithm should compute:
+New, open, changed
 
 # TODO:
 * John - ask IT if they have nessus data we can use
