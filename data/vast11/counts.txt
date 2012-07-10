@@ -1,0 +1,25 @@
+### Nessus ids
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Hole" | cut -d\| -f 5 | uniq -c | wc
+"Hole" Nessus ids: 914
+
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Note" | cut -d\| -f 5 | uniq -c | wc
+"Note" Nessus ids: 318
+
+### ips
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Hole" | cut -d\| -f 3 | uniq -c | wc
+"Hole" ips: 5
+
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Note" | cut -d\| -f 5 | uniq -c | wc
+"Note" ips: 241
+
+### cvss
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Hole" | cut -d\| -f 3 | uniq -c | wc
+"Hole" ips: 5
+
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Note" | cut -d\| -f 5 | uniq -c | wc
+"Note" ips: 241
+
+cat 20110411_VAST11MiC2_Nessus.nbe | grep "Hole" | sed -e 's/.*CVSS Base Score : //' -e 's/\\n(CVSS.*//'| uniq -c 
+
+
+

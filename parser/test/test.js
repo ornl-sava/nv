@@ -1,4 +1,6 @@
 var parseNessusResult = require("../src/parser").parseNessusResult
+var parseNessusTimeStamp = require("../src/parser").parseNessusTimeStamp
+var parseNBEFile = require("../src/parser").parseNBEFile
 var assert = require("assert")
 var sys = require("util")
 
@@ -11,9 +13,9 @@ suite('Nessus Parse', function(){
 
         assert(obj["port"] === -1)
         assert(obj["ip"] === "127.0.0.1")
-        assert(obj["holeNote"] === "Security Note")
-        assert(obj["code"] === 19506)
-        assert(obj["cvssScore"] === 0)
+        assert(obj["vulntype"] === "Security Note")
+        assert(obj["vulnid"] === 19506)
+        assert(obj["cvss"] === 0)
     });
 
     test("Nessus2", function(){
@@ -23,9 +25,9 @@ suite('Nessus Parse', function(){
 
         assert(obj["port"] === -1)
         assert(obj["ip"] === "192.168.2.99")
-        assert(obj["holeNote"] === "Security Note")
-        assert(obj["code"] === 10180)
-        assert(obj["cvssScore"] === 0)
+        assert(obj["vulntype"] === "Security Note")
+        assert(obj["vulnid"] === 10180)
+        assert(obj["cvss"] === 0)
     });
 
     test("Nessus3", function(){
@@ -35,9 +37,36 @@ suite('Nessus Parse', function(){
 
         assert(obj["port"] === 445)
         assert(obj["ip"] === "192.168.2.175")
-        assert(obj["holeNote"] === "Security Hole")
-        assert(obj["code"] === 49958)
-        assert(obj["cvssScore"] === 9.3)
+        assert(obj["vulntype"] === "Security Hole")
+        assert(obj["vulnid"] === 49958)
+        assert(obj["cvss"] === 9.3)
+    });
+
+    test("Nessus4", function(){
+        var n4 = "results|192.168.2|192.168.2.175|cifs (445/tcp)|"
+        var obj = parseNessusResult(n4)
+        assert(obj["port"] === 445)
+        assert(obj["ip"] === "192.168.2.175")
+        assert(obj["vulntype"] === "")
+        assert(obj["vulnid"] === 0)
+        assert(obj["cvss"] === 0)
     });
 
 });
+
+
+suite('TimeStamp Parse', function(){
+    test("TimeStamp Test 1", function(){
+        var n1 = "timestamps|||scan_start|Mon Apr 11 10:16:19 2011|"
+                  parseNessusTimeStamp
+    });
+});
+
+suite('Parse NBE', function(){
+    test("TimeStamp Test 1", function(){
+        var fs = require('fs');
+        var data = fs.readFileSync("../data/20110411_VAST11MiC2_Nessus.nbe", "ascii");
+        var results = parseNBEFile(data)
+    });
+});
+
