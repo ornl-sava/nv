@@ -56,6 +56,7 @@ From: http://seccubus.com/seccubus/about-seccubus
 * Fixed - The finding has been fixed and should not reappear. If this finding reappears it will be marked as changed.
 * Hard Masked - The finding is bogus and will not leave this status unless the user changes it.
 
+Which of these should be included in interaction?
 
 # TODO:
 * John - ask IT if they have nessus data we can use
