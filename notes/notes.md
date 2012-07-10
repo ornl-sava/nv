@@ -15,9 +15,10 @@ User defined groupings: label, nodes, importance/criticality score. If a machine
 * Zoom - click on interior node to zoom to next level
 * Details - click on leaf node to get details [using nessus API](http://www.nessus.org/plugins/index.php?view=single&id=42118/)
 
-### UI Widgets: 
-* Weight by Severity
+### UI Widgets: Size 
+* Weight by Severity (cvss scores)
 * Weight by Criticality
+* Weight by number of notes/holes per port
 
 ### Filters:
 * Security Hole Vulnerability Type
