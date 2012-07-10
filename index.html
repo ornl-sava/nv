@@ -13,19 +13,32 @@
   </head>
   <body>
 
-    <div class="hero-unit">
-      <div class="tabbable">
+    <div class="container">
+      <div class="row">
+        <div class="span12">
 
-        <ul class="nav nav-tabs" id="myTab">
-          <li class="active"><a href="#tab1" data-toggle="tab">.nbe File</a></li>
-          <li><a href="#tab2" data-toggle="tab">Machine Groups</a></li>
-          <li><a href="#tab3" data-toggle="tab">Results</a></li>
-        </ul>
+          <div class="hero-unit">
+            <h1>nv <small>Nessus Vulnerability Visualization</small></h1>
+          </div>
 
-        <div class="tab-content">
-          <div class="tab-pane active" id="tab1">
-            <p>Please paste your .nbe file below.</p>
-              <textarea rows="20" class="boxsizingBorder">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="span12">
+          <div class="tabbable">
+
+            <ul class="nav nav-tabs" id="myTab">
+              <li class="active"><a href="#dataTab" data-toggle="tab">Data</a></li>
+              <li><a href="#groupsTab" data-toggle="tab">Groups</a></li>
+              <li><a href="#visTab" data-toggle="tab">Visualization</a></li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="dataTab">
+                <p>Please paste your Nessus data file (.nbe) below.</p>
+                  <textarea rows="25" class="dataTextarea">
+    
 timestamps|||scan_start|Mon Apr 11 10:16:19 2011|
 timestamps||192.168.2.99|host_start||
 results|192.168.2|192.168.2.99|general/tcp|10180|Security Note|Synopsis :\n\nIt was possible to identify the status of the remote host (alive or dead)\n\nDescription :\n\nThis plugin attempts to determine if the remote host is alive using one or more\nping types :\n\n  - An ARP ping, provided the host is on the local subnet\n    and Nessus is running over ethernet.\n\n  - An ICMP ping.\n\n  - A TCP ping, in which the plugin sends to the remote host \n    a packet with the flag SYN, and the host will reply with\n    a RST or a SYN/ACK. \n\n  - A UDP ping (DNS, RPC, NTP, etc).\n\nSolution :\n\nn/a\n\nRisk factor :\n\nNone\n\nPlugin output :\nThe remote host is considered as dead - not scanning\nThe remote host did not respond to the following ping methods :\n- TCP ping\n- ICMP ping\n\n\n
@@ -35,60 +48,71 @@ timestamps||192.168.2.98|host_start||
 results|192.168.2|192.168.2.98|general/tcp|10180|Security Note|Synopsis :\n\nIt was possible to identify the status of the remote host (alive or dead)\n\nDescription :\n\nThis plugin attempts to determine if the remote host is alive using one or more\nping types :\n\n  - An ARP ping, provided the host is on the local subnet\n    and Nessus is running over ethernet.\n\n  - An ICMP ping.\n\n  - A TCP ping, in which the plugin sends to the remote host \n    a packet with the flag SYN, and the host will reply with\n    a RST or a SYN/ACK. \n\n  - A UDP ping (DNS, RPC, NTP, etc).\n\nSolution :\n\nn/a\n\nRisk factor :\n\nNone\n\nPlugin output :\nThe remote host is considered as dead - not scanning\nThe remote host did not respond to the following ping methods :\n- TCP ping\n- ICMP ping\n\n\n
 timestamps||192.168.2.98|host_end|Mon Apr 11 10:16:43 2011|
 timestamps|||scan_end|Mon Apr 11 10:19:34 2011|
-              </textarea>
+                  </textarea>
+              </div>
+              <div class="tab-pane" id="groupsTab">
+                <p>Please group the machines as needed.</p>
+                <table id="groupTable">
+                  <thead>
+                    <tr>
+                      <th class="header">IP</th>
+                      <th class="header">netmask</th>
+                      <th class="header">group name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td contenteditable="true">asdf</td>
+                      <td contenteditable="true">asdf</td>
+                      <td contenteditable="true">asdf</td>
+                    </tr>
+                    <tr>
+                      <td contenteditable="true">asdf</td>
+                      <td contenteditable="true">asdf</td>
+                      <td contenteditable="true">asdf</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br><br>
+                <p>Current grouping of detected addresses is:</p>
+                <table id="currentGroupTable">
+                  <thead>
+                    <tr>
+                      <th class="header">Group Name</th>
+                      <th class="header">Members</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>asdf</td>
+                      <td>asdf</td>
+                    </tr>
+                    <tr>
+                      <td>asdf</td>
+                      <td>asdf</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tab-pane" id="visTab">
+                <div id="vis"></div>
+              </div>
+            </div>
+
           </div>
-          <div class="tab-pane" id="tab2">
-            <p>Please group the machines as needed.</p>
-            <table id="">
-              <thead>
-                <tr>
-                  <th class="header">IP</th>
-                  <th class="header">netmask</th>
-                  <th class="header">group name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td contenteditable="true">asdf</td>
-                  <td contenteditable="true">asdf</td>
-                  <td contenteditable="true">asdf</td>
-                </tr>
-                <tr>
-                  <td contenteditable="true">asdf</td>
-                  <td contenteditable="true">asdf</td>
-                  <td contenteditable="true">asdf</td>
-                </tr>
-              </tbody>
-            </table>
-            <br><br>
-            <p>Current grouping of detected addresses is:</p>
-            <table id="">
-              <thead>
-                <tr>
-                  <th class="header">Group Name</th>
-                  <th class="header">Members</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>asdf</td>
-                  <td>asdf</td>
-                </tr>
-                <tr>
-                  <td>asdf</td>
-                  <td>asdf</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="tab-pane" id="tab3">
-            <p>Pretend there are some graphs.</p>
-          </div>
+        
         </div>
-
       </div>
-    </div>
 
+      <div class="row">
+        <div class="span12">
+          <footer>
+            ORNL Computational Sciences and Engineering Division
+          </footer>
+        </div>
+      </div>
+
+    </div>
   </body>
 </html>
 
