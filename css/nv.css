@@ -8,10 +8,25 @@ body{
   padding: 5px 20px 15px;
 }
 
+.app-instructions {
+  font-size: 90%;
+  color: #555;
+  margin-top: 4px;
+}
+
 /* navigation */
 .nav-tabs > li a{
   padding: 5px 25px;
 }
+
+/* footer */
+footer{
+  margin-top: 20px;
+  text-align: center;
+  font-size: 10px;
+  color: #777;
+}
+
 
 /* data tab */
 .dataTextarea{
@@ -44,14 +59,6 @@ body{
 
 #groupsTab td{
   border: 1px solid #ccc;
-}
-
-/* navigation */
-footer{
-  margin-top: 20px;
-  text-align: center;
-  font-size: 10px;
-  color: #888;
 }
 
 /* Treemap (from the original nv.css) */
