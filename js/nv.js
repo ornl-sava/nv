@@ -295,3 +295,32 @@ function loadJSONData(file){
   });
 }
 
+function handleGroupAdd(){
+  console.log("group add button");
+}
+
+function handleNbePageAdd(){
+}
+
+function handleNbePageDone(){
+}
+
+function handleNbeTab(){
+}
+
+function handleGroupTab(){
+}
+
+function handleResultsTab(){
+}
+
+
+// initialization
+$(document).ready(function () {
+  // set up needed event listeners, etc.
+  $('#addGroupBtn').bind('click', function(event) {
+    handleGroupAdd();
+  });
+
+});
+

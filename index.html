@@ -57,44 +57,73 @@ timestamps|||scan_end|Mon Apr 11 10:19:34 2011|
               </div>
               <div class="tab-pane" id="groupsTab">
                 <p>Please group the machines as needed.</p>
-                <table id="groupTable">
-                  <thead>
-                    <tr>
-                      <th class="header">IP</th>
-                      <th class="header">netmask</th>
-                      <th class="header">group name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td contenteditable="true">asdf</td>
-                      <td contenteditable="true">asdf</td>
-                      <td contenteditable="true">asdf</td>
-                    </tr>
-                    <tr>
-                      <td contenteditable="true">asdf</td>
-                      <td contenteditable="true">asdf</td>
-                      <td contenteditable="true">asdf</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <br><br>
+                <form id="addGroup">
+                  <input type=text size=20 id="ipStart" placeholder="start address">
+                  <input type=text size=20 id="netmask" placeholder="netmask">
+                  <input type=text size=20 id="groupName" placeholder="group name">
+                  <br>
+                  Default criticality score: 
+                  <select name="defaultWeight">
+                    <option value="1">1 (lowest)</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10 (highest)</option>
+                  </select>
+                  <input id="addGroupBtn" type="button" value="Add Group">
+                </form>
+                <hr>
                 <p>Current grouping of detected addresses is:</p>
                 <table id="currentGroupTable">
                   <thead>
                     <tr>
                       <th class="header">Group Name</th>
                       <th class="header">Members</th>
+                      <th class="header">Criticality</th>
                     </tr>
                   </thead>
                   <tbody>
+                    <!-- some placeholders -->
                     <tr>
-                      <td>asdf</td>
-                      <td>asdf</td>
+                      <td>some machine</td>
+                      <td>some group</td>
+                      <td>
+                        <select name="defaultWeight">
+                          <option value="1">1 (lowest)</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10 (highest)</option>
+                        </select>
+                      </td>
                     </tr>
                     <tr>
-                      <td>asdf</td>
-                      <td>asdf</td>
+                      <td>some machine</td>
+                      <td>some group</td>
+                      <td>
+                        <select name="defaultWeight">
+                          <option value="1">1 (lowest)</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10 (highest)</option>
+                        </select>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
