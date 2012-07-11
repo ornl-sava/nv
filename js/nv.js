@@ -25,6 +25,8 @@ var vulntypeLabelMap = ["hole", "note", "port"];
 var vulntypeNumberMap = d3.scale.ordinal()
       .domain(vulntypeLabelMap)
       .range([1,2,3]);
+
+//d3.range(3).map(function(d) {return d++;});
     
 // globals
 var margin = {top: 20, right: 0, bottom: 0, left: 0},
@@ -346,8 +348,8 @@ function initHistogram(sel, n, name, labelmap) {
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return ( (histoW / n)*i + (histoW / n / 2) ); })
-      .attr("y", histoH - 11)
+      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
+      .attr("y", histoH)
       .text( function(d) { 
         return labelmap ? labelmap[d] : d;
       });
@@ -355,7 +357,7 @@ function initHistogram(sel, n, name, labelmap) {
   hist.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
-      .attr("y", histoH - 1 )
+      .attr("y", histoH )
       .text(name);
 }
 
