@@ -5,7 +5,7 @@ body{
 
 /* head */
 .hero-unit {
-  padding: 25px;
+  padding: 5px 20px 15px;
 }
 
 /* navigation */
@@ -58,7 +58,7 @@ footer{
 
 #vis {
   width: 960px;
-  height: 500px;
+  height: 750px;
   background: #bbb;
 }
 
