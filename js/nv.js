@@ -349,7 +349,7 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
 
   // labels (x axis and title)
   var labels = d3.range(n);
-  hist.selectAll("text#histogramlabel")
+  hist.selectAll("text.histogramlabel")
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
@@ -379,6 +379,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   var histoW = binWidth*n,
       histoH = 200;
 
+  // if typeFilter defined, filter
   if(typeFilter){
     byVulnType.filter(typeFilter);
   }
@@ -391,8 +392,10 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
               })
               (byAny.top(Infinity));
 
+  // if typeFilter defined, remove filter and sort/reverse array (descending order for top 20)
   if(typeFilter){
     byVulnType.filterAll();
+    hist = hist.sort().reverse();
   }
 
   //set domain for data
@@ -408,7 +411,12 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
       .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
       .attr("height", function(d) { return hScale(d.length); });
 
-
+  // if the data in the hist is a vulnid, change labels to corresponding vulnids
+  if(typeFilter){
+    d3.select(name).selectAll("text.histogramlabel")
+      .data(hist)
+      .text(function(d) { return d[0].vulnid; });
+  }
 }
 
 // replaces the current dataset and calls redraw
