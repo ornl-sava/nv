@@ -72,18 +72,18 @@ init();
 function init() {
 
   //TODO - Evan - buttons
-  d3.select("#options").append("a")
-    .attr("href", "#")
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Severity");
-  d3.select("#options").append("a")
-    .attr("href", "#")
+    .text("Severity")
+    .on("click", function() { console.log("Severity was clicked"); });
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Criticality");
-  d3.select("#options").append("a")
-    .attr("href", "#")
+    .text("Criticality")
+    .on("click", function() { console.log("Criticality was clicked"); });
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Counts");
+    .text("Counts")
+    .on("click", function() { console.log("Counts was clicked"); });
 
 
   // initialize treemap
@@ -312,12 +312,16 @@ function drawTreemap() {
 
 //TODO - Evan
 // function that initalizes one histogram
-//sel   -> d3 selection
-//n     -> number of bins
-//name  -> name of histogram (id)
-function initHistogram(sel, n, name, labelmap) {
+//sel       -> d3 selection
+//n         -> number of bins
+//name      -> name of histogram (id)
+//labelmap  -> mapping numbers to labels
+//binWidth  -> width of each bar
+function initHistogram(sel, n, name, labelmap, binWidth) {
   
-  var histoW = 400,
+  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+
+  var histoW = binWidth*n,
       histoH = 200;
 
   var nothing = [];
@@ -366,9 +370,12 @@ function initHistogram(sel, n, name, labelmap) {
 //name  -> name of histogram (id)
 //n     -> number of bins
 //par   -> parameter in data being used
-function drawHistogram(name, n, par, scale) {
+//binWidth  -> width of each bar
+function drawHistogram(name, n, par, scale, binWidth) {
 
-  var histoW = 400,
+  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+
+  var histoW = binWidth*n,
       histoH = 200;
 
   //create histogram
