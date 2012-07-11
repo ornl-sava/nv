@@ -46,15 +46,58 @@ body{
   border: 1px solid #ccc;
 }
 
-/* vis tab */
-#vis{
-  height: 500px;
-}
-
 /* navigation */
 footer{
   margin-top: 20px;
   text-align: center;
   font-size: 10px;
   color: #888;
+}
+
+/* Treemap (from the original nv.css) */
+
+#vis {
+  width: 960px;
+  height: 500px;
+  background: #bbb;
+}
+
+text {
+  pointer-events: none;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+.rectlabel {
+  font-size: 11px;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+.grandparent rect {
+  fill: #fff;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+
+rect.parent {
+  pointer-events: all;
+}
+
+.children:hover rect.child,
+.grandparent:hover rect {
+  fill: #aaa;
 }

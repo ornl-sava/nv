@@ -23,8 +23,30 @@ var margin = {top: 20, right: 0, bottom: 0, left: 0},
     width = 960,
     height = 500 - margin.top - margin.bottom,
     formatNumber = d3.format(",d"),
-    transitioning,
-    nbedata; // All the data!
+    transitioning;
+
+// All the data!
+var nbedata,
+    all,
+    byIP,
+    byPort,
+    byCVSS,
+    byVulnID;
+    byVulnType;
+
+// crossfilter setup
+function crossfilterInit(){
+  // sets/resets our data
+  nbedata = crossfilter();
+
+  // dimensions/groups
+  all = nbedata.groupAll(),
+  byIP = nbedata.dimension(function(d) { return d.ip; }),
+  byPort = nbedata.dimension(function(d) { return d.port; }),
+  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
+  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
+  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
+}
 
 // treemap globals
 var x,
@@ -92,7 +114,6 @@ function initTreemap(){
       .attr("x", 6)
       .attr("y", 6 - margin.top)
       .attr("dy", ".75em");
-  
 }
 
 function drawTreemap() {
@@ -101,7 +122,7 @@ function drawTreemap() {
     .key(function(d) {return d.ip;})
     .key(function(d) {return d.port;})
     .sortKeys(d3.ascending)
-    .entries(nbedata);
+    .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
 
   // free the root from its original array
   root = root[0];
@@ -258,7 +279,14 @@ function drawTreemap() {
 
 // replaces the current dataset and calls redraw
 function setNBEData(dataset){
-  nbedata = dataset;
+  crossfilterInit();
+  nbedata.add(dataset);
+  // test crossfilter here
+//  console.log(nbedata.size());
+//  byCVSS.filter([2.0, 7.0]);
+//  console.log(byCVSS.top(Infinity));
+//  byCVSS.filterAll();
+  
   redraw();
 }
 
