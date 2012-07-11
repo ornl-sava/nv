@@ -247,8 +247,8 @@ function drawTreemap() {
       transitioning = true;
 
       var g2 = display(d),
-          t1 = g1.transition().duration(750),
-          t2 = g2.transition().duration(750);
+          t1 = g1.transition().duration(1250),
+          t2 = g2.transition().duration(1250);
 
       // Update the domain only after entering new elements.
       x.domain([d.x, d.x + d.dx]);
