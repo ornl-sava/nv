@@ -5,7 +5,7 @@
  *
  * Here are the divs in nv.html:
  * - id="vis"
- * - id="filters"
+ * - id="options"
  * - id="edit"
  * - id="nessusinfo"
  * - id="histograms"
@@ -28,16 +28,24 @@ var margin = {top: 20, right: 0, bottom: 0, left: 0},
 // All the data!
 var nbedata,
     all,
-    byCVSS;
+    byIP,
+    byPort,
+    byCVSS,
+    byVulnID,
+    byVulnType;
 
 // crossfilter setup
 function crossfilterInit(){
-  // data
+  // sets/resets our data
   nbedata = crossfilter();
 
   // dimensions/groups
   all = nbedata.groupAll(),
-  byCVSS = nbedata.dimension(function(d) { return d.cvss; });
+  byIP = nbedata.dimension(function(d) { return d.ip; }),
+  byPort = nbedata.dimension(function(d) { return d.port; }),
+  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
+  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
+  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
 }
 
 // treemap globals
@@ -106,7 +114,6 @@ function initTreemap(){
       .attr("x", 6)
       .attr("y", 6 - margin.top)
       .attr("dy", ".75em");
-  
 }
 
 function drawTreemap() {
@@ -275,9 +282,10 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-  console.log(nbedata.size());
-  byCVSS.filter([2.0, 7.0]);
-  console.log(byCVSS.top(Infinity));
+//  console.log(nbedata.size());
+//  byCVSS.filter([2.0, 7.0]);
+//  console.log(byCVSS.top(Infinity));
+//  byCVSS.filterAll();
   
   redraw();
 }
