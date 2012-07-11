@@ -60,6 +60,22 @@ var x,
 init();
 
 function init() {
+
+  //TODO - Evan - buttons
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Severity");
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Criticality");
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Counts");
+
+
   // initialize treemap
   initTreemap();
 
@@ -320,7 +336,7 @@ function initHistogram(sel, n, name) {
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return (histoW / n)*i + 5; })
+      .attr("x", function(d, i) { return (histoW / n)*i + histoW/n/2; })
       .attr("y", histoH - 11)
       .text( function(d) { return d+1 });
 
