@@ -445,7 +445,7 @@ function loadJSONData(file){
   // if file isn't .json file, load a default
   if(file.indexOf('json') === -1){
     console.log('invalid file named, reverting to a default');
-    file = '../../data/testdata/testdata6.json';
+    file = 'data/testdata/testdata6.json';
   }
 
   // Load data and set to nbedata global
@@ -471,16 +471,77 @@ function handleDataTab(){
   console.log("Data tab active");
 }
 
+function handleVisTab(){
+  console.log("Vis tab active");
+}
+
 function handleGroupsTab(){
   console.log("Groups tab active");
   var nbeText = $("#nbeFile1").html();
   var eventList = parseNBEFile( nbeText );
+  eventList = eventList.filter(function(){return true});//removes nulls
+
   //build default group list
   console.log("event list is " + JSON.stringify(eventList));
+  var ips = {}; //making a fake set here.
+  for( var i=0; i < eventList.length; i++ ){
+    ips[eventList[i].ip] = true;
+  }
+  ips = Object.keys(ips); //only need to keep this
+  console.log("have these IPs: " + JSON.stringify(ips));
+  //add to the default group.
+  groups = {};
+  groups["none"] = [];
+  for( var i=0; i < ips.length; i++ ){
+    var entry = {"ip": ips[i], "weight": 1}
+    groups["none"].push(entry);
+  }
+
+  //display the (default) groups and weights for all machines.
+  buildTable(groups);
+  //TODO add group name to item in crossfilter
+  eventList = addGroupInfoToData(groups, eventList)
+  //TODO actually let user make non-default groups.
+  //TODO make sure each IP is only in one group(?)
+  setNBEData(eventList); //only do this after groups are made, and weights are assigned.
 }
 
-function handleVisTab(){
-  console.log("Vis tab active");
+function addGroupInfoToData(groups, eventList){
+  var events = [];
+  var ips = {}; //make a map of ip:{group, weight}
+  var groupNames = Object.keys(groups);
+  for( var j=0; j < groupNames.length; j++ ){
+    var machines = groups[groupNames[j]];
+    for( var i=0; i < machines.length; i++ ){
+      ips[machines[i]["ip"]] = {"group": groupNames[j], "weight": machines[i]["weight"]}
+    }
+  }
+
+  for( var i=0; i < eventList.length; i++ ){
+    events.push(eventList[i])
+    events[i].group  = ips[eventList[i].ip].group
+    events[i].weight = ips[eventList[i].ip].weight
+  }
+  return events;
+}
+
+function buildTable(groups){
+  var weightSelector, row;
+  var groupNames = Object.keys(groups);
+  for( var j=0; j < groupNames.length; j++ ){
+    var machines = groups[groupNames[j]];
+    for( var i=0; i < machines.length; i++ ){
+      weightSelector = '<select class="weightSelect" id="weightSelect' + machines[i]["ip"].split('.').join('_') + '"';
+      weightSelector += '><option value="1">1 (lowest)</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10 (highest)</option></select>';
+      row = '<tr>';
+      row += '<td>'+ groupNames[j] +'</td><td>'+ machines[i]["ip"] +'</td>';
+      row += '<td>'+ weightSelector +'</td>';
+      row += '</tr>';
+      $('#currentGroupTable').select('tbody').append(row);
+      $('#weightSelect' + machines[i]["ip"].split('.').join('_') ).children().eq(machines[i]["weight"]-1).attr("selected","selected");
+      //console.log( $('#weightSelect' + machines[i]["ip"].split('.').join('_') ).select('option').eq(machines[i]["weight"]-1).html() );
+    }
+  }
 }
 
 
