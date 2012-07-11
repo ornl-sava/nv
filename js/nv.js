@@ -347,8 +347,10 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .style("fill", "purple")
       .style("stroke", "white");
 
-  // labels (x axis and title)
+  // labels
   var labels = d3.range(n);
+
+  //x-axis
   hist.selectAll("text#histogramlabel")
       .data(labels)
       .enter().append("text")
@@ -359,11 +361,21 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
         return labelmap ? labelmap[d] : d;
       });
 
+  //title
   hist.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
       .attr("y", histoH )
       .text(name);
+
+  //bar-labels
+  hist.selectAll("text#histogrambarlabel")
+      .data(labels)
+      .enter().append("text")
+      .attr("class", "histogrambarlabel")
+      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
+      .attr("y", histoH - 20 )
+      .text("0");
 }
 
 //TODO - Evan
@@ -409,6 +421,11 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
       .attr("height", function(d) { return hScale(d.length); });
 
 
+  //update bar-labels
+  d3.select(name)
+    .selectAll(".histogrambarlabel")
+    .data(hist)
+    .text( function(d) { return d.length; } );
 }
 
 // replaces the current dataset and calls redraw
