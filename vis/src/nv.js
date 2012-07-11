@@ -31,7 +31,7 @@ var nbedata,
     byIP,
     byPort,
     byCVSS,
-    byVulnID;
+    byVulnID,
     byVulnType;
 
 // crossfilter setup
@@ -62,6 +62,9 @@ function init() {
   // initialize treemap
   initTreemap();
 
+  // initialize histograms
+  initHistogram("#histograms", 20, "portHisto");
+
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
   loadJSONData('../../data/testdata/testdata6.json');
@@ -74,6 +77,7 @@ function init() {
 // called after data load
 function redraw() {
   drawTreemap();
+  drawHistogram("#portHisto", 20, "port");
 }
 
 // treemap functions
@@ -275,6 +279,92 @@ function drawTreemap() {
       ? name(d.parent) + "." + d.key
       : d.key;
   }
+}
+
+//TODO - Evan
+// function that initalizes one histogram
+//sel   -> d3 selection
+//n     -> number of bins
+//name  -> name of histogram (id)
+function initHistogram(sel, n, name) {
+  
+  var histoW = 400,
+      histoH = 200;
+
+  var nothing = [];
+
+  for ( var i = 0; i < n; i++) nothing[i] = 0;
+  
+  var hist = d3.select(sel)
+                .append("div")
+                .attr("id", name)
+                .attr("class", "histogram")
+                .append("svg")
+                .attr("width", histoW)
+                .attr("height", histoH);
+
+  hist.selectAll("rect")
+      .data(nothing)
+      .enter().append("rect")
+      .attr("x", function(d, i) { return (histoW / n)*i - 0.5; })
+      .attr("width", histoW / n)
+      .attr("y", histoH - 0.05*histoH - 20)
+      .attr("height", 0.05*histoH)
+      .style("fill", "purple")
+      .style("stroke", "white");
+
+  // labels (x axis and title)
+  var labels = d3.range(n);
+  hist.selectAll("text#label")
+      .data(labels)
+      .enter().append("text")
+      .attr("id", "label")
+      .attr("x", function(d, i) { return (histoW / n)*i + 5; })
+      .attr("y", histoH - 11)
+      .style("font-size", "8px")
+      .text( function(d) { return d+1 });
+
+  hist.append("text")
+      .attr("id", "title")
+      .attr("x", histoW / 2 )
+      .attr("y", histoH - 1 )
+      .attr("text-anchor", "middle")
+      .style("font-family", "Serif")
+      .style("font-size", "10px")
+      .text(name);
+}
+
+//TODO - Evan
+// function that initalizes one histogram
+//name  -> name of histogram (id)
+//n     -> number of bins
+//par   -> parameter in data being used
+function drawHistogram(name, n, par) {
+
+  var histoW = 400,
+      histoH = 200;
+
+  //TODO - Lane -> fix how histogram reads nbedata
+  //create histogram
+  var hist = d3.layout.histogram()
+              .bins(n)
+              .range([1, 20])
+              .value(function(d,i) { /*if(i==0){console.log(d);}*/return d[par]; })
+              (nbedata);
+
+  //set domain for data
+  var hScale = d3.scale.linear()
+                  .domain([0, d3.max(hist, function(d, i) { return d[par]; }) ])
+                  .range([0, histoH - 10]);
+  d3.select(name)
+    .selectAll("rect")
+    .data(hist)
+    .transition()
+      .duration(1000)
+      .attr("y", function(d) { return histoH - hScale(d[par]) - 20; })
+      .attr("height", function(d) { return hScale(d[par]); });
+
+
 }
 
 // replaces the current dataset and calls redraw

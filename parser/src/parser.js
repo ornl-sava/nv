@@ -1,4 +1,4 @@
-var sys = require("util")
+//var sys = require("util")
 
 /**
  * Parses a nessus result line and handles missing fields.
@@ -81,6 +81,6 @@ var parseNBEFile = function(nbe){
     return returnArray
 }
 
-module.exports.parseNessusResult = parseNessusResult;
-module.exports.parseNessusTimeStamp = parseNessusTimeStamp;
-module.exports.parseNBEFile = parseNBEFile;
+//module.exports.parseNessusResult = parseNessusResult;
+//module.exports.parseNessusTimeStamp = parseNessusTimeStamp;
+//module.exports.parseNBEFile = parseNBEFile;
