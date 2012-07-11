@@ -5,7 +5,7 @@
  *
  * Here are the divs in nv.html:
  * - id="vis"
- * - id="filters"
+ * - id="options"
  * - id="edit"
  * - id="nessusinfo"
  * - id="histograms"
@@ -17,6 +17,16 @@ var nodeColor = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
     //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+
+// LabelMaps are used to find a label given a number (in initHistogram)
+var vulntypeLabelMap = ["hole", "note", "port"];
+
+// NumberMaps are used to find a number given a label (in drawHistogram)
+var vulntypeNumberMap = d3.scale.ordinal()
+      .domain(vulntypeLabelMap)
+      .range([1,2,3]);
+
+//d3.range(3).map(function(d) {return d++;});
     
 // globals
 var margin = {top: 20, right: 0, bottom: 0, left: 0},
@@ -59,18 +69,18 @@ var x,
 function init() {
 
   //TODO - Evan - buttons
-  d3.select("#options").append("a")
-    .attr("href", "#")
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Severity");
-  d3.select("#options").append("a")
-    .attr("href", "#")
+    .text("Severity")
+    .on("click", function() { console.log("Severity was clicked"); });
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Criticality");
-  d3.select("#options").append("a")
-    .attr("href", "#")
+    .text("Criticality")
+    .on("click", function() { console.log("Criticality was clicked"); });
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Counts");
+    .text("Counts")
+    .on("click", function() { console.log("Counts was clicked"); });
 
 
   // initialize treemap
@@ -78,6 +88,7 @@ function init() {
 
   // initialize histograms
   initHistogram("#histograms", 10, "cvssHistogram");
+  initHistogram("#histograms", 3, "vulnTypeHistogram", vulntypeLabelMap);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -92,6 +103,7 @@ function init() {
 function redraw() {
   drawTreemap();
   drawHistogram("#cvssHistogram", 10, "cvss");
+  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
 }
 
 // treemap functions
@@ -244,8 +256,8 @@ function drawTreemap() {
       transitioning = true;
 
       var g2 = display(d),
-          t1 = g1.transition().duration(750),
-          t2 = g2.transition().duration(750);
+          t1 = g1.transition().duration(1250),
+          t2 = g2.transition().duration(1250);
 
       // Update the domain only after entering new elements.
       x.domain([d.x, d.x + d.dx]);
@@ -297,12 +309,16 @@ function drawTreemap() {
 
 //TODO - Evan
 // function that initalizes one histogram
-//sel   -> d3 selection
-//n     -> number of bins
-//name  -> name of histogram (id)
-function initHistogram(sel, n, name) {
+//sel       -> d3 selection
+//n         -> number of bins
+//name      -> name of histogram (id)
+//labelmap  -> mapping numbers to labels
+//binWidth  -> width of each bar
+function initHistogram(sel, n, name, labelmap, binWidth) {
   
-  var histoW = 400,
+  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+
+  var histoW = binWidth*n,
       histoH = 200;
 
   var nothing = [];
@@ -322,7 +338,7 @@ function initHistogram(sel, n, name) {
       .enter().append("rect")
       .attr("x", function(d, i) { return (histoW / n)*i - 0.5; })
       .attr("width", histoW / n)
-      .attr("y", histoH - 0.05*histoH - n)
+      .attr("y", histoH - n)
       .attr("height", 0.05*histoH)
       .style("fill", "purple")
       .style("stroke", "white");
@@ -333,38 +349,46 @@ function initHistogram(sel, n, name) {
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return (histoW / n)*i + histoW/n/2; })
-      .attr("y", histoH - 11)
-      .text( function(d) { return d+1 });
+      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
+      .attr("y", histoH)
+      .text( function(d) { 
+        return labelmap ? labelmap[d] : d;
+      });
 
   hist.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
-      .attr("y", histoH - 1 )
+      .attr("y", histoH )
       .text(name);
 }
 
 //TODO - Evan
-// function that initalizes one histogram
+// function that draws one histogram
 //name  -> name of histogram (id)
 //n     -> number of bins
 //par   -> parameter in data being used
-function drawHistogram(name, n, par) {
+//binWidth  -> width of each bar
+function drawHistogram(name, n, par, scale, binWidth) {
 
-  var histoW = 400,
+  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+
+  var histoW = binWidth*n,
       histoH = 200;
 
   //create histogram
   var hist = d3.layout.histogram()
               .bins(n)
               .range([1, n])
-              .value(function(d,i) { if(i==0){console.log(d[par]);} return d[par]; })
+              .value(function(d,i) { 
+                //if(i==0){console.log(d[par]);} 
+                return scale ? scale(d[par]) : d[par];
+              })
               (byAny.top(Infinity));
 
   //set domain for data
   var hScale = d3.scale.linear()
                   .domain([0, d3.max(hist, function(d, i) { return d.length; }) ])
-                  .range([0, histoH - 10]);
+                  .range([0, histoH - 50]);
   d3.select(name)
     .selectAll("rect")
     .data(hist)
