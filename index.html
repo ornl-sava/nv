@@ -34,15 +34,15 @@
           <div class="tabbable">
 
             <ul class="nav nav-tabs" id="myTab">
-              <li class="active"><a href="#dataTab" data-toggle="tab">Data</a></li>
-              <li><a href="#groupsTab" data-toggle="tab">Groups</a></li>
-              <li><a href="#visTab" data-toggle="tab">Visualization</a></li>
+              <li class="active"><a href="#dataTab" id="dataTabLink" data-toggle="tab">Data</a></li>
+              <li><a href="#groupsTab" id="groupsTabLink" data-toggle="tab">Groups</a></li>
+              <li><a href="#visTab"    id="visTabLink"    data-toggle="tab">Visualization</a></li>
             </ul>
 
             <div class="tab-content">
               <div class="tab-pane active" id="dataTab">
                 <p>Please paste your Nessus data file (.nbe) below. This data is not sent to a server; it is only parsed locally in the browser.</p>
-                  <textarea rows="25" class="dataTextarea">
+                  <textarea rows="25" class="dataTextarea" id="nbeFile1">
     
 timestamps|||scan_start|Mon Apr 11 10:16:19 2011|
 timestamps||192.168.2.99|host_start||
@@ -63,7 +63,7 @@ timestamps|||scan_end|Mon Apr 11 10:19:34 2011|
                   <input type=text size=20 id="groupName" placeholder="group name">
                   <br>
                   Default criticality score: 
-                  <select name="defaultWeight">
+                  <select name="defaultWeight" class="weightSelect">
                     <option value="1">1 (lowest)</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -83,17 +83,17 @@ timestamps|||scan_end|Mon Apr 11 10:19:34 2011|
                   <thead>
                     <tr>
                       <th class="header">Group Name</th>
-                      <th class="header">Members</th>
+                      <th class="header">Machine</th>
                       <th class="header">Criticality</th>
                     </tr>
                   </thead>
                   <tbody>
                     <!-- some placeholders -->
                     <tr>
-                      <td>some machine</td>
                       <td>some group</td>
+                      <td>some machine</td>
                       <td>
-                        <select name="defaultWeight">
+                        <select class="weightSelect">
                           <option value="1">1 (lowest)</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -108,10 +108,10 @@ timestamps|||scan_end|Mon Apr 11 10:19:34 2011|
                       </td>
                     </tr>
                     <tr>
-                      <td>some machine</td>
                       <td>some group</td>
+                      <td>some machine</td>
                       <td>
-                        <select name="defaultWeight">
+                        <select class="weightSelect">
                           <option value="1">1 (lowest)</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -152,6 +152,7 @@ timestamps|||scan_end|Mon Apr 11 10:19:34 2011|
 
     </div>
   <script type="text/javascript" src="js/nv.js"></script>
+  <script type="text/javascript" src="parser/src/parser.js"></script>
   </body>
 </html>
 

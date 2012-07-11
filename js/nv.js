@@ -56,9 +56,6 @@ var x,
     svg,
     grandparent;
 
-// start the vis
-init();
-
 function init() {
 
   //TODO - Evan - buttons
@@ -409,19 +406,29 @@ function handleGroupAdd(){
   console.log("group add button");
 }
 
-function handleNbePageAdd(){
+function handleDataPageAdd(){
+  console.log("Data page add button");
 }
 
-function handleNbePageDone(){
+function handleNbeChanged(){
+  console.log("NBE file modified");
+  //delete the current objs, will re-build them when needed.
 }
 
-function handleNbeTab(){
+function handleDataTab(){
+  console.log("Data tab active");
 }
 
-function handleGroupTab(){
+function handleGroupsTab(){
+  console.log("Groups tab active");
+  var nbeText = $("#nbeFile1").html();
+  var eventList = parseNBEFile( nbeText );
+  //build default group list
+  console.log("event list is " + JSON.stringify(eventList));
 }
 
-function handleResultsTab(){
+function handleVisTab(){
+  console.log("Vis tab active");
 }
 
 
@@ -431,6 +438,17 @@ $(document).ready(function () {
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
   });
+  $('#dataTabLink').bind('click', function(event) {
+    handleDataTab();
+  });
+  $('#groupsTabLink').bind('click', function(event) {
+    handleGroupsTab();
+  });
+  $('#visTabLink').bind('click', function(event) {
+    handleVisTab();
+  });
 
+  // start the vis
+  //init();
 });
 
