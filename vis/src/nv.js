@@ -1,63 +1,128 @@
-// testing data rollup
+/*
+ * nv.js
+ *
+ * TODO NOTE to Mike: the parser can use setNBEData(dataset) to set nbedata and call redraw
+ *
+ * Here are the divs in nv.html:
+ * - id="vis"
+ * - id="filters"
+ * - id="edit"
+ * - id="nessusinfo"
+ * - id="histograms"
+ */
 
+// colors
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
-//0xFEE6CE; 0xFDAE6B; 0xE6550D; 
-var cvssColor = d3.scale.linear()
+var nodeColor = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]);
-    //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]);
-
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
+    //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+    
+// globals
 var margin = {top: 20, right: 0, bottom: 0, left: 0},
     width = 960,
     height = 500 - margin.top - margin.bottom,
     formatNumber = d3.format(",d"),
     transitioning;
 
-var x = d3.scale.linear()
-    .domain([0, width])
-    .range([0, width]);
+// All the data!
+var nbedata,
+    all,
+    byIP,
+    byPort,
+    byCVSS,
+    byVulnID;
+    byVulnType;
 
-var y = d3.scale.linear()
-    .domain([0, height])
-    .range([0, height]);
+// crossfilter setup
+function crossfilterInit(){
+  // sets/resets our data
+  nbedata = crossfilter();
 
-var treemap = d3.layout.treemap()
-    .children(function(d, depth) { return depth ? null : d.values; })
-    .sort(function(a, b) { return a.value - b.value; })
-    .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
-    .round(false);
+  // dimensions/groups
+  all = nbedata.groupAll(),
+  byIP = nbedata.dimension(function(d) { return d.ip; }),
+  byPort = nbedata.dimension(function(d) { return d.port; }),
+  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
+  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
+  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
+}
 
-var svg = d3.select("#vis").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.bottom + margin.top)
-    .style("margin-left", -margin.left + "px")
-    .style("margin.right", -margin.right + "px")
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .style("shape-rendering", "crispEdges");
+// treemap globals
+var x,
+    y,
+    treemap,
+    svg,
+    grandparent;
 
-var grandparent = svg.append("g")
-    .attr("class", "grandparent");
+// start the vis
+init();
 
-grandparent.append("rect")
-    .attr("y", -margin.top)
-    .attr("width", width)
-    .attr("height", margin.top);
+function init() {
+  // initialize treemap
+  initTreemap();
 
-grandparent.append("text")
-    .attr("x", 6)
-    .attr("y", 6 - margin.top)
-    .attr("dy", ".75em");
+  // load treemap data (sets nbedata which calls drawTreemap() after it loads)
+  // this should be commented out when we receive data from the parser
+  loadJSONData('../../data/testdata/testdata6.json');
 
-//d3.json("../zoomable_treemap/flare.json", function(root) {
+  // test changes of data using timeouts
+  //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
+  //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata7.json'); }, 10000);  
+}
 
-d3.json("../../data/testdata/testdata6.json", function(data) {
+// called after data load
+function redraw() {
+  drawTreemap();
+}
+
+// treemap functions
+function initTreemap(){
+  
+  x = d3.scale.linear()
+      .domain([0, width])
+      .range([0, width]);
+  
+  y = d3.scale.linear()
+      .domain([0, height])
+      .range([0, height]);
+  
+  treemap = d3.layout.treemap()
+      .children(function(d, depth) { return depth ? null : d.values; })
+      .sort(function(a, b) { return a.value - b.value; })
+      .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
+      .round(false);
+  
+  svg = d3.select("#vis").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.bottom + margin.top)
+      .style("margin-left", -margin.left + "px")
+      .style("margin.right", -margin.right + "px")
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .style("shape-rendering", "crispEdges");
+  
+  grandparent = svg.append("g")
+      .attr("class", "grandparent");
+  
+  grandparent.append("rect")
+      .attr("y", -margin.top)
+      .attr("width", width)
+      .attr("height", margin.top);
+  
+  grandparent.append("text")
+      .attr("x", 6)
+      .attr("y", 6 - margin.top)
+      .attr("dy", ".75em");
+}
+
+function drawTreemap() {
   var root=d3.nest()
     .key(function(d) {return "group";})
     .key(function(d) {return d.ip;})
     .key(function(d) {return d.port;})
     .sortKeys(d3.ascending)
-    .entries(data);
+    .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
 
   // free the root from its original array
   root = root[0];
@@ -84,14 +149,14 @@ d3.json("../../data/testdata/testdata6.json", function(data) {
     d.cvss = accumulateCVSS(d);
 
     return d.values
-        ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
-        : d.value;
+      ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
+      : d.value;
   }
 
   function accumulateCVSS(d){
     return d.values
-        ? d.cvss = d.values.reduce(function(p, v) { return Math.max(p, accumulateCVSS(v)); }, 0)
-        : d.cvss;
+      ? d.cvss = d.values.reduce(function(p, v) { return Math.max(p, accumulateCVSS(v)); }, 0)
+      : d.cvss;
   }
 
   // Compute the treemap layout recursively such that each group of siblings
@@ -117,44 +182,44 @@ d3.json("../../data/testdata/testdata6.json", function(data) {
 
   function display(d) {
     grandparent
-        .datum(d.parent)
-        .on("click", transition)
+      .datum(d.parent)
+      .on("click", transition)
       .select("text")
-        .text(name(d));
+      .text(name(d));
 
     var g1 = svg.insert("g", ".grandparent")
-        .datum(d)
-        .attr("class", "depth");
+      .datum(d)
+      .attr("class", "depth");
 
     var g = g1.selectAll("g")
-        .data(d.values)
+      .data(d.values)
       .enter().append("g");
 
     g.filter(function(d) { return d.values; })
-        .classed("children", true)
-        .on("click", transition);
+      .classed("children", true)
+      .on("click", transition);
 
     // NOTE: can move the .style here to rect() to color by cell
     g.selectAll(".child")
-        .data(function(d) { return d.values || [d]; })
+      .data(function(d) { return d.values || [d]; })
       .enter().append("rect")
-        .attr("class", "child")
-        .style("fill", function(d) { 
-          return cvssColor(d.cvss);
-        })
-        .call(rect);
+      .attr("class", "child")
+      .style("fill", function(d) { 
+        return nodeColor(d.cvss);
+      })
+    .call(rect);
 
     g.append("rect")
-        .attr("class", "parent")
-        .call(rect)
+      .attr("class", "parent")
+      .call(rect)
       .append("title")
-        .text(function(d) { return formatNumber(d.value); });
+      .text(function(d) { return formatNumber(d.value); });
 
     g.append("text")
-        .attr("dy", ".75em")
-        .text(function(d) { return d.key; })
-        .classed("rectlabel", true)
-        .call(text);
+      .attr("dy", ".75em")
+      .text(function(d) { return d.key; })
+      .classed("rectlabel", true)
+      .call(text);
 
     function transition(d) {
       if (transitioning || !d) return;
@@ -195,20 +260,46 @@ d3.json("../../data/testdata/testdata6.json", function(data) {
 
   function text(text) {
     text.attr("x", function(d) { return x(d.x) + 6; })
-        .attr("y", function(d) { return y(d.y) + 6; });
+      .attr("y", function(d) { return y(d.y) + 6; });
   }
 
   function rect(rect) {
     rect.attr("x", function(d) { return x(d.x); })
-        .attr("y", function(d) { return y(d.y); })
-        .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
-        .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
+      .attr("y", function(d) { return y(d.y); })
+      .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
+      .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
   }
 
   function name(d) {
     return d.parent
-        ? name(d.parent) + "." + d.key
-        : d.key;
+      ? name(d.parent) + "." + d.key
+      : d.key;
   }
-});
+}
+
+// replaces the current dataset and calls redraw
+function setNBEData(dataset){
+  crossfilterInit();
+  nbedata.add(dataset);
+  // test crossfilter here
+//  console.log(nbedata.size());
+//  byCVSS.filter([2.0, 7.0]);
+//  console.log(byCVSS.top(Infinity));
+//  byCVSS.filterAll();
+  
+  redraw();
+}
+
+function loadJSONData(file){
+  // if file isn't .json file, load a default
+  if(file.indexOf('json') === -1){
+    console.log('invalid file named, reverting to a default');
+    file = '../../data/testdata/testdata6.json';
+  }
+
+  // Load data and set to nbedata global
+  d3.json(file, function(data) {
+    setNBEData(data);
+  });
+}
 
