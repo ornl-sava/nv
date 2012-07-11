@@ -367,15 +367,6 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .attr("x", histoW / 2 )
       .attr("y", histoH )
       .text(name);
-
-  //bar-labels
-  hist.selectAll("text#histogrambarlabel")
-      .data(labels)
-      .enter().append("text")
-      .attr("class", "histogrambarlabel")
-      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
-      .attr("y", histoH - 20 )
-      .text("0");
 }
 
 //TODO - Evan
@@ -420,12 +411,9 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
       .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
       .attr("height", function(d) { return hScale(d.length); });
 
-
-  //update bar-labels
   d3.select(name)
-    .selectAll(".histogrambarlabel")
-    .data(hist)
-    .text( function(d) { return d.length; } );
+    .append("text")
+    .text(max);
 }
 
 // replaces the current dataset and calls redraw
