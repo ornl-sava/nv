@@ -5,7 +5,7 @@
  *
  * Here are the divs in nv.html:
  * - id="vis"
- * - id="filters"
+ * - id="options"
  * - id="edit"
  * - id="nessusinfo"
  * - id="histograms"
@@ -17,6 +17,14 @@ var nodeColor = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
     //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+
+// LabelMaps are used to find a label given a number (in initHistogram)
+var vulntypeLabelMap = ["hole", "note", "port"];
+
+// NumberMaps are used to find a number given a label (in drawHistogram)
+var vulntypeNumberMap = d3.scale.ordinal()
+      .domain(vulntypeLabelMap)
+      .range([1,2,3]);
     
 // globals
 var margin = {top: 20, right: 0, bottom: 0, left: 0},
@@ -65,6 +73,7 @@ function init() {
 
   // initialize histograms
   initHistogram("#histograms", 10, "cvssHistogram");
+  initHistogram("#histograms", 3, "vulnTypeHistogram", vulntypeLabelMap);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -79,6 +88,7 @@ function init() {
 function redraw() {
   drawTreemap();
   drawHistogram("#cvssHistogram", 10, "cvss");
+  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
 }
 
 // treemap functions
@@ -287,7 +297,7 @@ function drawTreemap() {
 //sel   -> d3 selection
 //n     -> number of bins
 //name  -> name of histogram (id)
-function initHistogram(sel, n, name) {
+function initHistogram(sel, n, name, labelmap) {
   
   var histoW = 400,
       histoH = 200;
@@ -322,7 +332,9 @@ function initHistogram(sel, n, name) {
       .attr("class", "histogramlabel")
       .attr("x", function(d, i) { return (histoW / n)*i + 5; })
       .attr("y", histoH - 11)
-      .text( function(d) { return d+1 });
+      .text( function(d) { 
+        return labelmap ? labelmap[d] : d;
+      });
 
   hist.append("text")
       .attr("class", "histogramtitle")
@@ -336,7 +348,7 @@ function initHistogram(sel, n, name) {
 //name  -> name of histogram (id)
 //n     -> number of bins
 //par   -> parameter in data being used
-function drawHistogram(name, n, par) {
+function drawHistogram(name, n, par, scale) {
 
   var histoW = 400,
       histoH = 200;
@@ -345,7 +357,10 @@ function drawHistogram(name, n, par) {
   var hist = d3.layout.histogram()
               .bins(n)
               .range([1, n])
-              .value(function(d,i) { if(i==0){console.log(d[par]);} return d[par]; })
+              .value(function(d,i) { 
+                //if(i==0){console.log(d[par]);} 
+                return scale ? scale(d[par]) : d[par];
+              })
               (byAny.top(Infinity));
 
   //set domain for data
