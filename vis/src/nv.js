@@ -31,7 +31,7 @@ var nbedata,
     byIP,
     byPort,
     byCVSS,
-    byVulnID;
+    byVulnID,
     byVulnType;
 
 // crossfilter setup
