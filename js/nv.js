@@ -28,16 +28,25 @@ var margin = {top: 20, right: 0, bottom: 0, left: 0},
 // All the data!
 var nbedata,
     all,
-    byCVSS;
+    byIP,
+    byPort,
+    byCVSS,
+    byVulnID,
+    byVulnType;
 
 // crossfilter setup
 function crossfilterInit(){
-  // data
+  // sets/resets our data
   nbedata = crossfilter();
 
   // dimensions/groups
   all = nbedata.groupAll(),
-  byCVSS = nbedata.dimension(function(d) { return d.cvss; });
+  byIP = nbedata.dimension(function(d) { return d.ip; }),
+  byAny = nbedata.dimension(function(d) { return d; }),
+  byPort = nbedata.dimension(function(d) { return d.port; }),
+  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
+  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
+  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
 }
 
 // treemap globals
@@ -51,8 +60,27 @@ var x,
 init();
 
 function init() {
+
+  //TODO - Evan - buttons
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Severity");
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Criticality");
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Counts");
+
+
   // initialize treemap
   initTreemap();
+
+  // initialize histograms
+  initHistogram("#histograms", 10, "cvssHistogram");
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -66,6 +94,7 @@ function init() {
 // called after data load
 function redraw() {
   drawTreemap();
+  drawHistogram("#cvssHistogram", 10, "cvss");
 }
 
 // treemap functions
@@ -106,7 +135,6 @@ function initTreemap(){
       .attr("x", 6)
       .attr("y", 6 - margin.top)
       .attr("dy", ".75em");
-  
 }
 
 function drawTreemap() {
@@ -270,14 +298,96 @@ function drawTreemap() {
   }
 }
 
+//TODO - Evan
+// function that initalizes one histogram
+//sel   -> d3 selection
+//n     -> number of bins
+//name  -> name of histogram (id)
+function initHistogram(sel, n, name) {
+  
+  var histoW = 400,
+      histoH = 200;
+
+  var nothing = [];
+
+  for ( var i = 0; i < n; i++) nothing[i] = 0;
+  
+  var hist = d3.select(sel)
+               .append("div")
+               .attr("id", name)
+               .attr("class", "histogram")
+               .append("svg")
+               .attr("width", histoW)
+               .attr("height", histoH);
+
+  hist.selectAll("rect")
+      .data(nothing)
+      .enter().append("rect")
+      .attr("x", function(d, i) { return (histoW / n)*i - 0.5; })
+      .attr("width", histoW / n)
+      .attr("y", histoH - 0.05*histoH - n)
+      .attr("height", 0.05*histoH)
+      .style("fill", "purple")
+      .style("stroke", "white");
+
+  // labels (x axis and title)
+  var labels = d3.range(n);
+  hist.selectAll("text#histogramlabel")
+      .data(labels)
+      .enter().append("text")
+      .attr("class", "histogramlabel")
+      .attr("x", function(d, i) { return (histoW / n)*i + histoW/n/2; })
+      .attr("y", histoH - 11)
+      .text( function(d) { return d+1 });
+
+  hist.append("text")
+      .attr("class", "histogramtitle")
+      .attr("x", histoW / 2 )
+      .attr("y", histoH - 1 )
+      .text(name);
+}
+
+//TODO - Evan
+// function that initalizes one histogram
+//name  -> name of histogram (id)
+//n     -> number of bins
+//par   -> parameter in data being used
+function drawHistogram(name, n, par) {
+
+  var histoW = 400,
+      histoH = 200;
+
+  //create histogram
+  var hist = d3.layout.histogram()
+              .bins(n)
+              .range([1, n])
+              .value(function(d,i) { if(i==0){console.log(d[par]);} return d[par]; })
+              (byAny.top(Infinity));
+
+  //set domain for data
+  var hScale = d3.scale.linear()
+                  .domain([0, d3.max(hist, function(d, i) { return d.length; }) ])
+                  .range([0, histoH - 10]);
+  d3.select(name)
+    .selectAll("rect")
+    .data(hist)
+    .transition()
+      .duration(1000)
+      .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
+      .attr("height", function(d) { return hScale(d.length); });
+
+
+}
+
 // replaces the current dataset and calls redraw
 function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-  console.log(nbedata.size());
-  byCVSS.filter([2.0, 7.0]);
-  console.log(byCVSS.top(Infinity));
+//  console.log(nbedata.size());
+//  byCVSS.filter([2.0, 7.0]);
+//  console.log(byCVSS.top(Infinity));
+//  byCVSS.filterAll();
   
   redraw();
 }
