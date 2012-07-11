@@ -26,8 +26,6 @@ var vulntypeNumberMap = d3.scale.ordinal()
       .domain(vulntypeLabelMap)
       .range([1,2,3]);
 
-//d3.range(3).map(function(d) {return d++;});
-    
 // globals
 var margin = {top: 20, right: 0, bottom: 0, left: 0},
     width = 960,
@@ -92,10 +90,12 @@ function init() {
   // initialize histograms
   initHistogram("#histograms", 10, "cvssHistogram");
   initHistogram("#histograms", 3, "vulnTypeHistogram", vulntypeLabelMap);
+  initHistogram("#histograms", 20, "top20NoteHistogram");
+  initHistogram("#histograms", 20, "top20HoleHistogram");
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata6.json');
+  loadJSONData('../../data/testdata/testdata7.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -107,7 +107,10 @@ function redraw() {
   drawTreemap();
   drawHistogram("#cvssHistogram", 10, "cvss");
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
+  drawHistogram("#top20NoteHistogram", 20, "vulnid", null, "note");
+  drawHistogram("#top20HoleHistogram", 20, "vulnid", null, "hole");
 }
+
 
 // treemap functions
 function initTreemap(){
@@ -366,24 +369,31 @@ function initHistogram(sel, n, name, labelmap) {
 //name  -> name of histogram (id)
 //n     -> number of bins
 //par   -> parameter in data being used
-function drawHistogram(name, n, par, scale) {
+function drawHistogram(name, n, par, scale, typeFilter) {
 
   var histoW = 400,
       histoH = 200;
 
+  if(typeFilter){
+    byVulnType.filter(typeFilter);
+  }
   //create histogram
   var hist = d3.layout.histogram()
               .bins(n)
               .range([1, n])
               .value(function(d,i) { 
-                //if(i==0){console.log(d[par]);} 
                 return scale ? scale(d[par]) : d[par];
               })
               (byAny.top(Infinity));
 
+  if(typeFilter){
+    byVulnType.filterAll();
+  }
+
   //set domain for data
+  var max = d3.max(hist, function(d, i) { return d.length; });
   var hScale = d3.scale.linear()
-                  .domain([0, d3.max(hist, function(d, i) { return d.length; }) ])
+                  .domain([0,  max])
                   .range([0, histoH - 50]);
   d3.select(name)
     .selectAll("rect")
