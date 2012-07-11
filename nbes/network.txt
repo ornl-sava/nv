@@ -1,0 +1,5 @@
+Ubuntu Workstations 192.168.56.[101-110]
+Fedora Workstations 192.168.56.[111-120]
+LAPP Servers 192.168.56.[121-125]
+Wordpress Servers 192.168.56.[126-130]
+Metasploitable Ubuntu Workstation 192.168.56.[131-132]
