@@ -11,6 +11,21 @@
  * - id="histograms"
  */
 
+//$.get("http://codementum.org", function(data) {
+//  var resp = $(data); // Now you can do whatever you want with it
+//  $(".hero-unit", resp).appendTo("body");
+//});
+
+//$.get("http://www.nessus.org/plugins/index.php?view=single&id=42118/", function(data) {
+//  var resp = $(data); // Now you can do whatever you want with it
+//  $("#contentMain", resp).appendTo("#nessusinfo");
+//});
+
+//$.getJSON('http://www.panoramio.com/wapi/data/get_photos?v=1&key=dummykey&tag=test&offset=0&length=20&callback=?&minx=-30&miny=0&maxx=0&maxy=150', 
+//    function(json) {
+//      alert(json.photos[1].photoUrl);
+//});
+
 // colors
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
 var nodeColor = d3.scale.linear()
@@ -349,14 +364,14 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
 
   // labels
   var labels = d3.range(n);
-
+  
   //x-axis
   hist.selectAll("text#histogramlabel")
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
       .attr("x", function(d, i) { return ( (histoW / n)*i ); })
-      .attr("y", histoH)
+      .attr("y", histoH - 11)
       .text( function(d) { 
         return labelmap ? labelmap[d] : d;
       });
@@ -367,15 +382,6 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .attr("x", histoW / 2 )
       .attr("y", histoH )
       .text(name);
-
-  //bar-labels
-  hist.selectAll("text#histogrambarlabel")
-      .data(labels)
-      .enter().append("text")
-      .attr("class", "histogrambarlabel")
-      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
-      .attr("y", histoH - 20 )
-      .text("0");
 }
 
 //TODO - Evan
@@ -391,6 +397,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   var histoW = binWidth*n,
       histoH = 200;
 
+  // if typeFilter defined, filter
   if(typeFilter){
     byVulnType.filter(typeFilter);
   }
@@ -403,8 +410,10 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
               })
               (byAny.top(Infinity));
 
+  // if typeFilter defined, remove filter and sort/reverse array (descending order for top 20)
   if(typeFilter){
     byVulnType.filterAll();
+    hist = hist.sort().reverse();
   }
 
   //set domain for data
@@ -420,12 +429,16 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
       .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
       .attr("height", function(d) { return hScale(d.length); });
 
+  // if the data in the hist is a vulnid, change labels to corresponding vulnids
+  if(typeFilter){
+    d3.select(name).selectAll("text.histogramlabel")
+      .data(hist)
+      .text(function(d) { return d[0].vulnid; });
+  }
 
-  //update bar-labels
   d3.select(name)
-    .selectAll(".histogrambarlabel")
-    .data(hist)
-    .text( function(d) { return d.length; } );
+    .append("text")
+    .text("max: "+max);
 }
 
 // replaces the current dataset and calls redraw
