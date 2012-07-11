@@ -68,6 +68,22 @@ var x,
 init();
 
 function init() {
+
+  //TODO - Evan - buttons
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Severity");
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Criticality");
+  d3.select("#options").append("a")
+    .attr("href", "#")
+    .classed("btn btn-primary", true)
+    .text("Counts");
+
+
   // initialize treemap
   initTreemap();
 
@@ -319,7 +335,7 @@ function initHistogram(sel, n, name, labelmap) {
       .enter().append("rect")
       .attr("x", function(d, i) { return (histoW / n)*i - 0.5; })
       .attr("width", histoW / n)
-      .attr("y", histoH - 0.05*histoH - n)
+      .attr("y", histoH - n)
       .attr("height", 0.05*histoH)
       .style("fill", "purple")
       .style("stroke", "white");
@@ -330,7 +346,7 @@ function initHistogram(sel, n, name, labelmap) {
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return (histoW / n)*i + 5; })
+      .attr("x", function(d, i) { return ( (histoW / n)*i + (histoW / n / 2) ); })
       .attr("y", histoH - 11)
       .text( function(d) { 
         return labelmap ? labelmap[d] : d;
@@ -344,7 +360,7 @@ function initHistogram(sel, n, name, labelmap) {
 }
 
 //TODO - Evan
-// function that initalizes one histogram
+// function that draws one histogram
 //name  -> name of histogram (id)
 //n     -> number of bins
 //par   -> parameter in data being used
@@ -366,7 +382,7 @@ function drawHistogram(name, n, par, scale) {
   //set domain for data
   var hScale = d3.scale.linear()
                   .domain([0, d3.max(hist, function(d, i) { return d.length; }) ])
-                  .range([0, histoH - 10]);
+                  .range([0, histoH - 50]);
   d3.select(name)
     .selectAll("rect")
     .data(hist)
