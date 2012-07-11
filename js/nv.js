@@ -64,24 +64,21 @@ var x,
     svg,
     grandparent;
 
-// start the vis
-init();
-
 function init() {
 
   //TODO - Evan - buttons
-  d3.select("#options").append("a")
-    .attr("href", "#")
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Severity");
-  d3.select("#options").append("a")
-    .attr("href", "#")
+    .text("Severity")
+    .on("click", function() { console.log("Severity was clicked"); });
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Criticality");
-  d3.select("#options").append("a")
-    .attr("href", "#")
+    .text("Criticality")
+    .on("click", function() { console.log("Criticality was clicked"); });
+  d3.select("#options").append("button")
     .classed("btn btn-primary", true)
-    .text("Counts");
+    .text("Counts")
+    .on("click", function() { console.log("Counts was clicked"); });
 
 
   // initialize treemap
@@ -107,8 +104,9 @@ function redraw() {
   drawTreemap();
   drawHistogram("#cvssHistogram", 10, "cvss");
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#top20NoteHistogram", 20, "vulnid", null, "note");
-  drawHistogram("#top20HoleHistogram", 20, "vulnid", null, "hole");
+  drawHistogram("#top20NoteHistogram", 20, "vulnid", null, null, "note");
+  drawHistogram("#top20HoleHistogram", 20, "vulnid", null, null, "hole");
+  //drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 }
 
 
@@ -315,12 +313,16 @@ function drawTreemap() {
 
 //TODO - Evan
 // function that initalizes one histogram
-//sel   -> d3 selection
-//n     -> number of bins
-//name  -> name of histogram (id)
-function initHistogram(sel, n, name, labelmap) {
+//sel       -> d3 selection
+//n         -> number of bins
+//name      -> name of histogram (id)
+//labelmap  -> mapping numbers to labels
+//binWidth  -> width of each bar
+function initHistogram(sel, n, name, labelmap, binWidth) {
   
-  var histoW = 400,
+  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+
+  var histoW = binWidth*n,
       histoH = 200;
 
   var nothing = [];
@@ -369,9 +371,12 @@ function initHistogram(sel, n, name, labelmap) {
 //name  -> name of histogram (id)
 //n     -> number of bins
 //par   -> parameter in data being used
-function drawHistogram(name, n, par, scale, typeFilter) {
+//binWidth  -> width of each bar
+function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
-  var histoW = 400,
+  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+
+  var histoW = binWidth*n,
       histoH = 200;
 
   if(typeFilter){
@@ -431,4 +436,54 @@ function loadJSONData(file){
     setNBEData(data);
   });
 }
+
+function handleGroupAdd(){
+  console.log("group add button");
+}
+
+function handleDataPageAdd(){
+  console.log("Data page add button");
+}
+
+function handleNbeChanged(){
+  console.log("NBE file modified");
+  //delete the current objs, will re-build them when needed.
+}
+
+function handleDataTab(){
+  console.log("Data tab active");
+}
+
+function handleGroupsTab(){
+  console.log("Groups tab active");
+  var nbeText = $("#nbeFile1").html();
+  var eventList = parseNBEFile( nbeText );
+  //build default group list
+  console.log("event list is " + JSON.stringify(eventList));
+}
+
+function handleVisTab(){
+  console.log("Vis tab active");
+}
+
+
+// initialization
+$(document).ready(function () {
+  // set up needed event listeners, etc.
+  $('#addGroupBtn').bind('click', function(event) {
+    handleGroupAdd();
+  });
+  $('#dataTabLink').bind('click', function(event) {
+    handleDataTab();
+  });
+  $('#groupsTabLink').bind('click', function(event) {
+    handleGroupsTab();
+  });
+  $('#visTabLink').bind('click', function(event) {
+    handleVisTab();
+  });
+
+  // start the vis
+  init();
+});
 
