@@ -11,6 +11,21 @@
  * - id="histograms"
  */
 
+//$.get("http://codementum.org", function(data) {
+//  var resp = $(data); // Now you can do whatever you want with it
+//  $(".hero-unit", resp).appendTo("body");
+//});
+
+//$.get("http://www.nessus.org/plugins/index.php?view=single&id=42118/", function(data) {
+//  var resp = $(data); // Now you can do whatever you want with it
+//  $("#contentMain", resp).appendTo("#nessusinfo");
+//});
+
+//$.getJSON('http://www.panoramio.com/wapi/data/get_photos?v=1&key=dummykey&tag=test&offset=0&length=20&callback=?&minx=-30&miny=0&maxx=0&maxy=150', 
+//    function(json) {
+//      alert(json.photos[1].photoUrl);
+//});
+
 // colors
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
 var nodeColor = d3.scale.linear()
@@ -347,18 +362,21 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .style("fill", "purple")
       .style("stroke", "white");
 
-  // labels (x axis and title)
+  // labels
   var labels = d3.range(n);
-  hist.selectAll("text.histogramlabel")
+  
+  //x-axis
+  hist.selectAll("text#histogramlabel")
       .data(labels)
       .enter().append("text")
       .attr("class", "histogramlabel")
       .attr("x", function(d, i) { return ( (histoW / n)*i ); })
-      .attr("y", histoH)
+      .attr("y", histoH - 11)
       .text( function(d) { 
         return labelmap ? labelmap[d] : d;
       });
 
+  //title
   hist.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
@@ -417,6 +435,10 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
       .data(hist)
       .text(function(d) { return d[0].vulnid; });
   }
+
+  d3.select(name)
+    .append("text")
+    .text("max: "+max);
 }
 
 // replaces the current dataset and calls redraw
