@@ -5,13 +5,28 @@ body{
 
 /* head */
 .hero-unit {
-  padding: 25px;
+  padding: 5px 20px 15px;
+}
+
+.app-instructions {
+  font-size: 90%;
+  color: #555;
+  margin-top: 4px;
 }
 
 /* navigation */
 .nav-tabs > li a{
   padding: 5px 25px;
 }
+
+/* footer */
+footer{
+  margin-top: 20px;
+  text-align: center;
+  font-size: 10px;
+  color: #777;
+}
+
 
 /* data tab */
 .dataTextarea{
@@ -46,15 +61,50 @@ body{
   border: 1px solid #ccc;
 }
 
-/* vis tab */
-#vis{
-  height: 500px;
+/* Treemap (from the original nv.css) */
+
+#vis {
+  width: 960px;
+  height: 750px;
+  background: #bbb;
 }
 
-/* navigation */
-footer{
-  margin-top: 20px;
-  text-align: center;
-  font-size: 10px;
-  color: #888;
+text {
+  pointer-events: none;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+.rectlabel {
+  font-size: 11px;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+.grandparent rect {
+  fill: #fff;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+
+rect.parent {
+  pointer-events: all;
+}
+
+.children:hover rect.child,
+.grandparent:hover rect {
+  fill: #aaa;
 }
