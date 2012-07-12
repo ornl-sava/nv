@@ -1,7 +1,6 @@
 /*
  * nv.js
  *
- * TODO NOTE to Mike: the parser can use setNBEData(dataset) to set nbedata and call redraw
  *
  * Here are the divs in nv.html:
  * - id="vis"
@@ -11,6 +10,8 @@
  * - id="histograms"
  */
 
+
+// some tests for grabbing data from other websites
 //$.get("http://codementum.org", function(data) {
 //  var resp = $(data); // Now you can do whatever you want with it
 //  $(".hero-unit", resp).appendTo("body");
@@ -52,6 +53,10 @@ var margin = {top: 20, right: 0, bottom: 0, left: 0},
     formatNumber = d3.format(",d"),
     transitioning;
 
+// users can change this via buttons, which then redraws the treemap according to the new size metric
+// cvss, value, criticality
+var sizeOption = 'value';
+
 // All the data!
 var nbedata,
     all,
@@ -88,15 +93,15 @@ function init() {
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Severity")
-    .on("click", function() { console.log("Severity was clicked"); });
+    .on("click", function() { sizeOption = 'cvss'; redraw(); console.log("Severity was clicked"); });
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Criticality")
-    .on("click", function() { console.log("Criticality was clicked"); });
+    .on("click", function() { sizeOption = 'criticality'; redraw(); console.log("Criticality was clicked"); });
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Counts")
-    .on("click", function() { console.log("Counts was clicked"); });
+    .on("click", function() { sizeOption = 'value'; redraw();  console.log("Counts was clicked"); });
 
 
   // initialize treemap
@@ -110,11 +115,14 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata6.json');
+  loadJSONData('../../data/testdata/testdata11.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata7.json'); }, 10000);  
+  
+  // initialize nessus info area
+  initNessusInfo();
 }
 
 // called after data load
@@ -170,7 +178,8 @@ function initTreemap(){
 
 function drawTreemap() {
   var root=d3.nest()
-    .key(function(d) {return "group";})
+    .key(function(d) {return 'network name';})
+    .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
     .key(function(d) {return d.port;})
     .sortKeys(d3.ascending)
@@ -202,7 +211,7 @@ function drawTreemap() {
 
     return d.values
       ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
-      : d.value;
+      : d[sizeOption];
   }
 
   function accumulateCVSS(d){
@@ -251,6 +260,8 @@ function drawTreemap() {
     g.filter(function(d) { return d.values; })
       .classed("children", true)
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
+      .attr("histoNames", [])
+      .attr("histoIndices", [])
       .on("click", transition)
       .on("mouseover", function(d) {
           
@@ -341,7 +352,7 @@ function drawTreemap() {
 
   function name(d) {
     return d.parent
-      ? name(d.parent) + "." + d.key
+      ? name(d.parent) + "_" + d.key
       : d.key;
   }
 }
@@ -442,32 +453,89 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
   //TODO - Evan - add histogram interation w/treemap
   d3.select(name)
+    .selectAll("rect")
     .data(hist)
-    .on("click", function(d) { 
+    .on("click", function(d, iter) {
 
-        //label the clicked rectangles as "y"
-        for ( var i = 0; i < d.length; i++) {
-            
-            d3.select("#vis")
-              .select(".depth")
-              .select("#IP" + (d[i].ip).replace(/\./g, ""))
-              .selectAll(".child")
-              .attr("clicked", "y");
+        var name = $(this).parent().parent().attr("id");
+        var nameIndex;  //for finding if "name" already exists in "histoNames"
+        var indexIndex;
 
+        var histoNames = [],
+            histoIndices = [];
+
+        var base = d3.select("#vis")
+                      .select(".depth")
+                      .selectAll(".children");
+
+        //are there anything in the "attribute arrays"?
+        if ( base.attr("histoNames").length > 0 ) {
+          histoNames = base.attr("histoNames").split(",");
+          histoIndices = base.attr("histoIndices").split(",");
         }
 
-        //gray out all rectangles who have clicked set as "n"
-        d3.select("#vis")
-          .select(".depth")
-          .selectAll(".child")
-          .filter(function() {
-              if ( d3.select(this).attr("clicked") === "n") { return this; }
-              else return null;
-          })
-          .style("fill", function(d) {
-              return notSelected(d.values[0].cvss);
-          });
+        //has this bar been clicked before?
+        nameIndex = histoNames.indexOf(name);
+        indexIndex = histoIndices.indexOf(iter.toString());
 
+        if ( nameIndex !== -1 && indexIndex !== -1 ) { //yes
+
+            //remove histogram and its corresponding index
+            histoNames.splice(nameIndex, 1);
+            histoIndices.splice(indexIndex, 1);
+
+            //edit the "attribute arrays" for each ".children"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".children")
+              .attr("histoNames", histoNames)
+              .attr("histoIndices", histoIndices);
+
+            //re-color rectangles accordingly
+        
+        }
+        else {  //no
+
+            //push new histogram bar that has been clicked onto the arrays
+            histoNames.push(name);
+            histoIndices.push(iter);
+
+            //edit the "attribute arrays" for each ".children"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".children")
+              .attr("histoNames", histoNames)
+              .attr("histoIndices", histoIndices);
+
+            //label the clicked rectangles as "y"
+            for ( var i = 0; i < d.length; i++) {
+            
+                d3.select("#vis")
+                  .select(".depth")
+                  .select("#IP" + (d[i].ip).replace(/\./g, ""))
+                  .selectAll(".child")
+                  .attr("clicked", "y");
+
+            }
+
+            //gray out all rectangles who have clicked set as "n"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".child")
+              .filter(function() {
+                  if ( d3.select(this).attr("clicked") === "n") { return this; }
+                  else return null;
+              })
+              .style("fill", function(d) {
+                  return notSelected(d.values[0].cvss);
+              });
+
+            //reset "clicked" attribute
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".child")
+              .attr("clicked", "n");
+        }
     })
     .transition()
       .duration(1000)
@@ -486,6 +554,44 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     .text("max: "+max);
 }
 
+// initialize our nessus info area with labels
+function initNessusInfo(){
+  var nessusInfoLabels = ['title', 'overview', 'synopsis', 'description', 'seealso', 'solution', 'riskfactor'];
+  var div = d3.select('#nessusinfo');
+
+  var nessussections = div.selectAll('.nessusinfosection')
+    .data(nessusInfoLabels, function(d) { return d; })
+    .enter().append('div')
+    .classed('.nessusinfosection', true)
+    .attr('id', function(d) { return "nessus_"+d; });
+
+  nessussections.append('span')
+    .classed('nessusinfotitle', true)
+    .text(function(d) { return d; });
+
+  // this p later modified by the setNessusIDData function
+  nessussections.append('p');
+
+  // quick test of function below
+  var testdata = [
+    {key:"title", text:"3Com HiPer Access Router Card (HiperARC) IAC Packet Flood DoS"},
+    {key:"overview", text:"This script is Copyright (C) 1999-2011 Tenable Network Security, Inc."
+        + "<br />" + "Family  Denial of Service"
+        + "<br />" + "Nessus Plugin ID  10108 (hyperbomb.nasl)"
+        + "<br />" + "Bugtraq ID"  
+        + "<br />" + "CVE ID  CVE-1999-1336"},
+    {key:"synopsis", text:"The remote host is vulnerable to a denial of service attack."},
+    {key:"description", text:"It was possible to reboot the remote host (likely a HyperARC router) by sending it a high volume of IACs."
+      + "An attacker may use this flaw to shut down your internet connection."},
+    {key:"seealso", text:"http://marc.info/?l=bugtraq&m=93492615408725&w=2"
+      + "<br />" + "http://marc.info/?l=bugtraq&m=93458364903256&w=2"},
+    {key:"solution", text:"Add a telnet access list to your Hyperarc router. If the remote system is not a Hyperarc router, then contact your vendor for a patch."},
+    {key:"riskfactor", text:"(CVSS2#AV:N/AC:L/Au:N/C:N/I:N/A:P)"}
+  ];
+
+  setNessusIDData(testdata);
+}
+
 // replaces the current dataset and calls redraw
 function setNBEData(dataset){
   crossfilterInit();
@@ -499,11 +605,28 @@ function setNBEData(dataset){
   redraw();
 }
 
+// updates the nessus data by id
+// TODO Lane throw this on stackoverflow to see if the $.each can be avoided
+function setNessusIDData(iddata){
+  var div = d3.select('#nessusinfo');
+
+  var enter = div.selectAll('.nessusinfosection')
+    .data(iddata, function(d) { return d.key; })
+    .enter();
+
+  $.each(enter[0], function(i, v) { 
+    var key = v.__data__.key;
+    var text = v.__data__.text;
+    console.log(key); 
+    d3.select('#nessus_'+key).select('p').html(text);
+  });
+}
+
 function loadJSONData(file){
   // if file isn't .json file, load a default
   if(file.indexOf('json') === -1){
     console.log('invalid file named, reverting to a default');
-    file = 'data/testdata/testdata6.json';
+    file = 'data/testdata/testdata10.json';
   }
 
   // Load data and set to nbedata global
@@ -513,6 +636,13 @@ function loadJSONData(file){
 }
 
 var groupList = [];
+
+function handleNBEAdd(){
+  $("#dataTab2").show()
+  $("#dataTab2Link").show()
+  $("#dataTab1Link").html("Initial Data")
+  $("#dataTab2Link").html("Updated Data")
+}
 
 function handleGroupAdd(){
   //TODO make sure each IP is only in one group(?)
@@ -532,8 +662,12 @@ function handleDataPageAdd(){
   console.log("Data page add button");
 }
 
-function handleDataTab(){
-  console.log("Data tab active");
+function handleDataTab1(){
+  console.log("Data tab 1 active");
+}
+
+function handleDataTab2(){
+  console.log("Data tab 2 active");
 }
 
 function handleVisTab(){
@@ -674,11 +808,17 @@ function buildTable(groups){
 // initialization
 $(document).ready(function () {
   // set up needed event listeners, etc.
+  $('#addNBEBtn').bind('click', function(event) {
+    handleNBEAdd();
+  });
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
   });
-  $('#dataTabLink').bind('click', function(event) {
-    handleDataTab();
+  $('#dataTab1Link').bind('click', function(event) {
+    handleDataTab1();
+  });
+  $('#dataTab2Link').bind('click', function(event) {
+    handleDataTab2();
   });
   $('#groupsTabLink').bind('click', function(event) {
     handleGroupsTab();
@@ -686,6 +826,10 @@ $(document).ready(function () {
   $('#visTabLink').bind('click', function(event) {
     handleVisTab();
   });
+
+  //initially hide data tab 2 (for 'updated' nbe file)
+  $("#dataTab2").hide()
+  $("#dataTab2Link").hide()
 
   // start the vis
   init();
