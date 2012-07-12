@@ -11,6 +11,8 @@
  * - id="histograms"
  */
 
+
+// some tests for grabbing data from other websites
 //$.get("http://codementum.org", function(data) {
 //  var resp = $(data); // Now you can do whatever you want with it
 //  $(".hero-unit", resp).appendTo("body");
@@ -47,6 +49,10 @@ var margin = {top: 20, right: 0, bottom: 0, left: 0},
     height = 500 - margin.top - margin.bottom,
     formatNumber = d3.format(",d"),
     transitioning;
+
+// users can change this via buttons, which then redraws the treemap according to the new size metric
+// cvss, value, criticality
+var sizeOption = 'value';
 
 // All the data!
 var nbedata,
@@ -85,15 +91,15 @@ function init() {
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Severity")
-    .on("click", function() { console.log("Severity was clicked"); });
+    .on("click", function() { sizeOption = 'cvss'; redraw(); console.log("Severity was clicked"); });
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Criticality")
-    .on("click", function() { console.log("Criticality was clicked"); });
+    .on("click", function() { sizeOption = 'criticality'; redraw(); console.log("Criticality was clicked"); });
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Counts")
-    .on("click", function() { console.log("Counts was clicked"); });
+    .on("click", function() { sizeOption = 'value'; redraw();  console.log("Counts was clicked"); });
 
 
   // initialize treemap
@@ -107,7 +113,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata9.json');
+  loadJSONData('../../data/testdata/testdata11.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -200,7 +206,7 @@ function drawTreemap() {
 
     return d.values
       ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
-      : d.value;
+      : d[sizeOption];
   }
 
   function accumulateCVSS(d){
@@ -322,7 +328,7 @@ function drawTreemap() {
 
   function name(d) {
     return d.parent
-      ? name(d.parent) + "." + d.key
+      ? name(d.parent) + "_" + d.key
       : d.key;
   }
 }
