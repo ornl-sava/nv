@@ -91,20 +91,6 @@ var x,
 
 function init() {
 
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Severity")
-    .on("click", function() { sizeOption = 'cvss'; redraw(); console.log("Severity was clicked"); });
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Criticality")
-    .on("click", function() { sizeOption = 'criticality'; redraw(); console.log("Criticality was clicked"); });
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Counts")
-    .on("click", function() { sizeOption = 'value'; redraw();  console.log("Counts was clicked"); });
-
-
   // initialize treemap
   initTreemap();
 
@@ -125,6 +111,23 @@ function init() {
   // initialize nessus info area
   initNessusInfo();
 }
+
+// change treemap node size datafields
+function sizeBySeverity() {
+   sizeOption = 'cvss'; 
+   redraw(); 
+}
+
+function sizeByCriticality() {
+   sizeOption = 'criticality'; 
+   redraw(); 
+}
+
+function sizeByCount() {
+   sizeOption = 'value'; 
+   redraw(); 
+}
+
 
 // called after data load
 function redraw() {
@@ -296,7 +299,6 @@ function drawTreemap() {
     g.append("rect")
       .attr("class", "parent")
       .call(rect)
-      .append("title")
       .text(function(d) { return formatNumber(d.value); });
 
     g.append("text")
@@ -423,7 +425,6 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
 //n     -> number of bins
 //par   -> parameter in data being used
 //binWidth  -> width of each bar
-// TODO if number bins < #notes or ids, don't show
 function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
   binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
@@ -438,6 +439,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   //create histogram
   var hist = d3.layout.histogram()
               .bins(n)
+              .range([1, n])
               .value(function(d,i) { 
                 return scale ? scale(d[par]) : d[par];
               })
@@ -550,7 +552,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
+      .text(function(d) { return d[0].vulnid; });
   }
 
   d3.select(name)
@@ -601,9 +603,9 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-  //console.log(nbedata.size());
+  console.log(nbedata.size());
   //  byCVSS.filter([2.0, 7.0]);
-  //console.log(byAny.top(Infinity));
+  console.log(byAny.top(Infinity));
   //  byCVSS.filterAll();
 
   redraw();
@@ -621,6 +623,7 @@ function setNessusIDData(iddata){
   $.each(enter[0], function(i, v) { 
     var key = v.__data__.key;
     var text = v.__data__.text;
+    console.log(key); 
     d3.select('#nessus_'+key).select('p').html(text);
   });
 }
@@ -641,7 +644,7 @@ function loadJSONData(file){
 var groupList = [];
 
 function handleNBEAdd(){
-  //$("#dataTab2").show()
+  $("#dataTab2").show()
   $("#dataTab2Link").show()
   $("#dataTab1Link").html("Initial Data")
   $("#dataTab2Link").html("Updated Data")
@@ -683,16 +686,8 @@ function handleGroupsTab(){
 }
 
 function updateCurrentGroupTable(){
-  var eventList
-  //console.log( $("#dataTab2Link").css("display") ) 
-  if( ! ($("#dataTab2Link").css("display") === "none") ){
-    console.log("second data tab is visible ...")
-    var nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
-    var nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
-    eventList = mergeNBEs(nbeItems1, nbeItems2)
-  }else{
-    eventList = parseNBEFile( $("#nbeFile1").val() );
-  }
+  var nbeText = $("#nbeFile1").val();
+  var eventList = parseNBEFile( nbeText );
 
   //build default group list
   console.log("event list is " + JSON.stringify(eventList));
@@ -700,7 +695,7 @@ function updateCurrentGroupTable(){
   //console.log("have these IPs: " + JSON.stringify(ips));
 
   //add to the default group.
-  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table.  TODO might be cleaner to just do this in buildTable?  No other fns need this list currently.
+  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table.
   groups = {};
   for( var i=0; i < ips.length; i++ ){
     var groupName = findGroupName(ips[i]);
@@ -727,57 +722,6 @@ function updateCurrentGroupTable(){
   eventList = addGroupInfoToData(groups, eventList)
 
   setNBEData(eventList);
-}
-
-//TODO
-//this will be somewhat slow, O(n^2), no easy way around it.
-//note this will modify nbeItems2 and not modify nbeItems1.  Can change this if needed later.
-function mergeNBEs(nbeItems1, nbeItems2){
-  var result = [];
-  function compareEntries(a, b){ //true if equal, false if not
-    if(a.ip === b.ip && a.vulnid === b.vulnid && a.vulntype === b.vulntype && a.cvss === b.cvss && a.port === b.port){
-      return true
-    }else{
-      return false
-    }
-  }
-
-  var openItems = 0;
-  var changedItems = 0;
-  //iterate through first list, find matching items in second list. mark them 'open' in result and remove from second list.
-  //if no matching item is found, mark it as 'changed' in first.
-  var found;
-  for(var i=0; i<nbeItems1.length; i++){
-    found = false;
-    for(var j=0; j<nbeItems2.length; j++){
-      if( compareEntries(nbeItems1[i], nbeItems2[j]) ){
-        found = true;
-        var item = nbeItems1[i];
-        item.status = 'open';
-        result.push(item);
-        nbeItems2.splice(j, 1);
-        openItems +=1;
-        break;
-      }
-    }
-    if(found === false){
-      var item = nbeItems1[i];
-      item.status = 'changed';
-      result.push(item);
-      changedItems +=1;
-    }
-  }
-  console.log("open items: " + openItems);
-  console.log("changed items: " + changedItems);
-  console.log("new items: " + nbeItems2.length);
-  //handle items remaining in second list. (append to result list, mark 'new')
-  while( nbeItems2.length > 0){
-    var item = nbeItems2.pop();
-    item.status = 'new';
-    result.push(item);
-  }
-
-  return result;
 }
 
 function findIPsInList(eventList){
@@ -898,7 +842,7 @@ $(document).ready(function () {
   });
 
   //initially hide data tab 2 (for 'updated' nbe file)
-  //$("#dataTab2").hide()
+  $("#dataTab2").hide()
   $("#dataTab2Link").hide()
 
   // start the vis
