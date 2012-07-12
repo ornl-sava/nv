@@ -783,7 +783,7 @@ function addGroupInfoToData(groups, eventList){
   for( var i=0; i < eventList.length; i++ ){
     events.push(eventList[i])
     events[i].group  = ips[eventList[i].ip].group
-    events[i].weight = ips[eventList[i].ip].weight
+    events[i].criticality = parseInt(ips[eventList[i].ip].weight)
   }
   return events;
 }
