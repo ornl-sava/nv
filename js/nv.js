@@ -536,7 +536,7 @@ function updateCurrentGroupTable(){
   //add group name to item in crossfilter
   eventList = addGroupInfoToData(groups, eventList)
 
-  //setNBEData(eventList);
+  setNBEData(eventList);
 }
 
 function findIPsInList(eventList){
