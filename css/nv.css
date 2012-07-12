@@ -1,6 +1,6 @@
 body{
   background: white;
-  margin: 10px;
+  margin: 4px 0px;
 }
 
 /* head */
@@ -13,6 +13,13 @@ body{
   color: #555;
   margin-top: 4px;
 }
+
+.tab-instructions {
+  font-size: 105%;
+  color: #888;
+  margin-bottom: 8px;
+}
+
 
 /* navigation */
 .nav-tabs > li a{
@@ -49,7 +56,7 @@ footer{
 
 #groupsTab tr{
   cursor: default;
-  margin: 0px;
+  margin: 10px 0px;
   overflow-x: hidden;
   overflow-y: hidden;
   padding: 2px 6px;

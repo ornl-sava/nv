@@ -61,6 +61,7 @@ var sizeOption = 'value';
 var nbedata,
     all,
     byIP,
+    byAny,
     byPort,
     byCVSS,
     byVulnID,
@@ -178,10 +179,11 @@ function initTreemap(){
 
 function drawTreemap() {
   var root=d3.nest()
-    .key(function(d) {return 'network name';})
+    .key(function(d) {return 'groups';})
     .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
-    .key(function(d) {return d.port;})
+    .key(function(d) {return ":"+d.port;})
+    .key(function(d) {return "id:"+d.vulnid;})
     .sortKeys(d3.ascending)
     .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
 
@@ -260,9 +262,13 @@ function drawTreemap() {
     g.filter(function(d) { return d.values; })
       .classed("children", true)
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
+      .attr("histoNames", [])
+      .attr("histoIndices", [])
       .on("click", transition)
       .on("mouseover", function(d) {
           
+          d3.select(this).moveToFront();
+
           d3.select(this).select(".parent")
             .style("stroke", "black")
             .style("stroke-width", "2px");
@@ -451,32 +457,89 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
   //TODO - Evan - add histogram interation w/treemap
   d3.select(name)
+    .selectAll("rect")
     .data(hist)
-    .on("click", function(d) { 
+    .on("click", function(d, iter) {
 
-        //label the clicked rectangles as "y"
-        for ( var i = 0; i < d.length; i++) {
-            
-            d3.select("#vis")
-              .select(".depth")
-              .select("#IP" + (d[i].ip).replace(/\./g, ""))
-              .selectAll(".child")
-              .attr("clicked", "y");
+        var name = $(this).parent().parent().attr("id");
+        var nameIndex;  //for finding if "name" already exists in "histoNames"
+        var indexIndex;
 
+        var histoNames = [],
+            histoIndices = [];
+
+        var base = d3.select("#vis")
+                      .select(".depth")
+                      .selectAll(".children");
+
+        //are there anything in the "attribute arrays"?
+        if ( base.attr("histoNames").length > 0 ) {
+          histoNames = base.attr("histoNames").split(",");
+          histoIndices = base.attr("histoIndices").split(",");
         }
 
-        //gray out all rectangles who have clicked set as "n"
-        d3.select("#vis")
-          .select(".depth")
-          .selectAll(".child")
-          .filter(function() {
-              if ( d3.select(this).attr("clicked") === "n") { return this; }
-              else return null;
-          })
-          .style("fill", function(d) {
-              return notSelected(d.values[0].cvss);
-          });
+        //has this bar been clicked before?
+        nameIndex = histoNames.indexOf(name);
+        indexIndex = histoIndices.indexOf(iter.toString());
 
+        if ( nameIndex !== -1 && indexIndex !== -1 ) { //yes
+
+            //remove histogram and its corresponding index
+            histoNames.splice(nameIndex, 1);
+            histoIndices.splice(indexIndex, 1);
+
+            //edit the "attribute arrays" for each ".children"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".children")
+              .attr("histoNames", histoNames)
+              .attr("histoIndices", histoIndices);
+
+            //re-color rectangles accordingly
+        
+        }
+        else {  //no
+
+            //push new histogram bar that has been clicked onto the arrays
+            histoNames.push(name);
+            histoIndices.push(iter);
+
+            //edit the "attribute arrays" for each ".children"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".children")
+              .attr("histoNames", histoNames)
+              .attr("histoIndices", histoIndices);
+
+            //label the clicked rectangles as "y"
+            for ( var i = 0; i < d.length; i++) {
+            
+                d3.select("#vis")
+                  .select(".depth")
+                  .select("#IP" + (d[i].ip).replace(/\./g, ""))
+                  .selectAll(".child")
+                  .attr("clicked", "y");
+
+            }
+
+            //gray out all rectangles who have clicked set as "n"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".child")
+              .filter(function() {
+                  if ( d3.select(this).attr("clicked") === "n") { return this; }
+                  else return null;
+              })
+              .style("fill", function(d) {
+                  return notSelected(d.values[0].cvss);
+              });
+
+            //reset "clicked" attribute
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".child")
+              .attr("clicked", "n");
+        }
     })
     .transition()
       .duration(1000)
@@ -538,11 +601,11 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-//  console.log(nbedata.size());
-//  byCVSS.filter([2.0, 7.0]);
-//  console.log(byCVSS.top(Infinity));
-//  byCVSS.filterAll();
-  
+  console.log(nbedata.size());
+  //  byCVSS.filter([2.0, 7.0]);
+  console.log(byAny.top(Infinity));
+  //  byCVSS.filterAll();
+
   redraw();
 }
 
@@ -779,7 +842,7 @@ function addGroupInfoToData(groups, eventList){
   for( var i=0; i < eventList.length; i++ ){
     events.push(eventList[i])
     events[i].group  = ips[eventList[i].ip].group
-    events[i].weight = ips[eventList[i].ip].weight
+    events[i].criticality = parseInt(ips[eventList[i].ip].weight)
   }
   return events;
 }
@@ -803,6 +866,14 @@ function buildTable(groups){
     }
   }
 }
+
+// used to move svg element to front
+// https://groups.google.com/forum/?fromgroups#!searchin/d3-js/scope/d3-js/eUEJWSSWDRY/XWKLd3QuaAoJ
+d3.selection.prototype.moveToFront = function() { 
+  return this.each(function() { 
+    this.parentNode.appendChild(this); 
+  }); 
+}; 
 
 
 // initialization
