@@ -61,6 +61,7 @@ var sizeOption = 'value';
 var nbedata,
     all,
     byIP,
+    byAny,
     byPort,
     byCVSS,
     byVulnID,
@@ -178,10 +179,11 @@ function initTreemap(){
 
 function drawTreemap() {
   var root=d3.nest()
-    .key(function(d) {return 'network name';})
+    .key(function(d) {return 'groups';})
     .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
-    .key(function(d) {return d.port;})
+    .key(function(d) {return ":"+d.port;})
+    .key(function(d) {return "id:"+d.vulnid;})
     .sortKeys(d3.ascending)
     .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
 
@@ -265,6 +267,8 @@ function drawTreemap() {
       .on("click", transition)
       .on("mouseover", function(d) {
           
+          d3.select(this).moveToFront();
+
           d3.select(this).select(".parent")
             .style("stroke", "black")
             .style("stroke-width", "2px");
@@ -597,11 +601,11 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-//  console.log(nbedata.size());
-//  byCVSS.filter([2.0, 7.0]);
-//  console.log(byCVSS.top(Infinity));
-//  byCVSS.filterAll();
-  
+  console.log(nbedata.size());
+  //  byCVSS.filter([2.0, 7.0]);
+  console.log(byAny.top(Infinity));
+  //  byCVSS.filterAll();
+
   redraw();
 }
 
@@ -779,7 +783,7 @@ function addGroupInfoToData(groups, eventList){
   for( var i=0; i < eventList.length; i++ ){
     events.push(eventList[i])
     events[i].group  = ips[eventList[i].ip].group
-    events[i].weight = ips[eventList[i].ip].weight
+    events[i].criticality = parseInt(ips[eventList[i].ip].weight)
   }
   return events;
 }
@@ -803,6 +807,14 @@ function buildTable(groups){
     }
   }
 }
+
+// used to move svg element to front
+// https://groups.google.com/forum/?fromgroups#!searchin/d3-js/scope/d3-js/eUEJWSSWDRY/XWKLd3QuaAoJ
+d3.selection.prototype.moveToFront = function() { 
+  return this.each(function() { 
+    this.parentNode.appendChild(this); 
+  }); 
+}; 
 
 
 // initialization
