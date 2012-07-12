@@ -613,11 +613,13 @@ timestamps|||scan_end|Wed Jul 11 13:43:36 2012|
                   </div>
                   <div id="sidepanel" class="span2">
                     <div class="row-fluid">
-                      <label for="sizeoptions">Size nodes by:</label>
-                      <div id="sizeoptions" class="btn-group" data-toggle="buttons-radio">
-                        <button class="btn" onclick="sizeBySeverity()">Severity</button>
-                        <button class="btn" onclick="sizeByCriticality()">Criticality</button>
-                        <button class="btn active" onclick="sizeByCount()">Count</button>
+                      <div id="options">
+                        <label for="sizeoptions">Size nodes by:</label>
+                        <div id="sizeoptions" class="btn-group" data-toggle="buttons-radio">
+                          <button class="btn" onclick="sizeBySeverity()">Severity</button>
+                          <button class="btn" onclick="sizeByCriticality()">Criticality</button>
+                          <button class="btn active" onclick="sizeByCount()">Count</button>
+                        </div>
                       </div>
                       <div id="edit"></div>
                       <div id="nessusinfo"></div>

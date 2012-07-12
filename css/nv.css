@@ -76,6 +76,12 @@ footer{
   background: #bbb;*/
 }
 
+#options,
+#edit,
+#nessusinfo {
+  margin-bottom: 20px;
+}
+
 text {
   pointer-events: none;
 }
