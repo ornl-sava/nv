@@ -35,6 +35,10 @@ var nodeColor = d3.scale.linear()
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
     //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
 
+var notSelected = d3.scale.linear()
+    .domain([0.0, 10.0])
+    .range([d3.hsl("#FFFFFF"), d3.hsl("#DCDCDC")]); // white-gray
+
 // LabelMaps are used to find a label given a number (in initHistogram)
 var vulntypeLabelMap = ["hole", "note", "port"];
 
@@ -87,7 +91,6 @@ var x,
 
 function init() {
 
-  //TODO - Evan - buttons
   d3.select("#options").append("button")
     .classed("btn btn-primary", true)
     .text("Severity")
@@ -251,15 +254,32 @@ function drawTreemap() {
       .data(d.values)
       .enter().append("g");
 
+    //TODO - Lane - move to front
     g.filter(function(d) { return d.values; })
       .classed("children", true)
-      .on("click", transition);
+      .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
+      .on("click", transition)
+      .on("mouseover", function(d) {
+          
+          d3.select(this).select(".parent")
+            .style("stroke", "black")
+            .style("stroke-width", "2px");
+
+      })
+      .on("mouseout", function(d) {
+      
+          d3.select(this).select(".parent")
+            .style("stroke", "")
+            .style("stroke-width", "");
+
+      });
 
     // NOTE: can move the .style here to rect() to color by cell
     g.selectAll(".child")
       .data(function(d) { return d.values || [d]; })
       .enter().append("rect")
       .attr("class", "child")
+      .attr("clicked", "n")
       .style("fill", function(d) { 
         return nodeColor(d.cvss);
       })
@@ -333,7 +353,6 @@ function drawTreemap() {
   }
 }
 
-//TODO - Evan
 // function that initalizes one histogram
 //sel       -> d3 selection
 //n         -> number of bins
@@ -391,7 +410,6 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .text(name);
 }
 
-//TODO - Evan
 // function that draws one histogram
 //name  -> name of histogram (id)
 //n     -> number of bins
@@ -428,9 +446,36 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   var hScale = d3.scale.linear()
                   .domain([0,  max])
                   .range([0, histoH - 50]);
+
+  //TODO - Evan - add histogram interation w/treemap
   d3.select(name)
-    .selectAll("rect")
     .data(hist)
+    .on("click", function(d) { 
+
+        //label the clicked rectangles as "y"
+        for ( var i = 0; i < d.length; i++) {
+            
+            d3.select("#vis")
+              .select(".depth")
+              .select("#IP" + (d[i].ip).replace(/\./g, ""))
+              .selectAll(".child")
+              .attr("clicked", "y");
+
+        }
+
+        //gray out all rectangles who have clicked set as "n"
+        d3.select("#vis")
+          .select(".depth")
+          .selectAll(".child")
+          .filter(function() {
+              if ( d3.select(this).attr("clicked") === "n") { return this; }
+              else return null;
+          })
+          .style("fill", function(d) {
+              return notSelected(d.values[0].cvss);
+          });
+
+    })
     .transition()
       .duration(1000)
       .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
