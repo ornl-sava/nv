@@ -12,21 +12,26 @@ administrator performs maintenance.
 
 To test visualizing the static vulnerability state we use Nessus scan data from
 the VAST Challenge 2011. This data is from a simulated network for the
-fictitious All Freight Corporation.  This data set has more than one hundred
+fictitious All Freight Corporation.  The VAST challenge gives us a large network
+dataset to test how the Nessus Vulnerability Visualization scales to a large
+data set that contains many vulnerabilities.  This data set has more than one hundred
 fifty unique IP addresses from All Freight Corporation's various servers, firewalls and
 workstations.  The majority of All Freight Corporation's
 machines can be grouped into either their data center,  their office
-workstations or external web servers.  Most all of the machines are running a
+workstations or external web servers.  Most of the company's machines are running a
 version of Microsoft Windows with the servers running Windows Server 2008.
 The Nessus scan shows that numerous
 machines on the network have some sort of security hole such as incorrectly
 configured telnet client, a font driver that allows privilege escalation and a
-vulnerability in an outdated version of Microsoft Excel. 
+vulnerability in an outdated version of Microsoft Excel.  The visualization
+shows that the workstation group is the most vulnerable while the data center
+appears to be relatively secure despite it's much higher criticality.
 
 | Name         | IP Addresses| Security Notes | Security Holes |
 |:------------:|:-----------:|:--------------:|:--------------:|
 | Data Center  | 192.168.1.x | 10             | 0              |
 | Workstations | 192.168.2.x | 556            | 919            |
+
 
 ### Dynamic Vulnerability State Network
 
@@ -49,7 +54,7 @@ vulnerabilities such as an FTP server that allows a remote user to execute
 arbitrary code, an incorrectly configured Windows file sharing software, weak secure shell
 (SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
 
-The Nessus Visualization draws the administrators attention to the most
+The Nessus Vulnerability Visualization draws the administrators attention to the most
 grievous security holes by using a darker colored rectangle.  In this example
 the Ubuntu workstations are darkly colored because the group contains two
 machines with gaping vulnerabilities.  The system also draws the administrators
