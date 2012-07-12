@@ -116,19 +116,16 @@ function init() {
 function sizeBySeverity() {
    sizeOption = 'cvss'; 
    redraw(); 
-   console.log("Severity was clicked");
 }
 
 function sizeByCriticality() {
    sizeOption = 'criticality'; 
    redraw(); 
-   console.log("Criticality was clicked");
 }
 
 function sizeByCount() {
    sizeOption = 'value'; 
    redraw(); 
-   console.log("Count was clicked");
 }
 
 
