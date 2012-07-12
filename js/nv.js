@@ -467,17 +467,24 @@ function loadJSONData(file){
   });
 }
 
+var groupList = [];
+
 function handleGroupAdd(){
-  console.log("group add button");
+  //TODO make sure each IP is only in one group(?)
+  //TODO should really be able to remove groups also ...
+  var start = $("#ipStart").val();
+  var end = $("#ipEnd").val();
+  var groupName = $("#groupName").val();
+  var weight = $("#defaultWeight").val();
+  var newGroup = {"start":start, "end":end, "groupName":groupName, "weight":weight};
+  groupList.push(newGroup);
+  console.log("added group: " + JSON.stringify(newGroup));
+  console.log("group list now contains: " + JSON.stringify(groupList));
+  updateCurrentGroupTable();
 }
 
 function handleDataPageAdd(){
   console.log("Data page add button");
-}
-
-function handleNbeChanged(){
-  console.log("NBE file modified");
-  //delete the current objs, will re-build them when needed.
 }
 
 function handleDataTab(){
@@ -490,33 +497,93 @@ function handleVisTab(){
 
 function handleGroupsTab(){
   console.log("Groups tab active");
-  var nbeText = $("#nbeFile1").html();
+  updateCurrentGroupTable();
+}
+
+function updateCurrentGroupTable(){
+  var nbeText = $("#nbeFile1").val();
   var eventList = parseNBEFile( nbeText );
-  eventList = eventList.filter(function(){return true});//removes nulls
 
   //build default group list
   console.log("event list is " + JSON.stringify(eventList));
+  var ips = findIPsInList(eventList);
+  //console.log("have these IPs: " + JSON.stringify(ips));
+
+  //add to the default group.
+  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table.
+  groups = {};
+  for( var i=0; i < ips.length; i++ ){
+    var groupName = findGroupName(ips[i]);
+    var weight = 1; //default
+    for(var j=0; j<groupList.length; j++){
+      if(groupList[j].groupName === groupName){
+        weight = groupList[j].weight;
+      }
+    }
+    var entry = {"ip": ips[i], "weight": weight}
+    console.log("found that ip " + ips[i] + " is in group " + groupName);
+    if( !groups[groupName] ){
+      groups[groupName] = [];
+    }
+    groups[groupName].push(entry);
+  }
+
+  //console.log("current group list is: " + JSON.stringify(groups) );
+
+  //display the (default) groups and weights for all machines.
+  buildTable(groups);
+
+  //add group name to item in crossfilter
+  eventList = addGroupInfoToData(groups, eventList)
+
+  //setNBEData(eventList);
+}
+
+function findIPsInList(eventList){
   var ips = {}; //making a fake set here.
   for( var i=0; i < eventList.length; i++ ){
     ips[eventList[i].ip] = true;
   }
   ips = Object.keys(ips); //only need to keep this
-  console.log("have these IPs: " + JSON.stringify(ips));
-  //add to the default group.
-  groups = {};
-  groups["none"] = [];
-  for( var i=0; i < ips.length; i++ ){
-    var entry = {"ip": ips[i], "weight": 1}
-    groups["none"].push(entry);
+  return ips;
+}
+
+function findGroupName(ip){
+  var testAddr = ip.split('.')
+  if( testAddr.length !== 4){
+    throw "address of " + groupList[i].end + " is invalid";
   }
 
-  //display the (default) groups and weights for all machines.
-  buildTable(groups);
-  //TODO add group name to item in crossfilter
-  eventList = addGroupInfoToData(groups, eventList)
-  //TODO actually let user make non-default groups.
-  //TODO make sure each IP is only in one group(?)
-  setNBEData(eventList); //only do this after groups are made, and weights are assigned.
+  function isAfter(start, test){ //after or equal will return true
+    for(var i=0; i<4; i++){
+      if(parseInt(start[i]) > parseInt(test[i])){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function isBefore(end, test){ //before or equal
+    return isAfter(test, end);
+  }
+
+  //grouplist contains a list of {start, end, groupName, weight}
+  for(var i=0; i<groupList.length; i++){
+    var start = groupList[i].start.split('.')
+    if( start.length !== 4){
+      throw "start address of " + groupList[i].start + " is invalid";
+    }
+    var end = groupList[i].end.split('.')
+    if( end.length !== 4){
+      throw "end address of " + groupList[i].end + " is invalid";
+    }
+    console.log(groupList[i].groupName + ": isAfter(" + groupList[i].start + ", " + ip + ") returned " + isAfter(start, testAddr) );
+    console.log(groupList[i].groupName + ": isBefore(" + groupList[i].end  + ", " + ip + ") returned " + isBefore(end, testAddr) );
+    if( isAfter(start, testAddr) && isBefore(end, testAddr) ){
+      return groupList[i].groupName;
+    }
+  }
+  return "none"; //not found; "none" is the default label for table.
 }
 
 function addGroupInfoToData(groups, eventList){
@@ -539,6 +606,7 @@ function addGroupInfoToData(groups, eventList){
 }
 
 function buildTable(groups){
+  $('#currentGroupTable').select('tbody').html("");
   var weightSelector, row;
   var groupNames = Object.keys(groups);
   for( var j=0; j < groupNames.length; j++ ){

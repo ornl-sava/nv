@@ -78,7 +78,7 @@ var parseNBEFile = function(nbe){
             returnArray.push(parseNessusResult(lines[i]))
         }
     }
-    return returnArray
+    return returnArray.filter(function(){return true});//removes nulls
 }
 
 //module.exports.parseNessusResult = parseNessusResult;
