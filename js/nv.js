@@ -116,7 +116,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata12.json');
+  //loadJSONData('../../data/testdata/testdata12.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
