@@ -61,6 +61,7 @@ var sizeOption = 'value';
 var nbedata,
     all,
     byIP,
+    byAny,
     byPort,
     byCVSS,
     byVulnID,
@@ -90,20 +91,6 @@ var x,
 
 function init() {
 
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Severity")
-    .on("click", function() { sizeOption = 'cvss'; redraw(); console.log("Severity was clicked"); });
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Criticality")
-    .on("click", function() { sizeOption = 'criticality'; redraw(); console.log("Criticality was clicked"); });
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Counts")
-    .on("click", function() { sizeOption = 'value'; redraw();  console.log("Counts was clicked"); });
-
-
   // initialize treemap
   initTreemap();
 
@@ -115,7 +102,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata11.json');
+  //loadJSONData('../../data/testdata/testdata12.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -124,6 +111,23 @@ function init() {
   // initialize nessus info area
   initNessusInfo();
 }
+
+// change treemap node size datafields
+function sizeBySeverity() {
+   sizeOption = 'cvss'; 
+   redraw(); 
+}
+
+function sizeByCriticality() {
+   sizeOption = 'criticality'; 
+   redraw(); 
+}
+
+function sizeByCount() {
+   sizeOption = 'value'; 
+   redraw(); 
+}
+
 
 // called after data load
 function redraw() {
@@ -135,9 +139,22 @@ function redraw() {
   //drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 }
 
+// called when window is resized
+function resize() {
+  width = $('#vis').width();
+  console.log( 'width: ' + width);
+  x.domain([0, width]).range([0, width]);
+  d3.select("#vis > svg").attr("width", width + margin.left + margin.right);
+  d3.selectAll(".grandparent rect").attr("width", width);
+  treemap.ratio(height / width * 0.5 * (1 + Math.sqrt(5)));
+  redraw();
+}
 
 // treemap functions
 function initTreemap(){
+
+  width = $('#vis').width();
+  console.log( 'width: ' + width);
   
   x = d3.scale.linear()
       .domain([0, width])
@@ -178,10 +195,11 @@ function initTreemap(){
 
 function drawTreemap() {
   var root=d3.nest()
-    .key(function(d) {return 'network name';})
+    .key(function(d) {return 'groups';})
     .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
-    .key(function(d) {return d.port;})
+    .key(function(d) {return ":"+d.port;})
+    .key(function(d) {return "id:"+d.vulnid;})
     .sortKeys(d3.ascending)
     .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
 
@@ -265,6 +283,8 @@ function drawTreemap() {
       .on("click", transition)
       .on("mouseover", function(d) {
           
+          d3.select(this).moveToFront();
+
           d3.select(this).select(".parent")
             .style("stroke", "black")
             .style("stroke-width", "2px");
@@ -292,7 +312,6 @@ function drawTreemap() {
     g.append("rect")
       .attr("class", "parent")
       .call(rect)
-      .append("title")
       .text(function(d) { return formatNumber(d.value); });
 
     g.append("text")
@@ -412,6 +431,11 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .attr("x", histoW / 2 )
       .attr("y", histoH )
       .text(name);
+
+  hist.append("text")
+      .attr("x", histoW / 2 - 50 )
+      .attr("y", histoH )
+      .attr("class", "maxarea");
 }
 
 // function that draws one histogram
@@ -433,7 +457,6 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   //create histogram
   var hist = d3.layout.histogram()
               .bins(n)
-              .range([1, n])
               .value(function(d,i) { 
                 return scale ? scale(d[par]) : d[par];
               })
@@ -587,11 +610,10 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0].vulnid; });
+      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
   }
 
-  d3.select(name)
-    .append("text")
+  d3.select(name).select(".maxarea")
     .text("max: "+max);
 }
 
@@ -662,11 +684,11 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-//  console.log(nbedata.size());
-//  byCVSS.filter([2.0, 7.0]);
-//  console.log(byCVSS.top(Infinity));
-//  byCVSS.filterAll();
-  
+  console.log(nbedata.size());
+  //  byCVSS.filter([2.0, 7.0]);
+  console.log(byAny.top(Infinity));
+  //  byCVSS.filterAll();
+
   redraw();
 }
 
@@ -844,7 +866,7 @@ function addGroupInfoToData(groups, eventList){
   for( var i=0; i < eventList.length; i++ ){
     events.push(eventList[i])
     events[i].group  = ips[eventList[i].ip].group
-    events[i].weight = ips[eventList[i].ip].weight
+    events[i].criticality = parseInt(ips[eventList[i].ip].weight)
   }
   return events;
 }
@@ -869,9 +891,18 @@ function buildTable(groups){
   }
 }
 
+// used to move svg element to front
+// https://groups.google.com/forum/?fromgroups#!searchin/d3-js/scope/d3-js/eUEJWSSWDRY/XWKLd3QuaAoJ
+d3.selection.prototype.moveToFront = function() { 
+  return this.each(function() { 
+    this.parentNode.appendChild(this); 
+  }); 
+}; 
+
+
 
 // initialization
-$(document).ready(function () {
+$().ready(function () {
   // set up needed event listeners, etc.
   $('#addNBEBtn').bind('click', function(event) {
     handleNBEAdd();
@@ -895,6 +926,11 @@ $(document).ready(function () {
   //initially hide data tab 2 (for 'updated' nbe file)
   $("#dataTab2").hide()
   $("#dataTab2Link").hide()
+
+  // handle window resizes
+  $(window).resize(function() {
+    resize();
+  });
 
   // start the vis
   init();

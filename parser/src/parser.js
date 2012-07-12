@@ -17,19 +17,20 @@ var parseNessusResult = function(nessStr){
         var score = parseFloat(scoreReg.exec(nessStr)[1]);
     }
     else{
-        var score = 0.0;
+        var score = 1.0;
     }
     if(portReg.test(nessStr)){
         var port = parseFloat(portReg.exec(nessStr)[1]);
     }
     else{
-        var port = -1;
+        var port = 'notes';
     }
     
     return {"ip": (ip === undefined ? "" : ip),
         "vulnid": (isNaN(code) ? 0 : code),
-        "vulntype":(holeNote === undefined ? "" : holeNote),
+        "vulntype":(holeNote === undefined ? "" : holeNote.indexOf('Note') !== -1 ? 'note' : 'hole'),
         "cvss": score,
+        "value": 1,
         "port":port};
 }
 
