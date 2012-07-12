@@ -1,5 +1,0 @@
-Things to revisit sometime after submission:
-
-way to remove groups
-checking that groups don't overlap, how to handle if they do
-set weight to 0/'ignore' to remove machines from results?
