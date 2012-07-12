@@ -418,6 +418,11 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
       .attr("x", histoW / 2 )
       .attr("y", histoH )
       .text(name);
+
+  hist.append("text")
+      .attr("x", histoW / 2 - 50 )
+      .attr("y", histoH )
+      .attr("class", "maxarea");
 }
 
 // function that draws one histogram
@@ -439,7 +444,6 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   //create histogram
   var hist = d3.layout.histogram()
               .bins(n)
-              .range([1, n])
               .value(function(d,i) { 
                 return scale ? scale(d[par]) : d[par];
               })
@@ -552,11 +556,10 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0].vulnid; });
+      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
   }
 
-  d3.select(name)
-    .append("text")
+  d3.select(name).select(".maxarea")
     .text("max: "+max);
 }
 
