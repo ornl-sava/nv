@@ -61,6 +61,7 @@ var sizeOption = 'value';
 var nbedata,
     all,
     byIP,
+    byAny,
     byPort,
     byCVSS,
     byVulnID,
@@ -538,11 +539,11 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-//  console.log(nbedata.size());
-//  byCVSS.filter([2.0, 7.0]);
-//  console.log(byCVSS.top(Infinity));
-//  byCVSS.filterAll();
-  
+  console.log(nbedata.size());
+  //  byCVSS.filter([2.0, 7.0]);
+  console.log(byAny.top(Infinity));
+  //  byCVSS.filterAll();
+
   redraw();
 }
 
