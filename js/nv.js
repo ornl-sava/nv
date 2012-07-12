@@ -139,9 +139,22 @@ function redraw() {
   //drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 }
 
+// called when window is resized
+function resize() {
+  width = $('#vis').width();
+  console.log( 'width: ' + width);
+  x.domain([0, width]).range([0, width]);
+  d3.select("#vis > svg").attr("width", width + margin.left + margin.right);
+  d3.selectAll(".grandparent rect").attr("width", width);
+  treemap.ratio(height / width * 0.5 * (1 + Math.sqrt(5)));
+  redraw();
+}
 
 // treemap functions
 function initTreemap(){
+
+  width = $('#vis').width();
+  console.log( 'width: ' + width);
   
   x = d3.scale.linear()
       .domain([0, width])
@@ -819,8 +832,9 @@ d3.selection.prototype.moveToFront = function() {
 }; 
 
 
+
 // initialization
-$(document).ready(function () {
+$().ready(function () {
   // set up needed event listeners, etc.
   $('#addNBEBtn').bind('click', function(event) {
     handleNBEAdd();
@@ -844,6 +858,11 @@ $(document).ready(function () {
   //initially hide data tab 2 (for 'updated' nbe file)
   $("#dataTab2").hide()
   $("#dataTab2Link").hide()
+
+  // handle window resizes
+  $(window).resize(function() {
+    resize();
+  });
 
   // start the vis
   init();
