@@ -116,7 +116,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata11.json');
+  loadJSONData('../../data/testdata/testdata12.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -423,6 +423,7 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
 //n     -> number of bins
 //par   -> parameter in data being used
 //binWidth  -> width of each bar
+// TODO if number bins < #notes or ids, don't show
 function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
   binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
@@ -437,7 +438,6 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   //create histogram
   var hist = d3.layout.histogram()
               .bins(n)
-              .range([1, n])
               .value(function(d,i) { 
                 return scale ? scale(d[par]) : d[par];
               })
@@ -550,7 +550,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0].vulnid; });
+      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
   }
 
   d3.select(name)
@@ -601,9 +601,9 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-  console.log(nbedata.size());
+  //console.log(nbedata.size());
   //  byCVSS.filter([2.0, 7.0]);
-  console.log(byAny.top(Infinity));
+  //console.log(byAny.top(Infinity));
   //  byCVSS.filterAll();
 
   redraw();
@@ -621,7 +621,6 @@ function setNessusIDData(iddata){
   $.each(enter[0], function(i, v) { 
     var key = v.__data__.key;
     var text = v.__data__.text;
-    console.log(key); 
     d3.select('#nessus_'+key).select('p').html(text);
   });
 }
