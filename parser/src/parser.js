@@ -28,7 +28,7 @@ var parseNessusResult = function(nessStr){
     
     return {"ip": (ip === undefined ? "" : ip),
         "vulnid": (isNaN(code) ? 0 : code),
-        "vulntype":(holeNote === undefined ? "" : holeNote),
+        "vulntype":(holeNote === undefined ? "" : holeNote.indexOf('Note') !== -1 ? 'note' : 'hole'),
         "cvss": score,
         "value": 1,
         "port":port};
