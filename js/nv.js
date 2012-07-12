@@ -469,6 +469,13 @@ function loadJSONData(file){
 
 var groupList = [];
 
+function handleNBEAdd(){
+  $("#dataTab2").show()
+  $("#dataTab2Link").show()
+  $("#dataTab1Link").html("Initial Data")
+  $("#dataTab2Link").html("Updated Data")
+}
+
 function handleGroupAdd(){
   //TODO make sure each IP is only in one group(?)
   //TODO should really be able to remove groups also ...
@@ -487,8 +494,12 @@ function handleDataPageAdd(){
   console.log("Data page add button");
 }
 
-function handleDataTab(){
-  console.log("Data tab active");
+function handleDataTab1(){
+  console.log("Data tab 1 active");
+}
+
+function handleDataTab2(){
+  console.log("Data tab 2 active");
 }
 
 function handleVisTab(){
@@ -629,11 +640,17 @@ function buildTable(groups){
 // initialization
 $(document).ready(function () {
   // set up needed event listeners, etc.
+  $('#addNBEBtn').bind('click', function(event) {
+    handleNBEAdd();
+  });
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
   });
-  $('#dataTabLink').bind('click', function(event) {
-    handleDataTab();
+  $('#dataTab1Link').bind('click', function(event) {
+    handleDataTab1();
+  });
+  $('#dataTab2Link').bind('click', function(event) {
+    handleDataTab2();
   });
   $('#groupsTabLink').bind('click', function(event) {
     handleGroupsTab();
@@ -641,6 +658,10 @@ $(document).ready(function () {
   $('#visTabLink').bind('click', function(event) {
     handleVisTab();
   });
+
+  //initially hide data tab 2 (for 'updated' nbe file)
+  $("#dataTab2").hide()
+  $("#dataTab2Link").hide()
 
   // start the vis
   init();
