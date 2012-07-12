@@ -42,11 +42,8 @@
 
             <div class="tab-content">
               <div class="tab-pane active" id="dataTab1">
-                <p>
-                  Please paste your Nessus data file (.nbe) below. 
-                  This data is not sent to a server; it is only parsed locally in the browser.
-                </p>
-                <form><input id="addNBEBtn" type="button" value="Add before/after results"></form>
+                <div class='tab-instructions'>Please paste your Nessus data file (.nbe) below. This data is not sent to a server; it is only parsed locally in the browser. If you want to compare two scans, click on 'Load second scan' after uploading the first scan.</div>
+                <form><input id="addNBEBtn" class="btn btn-primary" type="button" value="Load second scan"></form>
                 <textarea rows="25" class="dataTextarea" id="nbeFile1">
     
 timestamps|||scan_start|Wed Jul 11 13:35:02 2012|
@@ -358,11 +355,9 @@ timestamps||192.168.56.102|host_end|Wed Jul 11 13:43:36 2012|
 timestamps|||scan_end|Wed Jul 11 13:43:36 2012|
                 </textarea>
               </div>
+
               <div class="tab-pane active" id="dataTab2">
-                <p>
-                  Please paste your updated Nessus data file (.nbe) below. 
-                  This data is not sent to a server; it is only parsed locally in the browser.
-                </p>
+                <div class='tab-instructions'>Please paste a second Nessus data file (.nbe) below.</div>
                 <textarea rows="25" class="dataTextarea" id="nbeFile2">
     
 timestamps|||scan_start|Wed Jul 11 13:35:02 2012|
@@ -546,29 +541,34 @@ timestamps|||scan_end|Wed Jul 11 13:43:36 2012|
                 </textarea>
               </div>
               <div class="tab-pane" id="groupsTab">
-                <p>Please group the machines as needed.</p>
-                <form id="addGroup">
-                  <input type=text size=20 id="ipStart" placeholder="start address">
-                  <input type=text size=20 id="ipEnd" placeholder="end address">
-                  <input type=text size=20 id="groupName" placeholder="group name">
-                  <br>
-                  Default criticality score: 
-                  <select id="defaultWeight" class="weightSelect">
-                    <option value="1">1 (lowest)</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10 (highest)</option>
-                  </select>
-                  <input id="addGroupBtn" type="button" value="Add Group">
-                </form>
+                <div class='tab-instructions'>Please group the machines as needed.</div>
+                <h3>Add new group</h3>
+                <p>
+                  <form id="addGroup">
+                    <input type=text size=30 id="groupName" placeholder="group name">
+                    <br />
+                    <input type=text size=20 id="ipStart" placeholder="start address">
+                    <input type=text size=20 id="ipEnd" placeholder="end address">
+                    <br />
+                    Default criticality score: 
+                    <select id="defaultWeight" class="weightSelect">
+                      <option value="1">1 (lowest)</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10 (highest)</option>
+                    </select>
+                    <br />
+                    <input id="addGroupBtn" class="btn btn-large btn-primary" type="button" value="Add Group">
+                  </form>
+                </p>
                 <hr>
-                <p>Current grouping of detected addresses is:</p>
+                <h3>Current groupings</h3>
                 <table id="currentGroupTable">
                   <thead>
                     <tr>
