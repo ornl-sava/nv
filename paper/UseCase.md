@@ -23,10 +23,10 @@ machines on the network have some sort of security hole such as incorrectly
 configured telnet client, a font driver that allows privilege escalation and a
 vulnerability in an outdated version of Microsoft Excel. 
 
-| Name         | IP Addresses   | Security Notes | Security Holes |
-|:------------:|:--------------:|:--------------:|:--------------:|
-| Data Center  | 192.168.1.x/24 | 10             | 0              |
-| Workstations | 192.168.2.x/24 | 556            | 919            |
+| Name         | IP Addresses| Security Notes | Security Holes |
+|:------------:|:-----------:|:--------------:|:--------------:|
+| Data Center  | 192.168.1.x | 10             | 0              |
+| Workstations | 192.168.2.x | 556            | 919            |
 
 ### Dynamic State Network
 
@@ -74,3 +74,13 @@ purposely unatched and misconfigured software.
 The Fedora workstations were running Fedora 15.  We used the Metasploitable
 virtual machine image to simulate the two vulnerable workstations before they
 were upgraded to 11.10.
+
+| Name              | IP Addresses | Time period    |  Security Notes | Security Holes |
+|:-----------------:|:------------:|:---------------|:---------------:|:--------------:|
+| Workstations      | 192.168.56.x | Before Patches | 680             | 18             |
+|                   |              | After Patches  | 507             | 0              |
+| LAPP Servers      | 192.168.57.x | Before Patches | 205             | 5              |
+|                   |              | After Patches  | 200             | 0              |
+| Wordpress Servers | 192.168.58.x | Before Patches | 195             | 5              |
+|                   |              | After Patches  | 195             | 0              |
+
