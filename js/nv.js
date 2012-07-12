@@ -267,6 +267,8 @@ function drawTreemap() {
       .on("click", transition)
       .on("mouseover", function(d) {
           
+          d3.select(this).moveToFront();
+
           d3.select(this).select(".parent")
             .style("stroke", "black")
             .style("stroke-width", "2px");
@@ -805,6 +807,14 @@ function buildTable(groups){
     }
   }
 }
+
+// used to move svg element to front
+// https://groups.google.com/forum/?fromgroups#!searchin/d3-js/scope/d3-js/eUEJWSSWDRY/XWKLd3QuaAoJ
+d3.selection.prototype.moveToFront = function() { 
+  return this.each(function() { 
+    this.parentNode.appendChild(this); 
+  }); 
+}; 
 
 
 // initialization
