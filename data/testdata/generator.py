@@ -14,9 +14,10 @@ class Entry:
     self.vulnid = randrange(1, 100)
     self.vulntype = 'hole' if randrange(1, 11) > 9 else 'note'
     self.cvss = uniform(1, 11)
+    self.group = 'financial' if '192.168.2' in self.ip else 'dns' if '192.168.3' in self.ip else 'workstation' 
     self.value = 1
 
-lines = 25000;
+lines = 100;
 
 print "["
 for i in range(lines):

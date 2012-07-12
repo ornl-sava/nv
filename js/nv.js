@@ -107,7 +107,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata7.json');
+  loadJSONData('../../data/testdata/testdata9.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -167,7 +167,8 @@ function initTreemap(){
 
 function drawTreemap() {
   var root=d3.nest()
-    .key(function(d) {return "group";})
+    .key(function(d) {return 'network name';})
+    .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
     .key(function(d) {return d.port;})
     .sortKeys(d3.ascending)
@@ -458,7 +459,7 @@ function loadJSONData(file){
   // if file isn't .json file, load a default
   if(file.indexOf('json') === -1){
     console.log('invalid file named, reverting to a default');
-    file = 'data/testdata/testdata6.json';
+    file = 'data/testdata/testdata10.json';
   }
 
   // Load data and set to nbedata global
