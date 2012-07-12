@@ -26,10 +26,13 @@ patching and updating all of the squares are of similar size and color because
 all of the machines are up to date with no vulnerabilities that Nessus
 classifies as holes.  
 
-We simulated this use case using virtual machines networked through a host only
-network. Both of the groups of servers were using Ubuntu 10.10 LTS.
-Ten of the Ubuntu workstations were using Ubuntu 11.10 while the two
-with the massive number of vulnerabilities were using Ubuntu 8.04 (CHECK) and
-the Fedora workstations were running Fedora 15.  We used the Metasploitable
+We simulated this use case using virtual machines (VM) networked through a host only
+network. Using a host only network allowed us to use Nessus from the host
+to scan the VMs.  We used one grouping of two different types of work station
+and two groupings of similar servers. Both of the groups of servers were using Ubuntu 10.10 LTS.
+Ten of the Ubuntu workstations were using Ubuntu 11.10 while the two workstations
+with the massive number of vulnerabilities were using Ubuntu 8.04 (CHECK) with
+purposely unatched and misconfigured software.
+The Fedora workstations were running Fedora 15.  We used the Metasploitable
 virtual machine image to simulate the two vulnerable workstations before they
 were upgraded to 11.10.
