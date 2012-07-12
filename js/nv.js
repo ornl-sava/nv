@@ -91,20 +91,6 @@ var x,
 
 function init() {
 
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Severity")
-    .on("click", function() { sizeOption = 'cvss'; redraw(); console.log("Severity was clicked"); });
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Criticality")
-    .on("click", function() { sizeOption = 'criticality'; redraw(); console.log("Criticality was clicked"); });
-  d3.select("#options").append("button")
-    .classed("btn btn-primary", true)
-    .text("Counts")
-    .on("click", function() { sizeOption = 'value'; redraw();  console.log("Counts was clicked"); });
-
-
   // initialize treemap
   initTreemap();
 
@@ -125,6 +111,26 @@ function init() {
   // initialize nessus info area
   initNessusInfo();
 }
+
+// change treemap node size datafields
+function sizeBySeverity() {
+   sizeOption = 'cvss'; 
+   redraw(); 
+   console.log("Severity was clicked");
+}
+
+function sizeByCriticality() {
+   sizeOption = 'criticality'; 
+   redraw(); 
+   console.log("Criticality was clicked");
+}
+
+function sizeByCount() {
+   sizeOption = 'value'; 
+   redraw(); 
+   console.log("Count was clicked");
+}
+
 
 // called after data load
 function redraw() {
