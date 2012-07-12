@@ -260,8 +260,8 @@ function drawTreemap() {
     g.filter(function(d) { return d.values; })
       .classed("children", true)
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
-      .attr("histoNames", [])
-      .attr("histoIndices", [])
+      .attr("histoNames", "")
+      .attr("histoIndices", "")
       .on("click", transition)
       .on("mouseover", function(d) {
           
@@ -458,56 +458,89 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     .on("click", function(d, iter) {
 
         var name = $(this).parent().parent().attr("id");
-        var nameIndex;  //for finding if "name" already exists in "histoNames"
-        var indexIndex;
+        var nameIndex,  //for finding if "name" already exists in "histoNames"
+            indexIndex;
+            
+        var duplicate = true;  //boolean to find out if you've seen the bar you've just clicked on or not
 
-        var histoNames = [],
-            histoIndices = [];
+        //temporary array to store exactly what bars you click on and off
+        var histoNames = {};
 
         var base = d3.select("#vis")
                       .select(".depth")
                       .selectAll(".children");
 
-        //are there anything in the "attribute arrays"?
+        //are there anything in the "attribute arrays"? if so, shove them into the temporary arrays to be edited
         if ( base.attr("histoNames").length > 0 ) {
-          histoNames = base.attr("histoNames").split(",");
-          histoIndices = base.attr("histoIndices").split(",");
+            
+            histoNames = base.attr("histoNames");
+            console.log(histoNames);
+
+            histoNames = jQuery.parseJSON(histoNames);
+        }
+        console.log(histoNames);
+
+        //has this histogram been clicked before?
+        if ( histoNames.hasOwnProperty(name) === false ) {  //no
+            histoNames[name] = [];
+            
+            for ( var i = 0; i < n; i++) {
+                histoNames[name][i] = 0;
+            }
+
+            histoNames[name][iter] = 1;
+            duplicate = false;
+        }
+        //has this bar been clicked before?
+        else if ( histoNames[name][iter] !== iter ) { //no
+            histoNames[name][iter] = 1;
+            duplicate = false;
         }
 
-        //has this bar been clicked before?
-        nameIndex = histoNames.indexOf(name);
-        indexIndex = histoIndices.indexOf(iter.toString());
+        console.log(histoNames);
 
-        if ( nameIndex !== -1 && indexIndex !== -1 ) { //yes
 
-            //remove histogram and its corresponding index
-            histoNames.splice(nameIndex, 1);
-            histoIndices.splice(indexIndex, 1);
+        if ( duplicate === true ) { //yes
+
+            //un-color bar in histogram
+            d3.select(this)
+              .style("fill", function() {
+                  return d3.hsl( d3.select(this).style("fill") ).brighter(2).toString();
+              });
+
+            //remove bar from histogram in array
+            histoNames[name][iter] = 0;
+
+            //convert object into string
+            var newString = arrtos(histoNames);
 
             //edit the "attribute arrays" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
-              .attr("histoNames", histoNames)
-              .attr("histoIndices", histoIndices);
+              .attr("histoNames", newString);
 
-            //re-color rectangles accordingly
-        
         }
         else {  //no
 
-            //push new histogram bar that has been clicked onto the arrays
-            histoNames.push(name);
-            histoIndices.push(iter);
+            //color bar in histogram
+            d3.select(this)
+              .style("fill", function() {
+                  return d3.hsl( d3.select(this).style("fill") ).darker(2).toString();
+              });
+
+            //convert object into string
+            var newString = arrtos(histoNames);
 
             //edit the "attribute arrays" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
-              .attr("histoNames", histoNames)
-              .attr("histoIndices", histoIndices);
+              .attr("histoNames", newString);
 
-            //label the clicked rectangles as "y"
+        }
+
+            /*label the clicked rectangles as "y"
             for ( var i = 0; i < d.length; i++) {
             
                 d3.select("#vis")
@@ -534,8 +567,16 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             d3.select("#vis")
               .select(".depth")
               .selectAll(".child")
-              .attr("clicked", "n");
-        }
+              .attr("clicked", "n");*/
+    
+        //TODO - Evan
+        //recolor treemap
+        d3.select("#vis")
+          .select(".depth")
+          .selectAll(".child")
+          .data(hist)
+          .style("fill", "blue");
+
     })
     .transition()
       .duration(1000)
@@ -552,6 +593,30 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   d3.select(name)
     .append("text")
     .text("max: "+max);
+}
+
+//helper function that converts an associative array into a string
+function arrtos(array) {
+
+  var cat = "{";  //string to be returned (to be concatinated on to)
+
+  for ( var key in array ) {
+      cat += "\"";
+      cat += key;
+      cat += "\"";
+      cat += ":";
+      cat += "[";
+      cat += array[key].toString();
+      cat += "]";
+      cat += ",";
+  }
+
+  //TODO - Lane - Here's where I stopped
+  if ( cat[cat.length-1] == "," ) cat[cat.length-1] = " ";
+
+  cat += "}";
+
+  return cat;
 }
 
 // initialize our nessus info area with labels
