@@ -1,7 +1,6 @@
 /*
  * nv.js
  *
- * TODO NOTE to Mike: the parser can use setNBEData(dataset) to set nbedata and call redraw
  *
  * Here are the divs in nv.html:
  * - id="vis"
@@ -121,6 +120,9 @@ function init() {
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata7.json'); }, 10000);  
+  
+  // initialize nessus info area
+  initNessusInfo();
 }
 
 // called after data load
@@ -493,6 +495,44 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     .text("max: "+max);
 }
 
+// initialize our nessus info area with labels
+function initNessusInfo(){
+  var nessusInfoLabels = ['title', 'overview', 'synopsis', 'description', 'seealso', 'solution', 'riskfactor'];
+  var div = d3.select('#nessusinfo');
+
+  var nessussections = div.selectAll('.nessusinfosection')
+    .data(nessusInfoLabels, function(d) { return d; })
+    .enter().append('div')
+    .classed('.nessusinfosection', true)
+    .attr('id', function(d) { return "nessus_"+d; });
+
+  nessussections.append('span')
+    .classed('nessusinfotitle', true)
+    .text(function(d) { return d; });
+
+  // this p later modified by the setNessusIDData function
+  nessussections.append('p');
+
+  // quick test of function below
+  var testdata = [
+    {key:"title", text:"3Com HiPer Access Router Card (HiperARC) IAC Packet Flood DoS"},
+    {key:"overview", text:"This script is Copyright (C) 1999-2011 Tenable Network Security, Inc."
+        + "<br />" + "Family  Denial of Service"
+        + "<br />" + "Nessus Plugin ID  10108 (hyperbomb.nasl)"
+        + "<br />" + "Bugtraq ID"  
+        + "<br />" + "CVE ID  CVE-1999-1336"},
+    {key:"synopsis", text:"The remote host is vulnerable to a denial of service attack."},
+    {key:"description", text:"It was possible to reboot the remote host (likely a HyperARC router) by sending it a high volume of IACs."
+      + "An attacker may use this flaw to shut down your internet connection."},
+    {key:"seealso", text:"http://marc.info/?l=bugtraq&m=93492615408725&w=2"
+      + "<br />" + "http://marc.info/?l=bugtraq&m=93458364903256&w=2"},
+    {key:"solution", text:"Add a telnet access list to your Hyperarc router. If the remote system is not a Hyperarc router, then contact your vendor for a patch."},
+    {key:"riskfactor", text:"(CVSS2#AV:N/AC:L/Au:N/C:N/I:N/A:P)"}
+  ];
+
+  setNessusIDData(testdata);
+}
+
 // replaces the current dataset and calls redraw
 function setNBEData(dataset){
   crossfilterInit();
@@ -504,6 +544,23 @@ function setNBEData(dataset){
 //  byCVSS.filterAll();
   
   redraw();
+}
+
+// updates the nessus data by id
+// TODO Lane throw this on stackoverflow to see if the $.each can be avoided
+function setNessusIDData(iddata){
+  var div = d3.select('#nessusinfo');
+
+  var enter = div.selectAll('.nessusinfosection')
+    .data(iddata, function(d) { return d.key; })
+    .enter();
+
+  $.each(enter[0], function(i, v) { 
+    var key = v.__data__.key;
+    var text = v.__data__.text;
+    console.log(key); 
+    d3.select('#nessus_'+key).select('p').html(text);
+  });
 }
 
 function loadJSONData(file){
