@@ -13,11 +13,11 @@ sub replaceIP{
 }
 
 my %inputs = (
-    "ubuntu" => [101, 10, "open/ubuntuWorkstation.nbe", "192.168.56.101"],
-    "fedora" => [111, 10, "open/fedoraWorkstation.nbe", "192.168.56.102"],
-    "LAPP" => [121, 5, "open/lappServer.nbe", "192.168.56.103"],
-    "wordpress" => [126, 5, "open/wordpressServer.nbe", "192.168.56.104"],
-    "MS" => [131, 2, "open/metasploitable.nbe", "192.168.56.105"]
+    "ubuntu" => [101, 10, "open/ubuntuWorkstation.nbe", "192.168.56.101", 56],
+    "fedora" => [111, 10, "open/fedoraWorkstation.nbe", "192.168.56.102", 56],
+    "LAPP" => [101, 5, "open/lappServer.nbe", "192.168.56.103", 57],
+    "wordpress" => [101, 5, "open/wordpressServer.nbe", "192.168.56.104", 58],
+    "MS" => [121, 2, "open/metasploitable.nbe", "192.168.56.105", 56]
 );
 
 my $outputNBE;
@@ -28,13 +28,15 @@ foreach my $key (keys %inputs){
     my $count = $inputs{$key}[1];
     my $input_file = $inputs{$key}[2];
     my $orig_ip = $inputs{$key}[3];
+    my $subnet = $inputs{$key}[4];
 
     open(FILE, $input_file);
     my @lines = <FILE>;
     close(FILE);
     for(my $i = 0; $i < $count; $i++){
         foreach my $line (@lines){
-            my $new_ip = "192.168.56." . ($ip_start + $i);
+            my $new_ip = "192.168." . $subnet . "." . ($ip_start + $i);
+            say $new_ip;
             my $new_line = replaceIP($orig_ip, $new_ip, $line);
             $outputNBE = $outputNBE . $new_line;
         }

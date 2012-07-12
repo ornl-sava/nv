@@ -21,12 +21,17 @@ version of Microsoft Windows with the servers running Windows Server 2008.
 The Nessus scan shows that numerous
 machines on the network have some sort of security hole such as incorrectly
 configured telnet client, a font driver that allows privilege escalation and a
-vulnerability in an outdated version of Microsoft Excel.  
+vulnerability in an outdated version of Microsoft Excel. 
+
+| Name         | IP Addresses   | Security Notes | Security Holes |
+|:------------:|:--------------:|:--------------:|:--------------:|
+| Data Center  | 192.168.1.x/24 | 10             | 0              |
+| Workstations | 192.168.2.x/24 | 556            | 919            |
 
 ### Dynamic State Network
 
 The second use case for our system is to make it easier for administrators to
-visualize that state of machines on a network before and after maintenance.  
+visualize that state of machines on a network before and after maintenance. 
 The grouping functionality allows
 the administrator to group together related machines by subnet, purpose of
 functionality.  In this example virtual system machines are grouped into three
