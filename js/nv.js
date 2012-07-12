@@ -261,6 +261,8 @@ function drawTreemap() {
     g.filter(function(d) { return d.values; })
       .classed("children", true)
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
+      .attr("histoNames", [])
+      .attr("histoIndices", [])
       .on("click", transition)
       .on("mouseover", function(d) {
           
@@ -452,32 +454,89 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
   //TODO - Evan - add histogram interation w/treemap
   d3.select(name)
+    .selectAll("rect")
     .data(hist)
-    .on("click", function(d) { 
+    .on("click", function(d, iter) {
 
-        //label the clicked rectangles as "y"
-        for ( var i = 0; i < d.length; i++) {
-            
-            d3.select("#vis")
-              .select(".depth")
-              .select("#IP" + (d[i].ip).replace(/\./g, ""))
-              .selectAll(".child")
-              .attr("clicked", "y");
+        var name = $(this).parent().parent().attr("id");
+        var nameIndex;  //for finding if "name" already exists in "histoNames"
+        var indexIndex;
 
+        var histoNames = [],
+            histoIndices = [];
+
+        var base = d3.select("#vis")
+                      .select(".depth")
+                      .selectAll(".children");
+
+        //are there anything in the "attribute arrays"?
+        if ( base.attr("histoNames").length > 0 ) {
+          histoNames = base.attr("histoNames").split(",");
+          histoIndices = base.attr("histoIndices").split(",");
         }
 
-        //gray out all rectangles who have clicked set as "n"
-        d3.select("#vis")
-          .select(".depth")
-          .selectAll(".child")
-          .filter(function() {
-              if ( d3.select(this).attr("clicked") === "n") { return this; }
-              else return null;
-          })
-          .style("fill", function(d) {
-              return notSelected(d.values[0].cvss);
-          });
+        //has this bar been clicked before?
+        nameIndex = histoNames.indexOf(name);
+        indexIndex = histoIndices.indexOf(iter.toString());
 
+        if ( nameIndex !== -1 && indexIndex !== -1 ) { //yes
+
+            //remove histogram and its corresponding index
+            histoNames.splice(nameIndex, 1);
+            histoIndices.splice(indexIndex, 1);
+
+            //edit the "attribute arrays" for each ".children"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".children")
+              .attr("histoNames", histoNames)
+              .attr("histoIndices", histoIndices);
+
+            //re-color rectangles accordingly
+        
+        }
+        else {  //no
+
+            //push new histogram bar that has been clicked onto the arrays
+            histoNames.push(name);
+            histoIndices.push(iter);
+
+            //edit the "attribute arrays" for each ".children"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".children")
+              .attr("histoNames", histoNames)
+              .attr("histoIndices", histoIndices);
+
+            //label the clicked rectangles as "y"
+            for ( var i = 0; i < d.length; i++) {
+            
+                d3.select("#vis")
+                  .select(".depth")
+                  .select("#IP" + (d[i].ip).replace(/\./g, ""))
+                  .selectAll(".child")
+                  .attr("clicked", "y");
+
+            }
+
+            //gray out all rectangles who have clicked set as "n"
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".child")
+              .filter(function() {
+                  if ( d3.select(this).attr("clicked") === "n") { return this; }
+                  else return null;
+              })
+              .style("fill", function(d) {
+                  return notSelected(d.values[0].cvss);
+              });
+
+            //reset "clicked" attribute
+            d3.select("#vis")
+              .select(".depth")
+              .selectAll(".child")
+              .attr("clicked", "n");
+        }
     })
     .transition()
       .duration(1000)
@@ -579,6 +638,13 @@ function loadJSONData(file){
 
 var groupList = [];
 
+function handleNBEAdd(){
+  $("#dataTab2").show()
+  $("#dataTab2Link").show()
+  $("#dataTab1Link").html("Initial Data")
+  $("#dataTab2Link").html("Updated Data")
+}
+
 function handleGroupAdd(){
   //TODO make sure each IP is only in one group(?)
   //TODO should really be able to remove groups also ...
@@ -597,8 +663,12 @@ function handleDataPageAdd(){
   console.log("Data page add button");
 }
 
-function handleDataTab(){
-  console.log("Data tab active");
+function handleDataTab1(){
+  console.log("Data tab 1 active");
+}
+
+function handleDataTab2(){
+  console.log("Data tab 2 active");
 }
 
 function handleVisTab(){
@@ -739,11 +809,17 @@ function buildTable(groups){
 // initialization
 $(document).ready(function () {
   // set up needed event listeners, etc.
+  $('#addNBEBtn').bind('click', function(event) {
+    handleNBEAdd();
+  });
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
   });
-  $('#dataTabLink').bind('click', function(event) {
-    handleDataTab();
+  $('#dataTab1Link').bind('click', function(event) {
+    handleDataTab1();
+  });
+  $('#dataTab2Link').bind('click', function(event) {
+    handleDataTab2();
   });
   $('#groupsTabLink').bind('click', function(event) {
     handleGroupsTab();
@@ -751,6 +827,10 @@ $(document).ready(function () {
   $('#visTabLink').bind('click', function(event) {
     handleVisTab();
   });
+
+  //initially hide data tab 2 (for 'updated' nbe file)
+  $("#dataTab2").hide()
+  $("#dataTab2Link").hide()
 
   // start the vis
   init();
