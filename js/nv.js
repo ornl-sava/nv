@@ -179,10 +179,11 @@ function initTreemap(){
 
 function drawTreemap() {
   var root=d3.nest()
-    .key(function(d) {return 'network name';})
+    .key(function(d) {return 'groups';})
     .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
-    .key(function(d) {return d.port;})
+    .key(function(d) {return ":"+d.port;})
+    .key(function(d) {return "id:"+d.vulnid;})
     .sortKeys(d3.ascending)
     .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
 
