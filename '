@@ -456,6 +456,17 @@ function drawTreemap() {
               .style("stroke", "black")
               .style("stroke-width", "5px");
 
+            //TODO this is hacky and bad
+            //make new rect to simulate border
+            /*d3.select(this).append("rect")
+              .attr( "x", d3.select(this).select(".child").attr("x") )
+              .attr( "y", d3.select(this).select(".child").attr("y") )
+              .attr( "fill", "none" )
+              .attr( "width", d3.select(this).select(".child").attr("width") )
+              .attr( "height", d3.select(this).select(".child").attr("height") )
+              .style("stroke", "black")
+              .style("stroke-width", "5px");*/
+
         } else {
           transition(d);
         }
