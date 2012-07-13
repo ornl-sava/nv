@@ -55,7 +55,15 @@ After further exploring his network the administrator patches the most critical
 vulnerabilities in his system.  The Nessus Vulnerability Visualization system
 provides functionality to compare two nbe files to show changes between two
 vulnerability states such as before and after applying patches.  After patching
-his system the administrator can explore and compare his patched system.  
+his system the administrator can explore and compare his patched system and
+easily compare the differences.  The Nessus Visualization System shows corrected
+vulnerabilities in green, the remaining vulnerabilities in orange and any new
+vulnerabilities in pink.  The system administrator can easily see that the
+major workstations vulnerabilities have been patched.  Zooming into the
+workstation node the system administrator sees that while he patching the most
+severe vulnerabilities he inadvertently opens a new vulnerability on the two
+machines and does not solve the problems that lead to some of the notes left
+open.
 
 In this use case we did not patch all security notes that Nessus mentions
 because this would not be realistic for an actual system administrator.  Instead
