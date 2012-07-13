@@ -2,6 +2,7 @@ Non-critical bugs:
 
 assigning a criticality/weight to individual machines has no effect.
 
+IPs should be in order on 'groups' tab
 
 Features to revisit sometime after submission:
 
