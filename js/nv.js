@@ -37,6 +37,9 @@
 // http://colorbrewer2.org/index.php?type=qualitative&scheme=Set2&n=5
 // #66C2A5; #FC8D62; #8DA0CB; #E78AC3; #A6D854; 
 // greenblue, orange, blue, pink, green
+//
+// #E41A1C; #377EB8; #4DAF4A; #984EA3; #FF7F00; 
+// red, blue, green, purple, orange
 
 // colors
 // old -> http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
@@ -50,18 +53,18 @@ var nodeColor = d3.scale.linear()
 // #E5F5E0; #A1D99B; #31A354; 
 var nodeColorFixed = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#66C2A5")]); // white-green
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
 
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Reds&n=3
 // #FEE0D2; #FC9272; #DE2D26; 
 var nodeColorNew = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#E78AC3")]); // white-red
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
 
 // actually is same
 var nodeColorOpen = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FC8D62")]); // white-orange
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
 
 //associative array to store exactly what bars you click on and off
 var activeFilters = {};
@@ -110,8 +113,8 @@ var nbedata,
      else {
        if(typeof d[key] !== undefined){
          if ( !isNaN(d[key]) ){ //if value is a number
-          console.log("d[key]: " + d[key]);
-          console.log("value: " + value);
+          //console.log("d[key]: " + d[key]);
+          //console.log("value: " + value);
 
           //find the value of each bar in the histograms
           if ( Math.floor(d[key]) === Math.floor(value) ){

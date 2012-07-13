@@ -7,12 +7,12 @@ Nessus data in detail
 
 
 #### Use Case
-The primary goal of the system
+The primary goal of nv is to support sysadmins in identifying and analyzing vulnerabilities in their network, information which they may then use to better prioritize their (often) limited resources.
+Specifically, the main questions nv seeks to answer are as follows:
 
-The main questions sysadmins are able to answer with nv are as follows:
--
--
--
+- What vulnerabilities are most common across the network?
+- What machines or groups have the most severe vulnerabilities?
+- Are critical machines are vulnerable?
 
 #### Visualization and Interaction
 Nv consists of multiple coordinated views including a treemap, several histograms, and a detail-information area showing information on the selected Nessus id. Each of these are designed to support a specific aspect of the vulnerability analysis workflow
@@ -29,27 +29,21 @@ Since analysts can specify the criticality of both individual machines and group
 
 The color scales in the treemap were created using ColorBrewer2 (TODO cite). While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure). 
 
-Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids. These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis. For instance, by brushing over the highest values in the severity histogram, the appropriate nodes in the treemap are highlighted. This works by examining each child of each element in the current level of the hierarchy. Another use of the histograms is to easily highlight the most commonly occuring issues in the network. A possible drawback of this approach is that sometimes the least common issues can be the most damaging. However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find. 
+Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids. These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis. For instance, by brushing over the highest values in the severity histogram, the appropriate nodes in the treemap are highlighted. This works by examining each child of each element in the current level of the hierarchy. Another use of the histograms is to easily highlight the most commonly occuring issues in the network. A possible drawback of this approach is that sometimes the least common issues can be the most damaging. However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find. The histograms also operate in as conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
 
-NessusInfo
-
-Data input (grouping)
-
-Modification
-
+The Nessus information area is updated when the sysadmin drills down to the level at which Nessus issue-identification numbers are shown. The area then updates with detailed information about the currently selected Nessus id, including a synopsis, detailed description, vulnerability family, and solution (when available). Based on this information, the sysadmin has the option to mark the vulnerability as either fixed or as a non-issue, which re-colors the node in the treemap. This functionality is intended to serve as a way for analysts to avoid revisiting issues that have been addressed. 
 
 #### Implementation
 
 no server-side, d3, jquery, crossfilter
 
-One significant requirement for this project was to not unnecessarily disclose the Nessus scan results to any third parties; because this information would be very valuable to any attacker, the users of this tool would have an obvious concern to prevent its disclosure. To address this concern, the NV tool runs entirely in the browser client, without relying on any server-side functionality, and without loading any non-local resources. We were able to achieve this in a highly scalable implementation by combining several existing components, including the crossfilter data model library and the d3 library for data-driven DOM manipulation. We also developed a custom parser for the .nbe files, which also handles this task in the browser. For additional peace-of-mind to any users, the entire technology stack is open source, and the NV tool itself will also soon be open sourced.(TODO make less 'meh')
+One significant requirement for this project was to not unnecessarily disclose the Nessus scan results to any third parties; because this information would be very valuable to any attacker, the users of this tool would have an obvious concern to prevent its disclosure. To address this concern, the NV tool runs entirely in the browser client, without relying on any server-side functionality, and without loading any non-local resources. We were able to achieve this in a highly scalable implementation by combining several existing components, including the crossfilter data model library and the d3 library for data-driven DOM manipulation. We also developed a custom parser for the .nbe files, and related code to compare and merge these results.  We were also able to handle these tasks in the browser with good performance. For additional peace-of-mind to any users, the entire technology stack is open source, and the NV tool itself will also soon be open sourced.(TODO make less 'meh')
 
 One difficulty caused by the requirement of not leaking scan results was how to look up additional details about the results. Nessus provides an interface to access significant additional information about any specific vulnerability ID, including useful details such as related CVE and Bugrtaq IDs, and information about how to patch or otherwise address each issue. However, using this directly could still give an adversary significant information; if they could observe any of this traffic, then they could still learn which vulnerabilities are present. To address this, we build a local cache of this information, which the client can access offline. (TODO presumably we won't be open-sourcing this part, heh. I guess that's obvious enough that we don't need to say it...)
 
-The main treemap and the histograms were created using the d3 library (TODO cite), for "apply[ing] data-driven transformations" to the Document Object Model (DOM).  D3 is fast, flexible, and supports large datasets, which were our main requirements. (TODO elaborate?  Should we maybe say that it's awesome but also a pain?  Not sure where to go with this ...)
+The main treemap and the histograms were created using the d3 library (TODO cite), which is decigned for "apply[ing] data-driven transformations" to the Document Object Model (DOM).  D3 is fast, flexible, and supports large datasets, which were our main requirements. (TODO elaborate?  Should we maybe say that it's awesome but also a pain?  Not sure where to go with this ...)
 
-The crossfilter library (TODO cite), designed for accessing "large multivariate datasets in the browser", was used to store and access our Nessus scan results and all related information about the machines and subnets on the network.  (TODO same issue as above.)
+The crossfilter library (TODO cite), designed for accessing "large multivariate datasets in the browser", was used to store and access our Nessus scan results and all related information about the machines and subnets on the network.  This handles the data entirely in memory, and handles storage and access in an efficient manner.  (TODO same issue as above.)
 
-As with everything, jquery was used for massive convenience when manipulating elements and such. (TODO what else can we actually say about it?)
-
+As with everything, jquery was used for massive convenience when manipulating elements and such. (TODO what else can we actually say about it?  TODO merge these 3 into one paragraph?)
 
