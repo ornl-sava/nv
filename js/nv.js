@@ -120,6 +120,7 @@ var x,
     grandparent;
 
 function init() {
+  crossfilterInit(); // TODO Lane not sure why this needs to be called here, need to investigate how setNBEData is being used...
 
   // initialize treemap
   initTreemap();
@@ -287,14 +288,23 @@ function drawTreemap() {
     root.depth = 0;
   }
 
+
   // Aggregate the values for internal nodes. This is normally done by the
   // treemap layout, but not here because of our custom implementation.
   function accumulate(d) {
     nodes.push(d);
 
     d.cvss = accumulateCVSS(d);
-    if(isChangeVis)
+    if(isChangeVis){
       d.state = accumulateState(d);
+      d.fixedCount = accumulateFixedCounts(d);
+      d.openCount = accumulateOpenCounts(d);
+      d.newCount = accumulateNewCounts(d);
+
+//      console.log('fixed: '+d.fixedCount);
+//      console.log('open: '+d.openCount);
+//      console.log('new: '+d.newCount);
+    }
 
     return d.values
       ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
@@ -311,6 +321,38 @@ function drawTreemap() {
     return d.values
       ? d.state = d.values.reduce(function(p, v) { return accumulateState(v); }, 0)
       : d.state;
+  }
+
+  function accumulateFixedCounts(d){
+    return d.values
+      ? d.fixedCount = d.values.reduce(function(p, v) { return p + accumulateFixedCounts(v); }, 0)
+      : d.state === 'fixed' ? 1 : 0;
+  }
+  
+  function accumulateOpenCounts(d){
+    return d.values
+      ? d.openCount = d.values.reduce(function(p, v) { return p + accumulateOpenCounts(v); }, 0)
+      : d.state === 'open' ? 1 : 0;
+  }
+
+  function accumulateNewCounts(d){
+    return d.values
+      ? d.newCount = d.values.reduce(function(p, v) { return p + accumulateNewCounts(v); }, 0)
+      : d.state === 'new' ? 1 : 0;
+  }
+
+  function maxIndex(arr){
+    var max_index = -1;
+    var max_value = Number.MIN_VALUE;
+    for(var i = 0; i < arr.length; i++)
+    {
+      if(arr[i] > max_value)
+      {
+        max_value = arr[i];
+        max_index = i;
+      }
+    }
+    return max_index;
   }
 
   // Compute the treemap layout recursively such that each group of siblings
@@ -405,6 +447,13 @@ function drawTreemap() {
       .style("fill", function(d) { 
         // if status, use appropriate color scale
         if(d.state){
+          // reset d.state here according to max counts
+          // TODO Lane this is a hack, but will work for the paper
+          var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
+          //console.log('maxindex: ' +maxStateIndex);
+          d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
+
+          // choose which scale to use
           if(d.state === 'new')
             return nodeColorNew(d.cvss);
 
