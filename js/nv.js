@@ -132,7 +132,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  loadJSONData('../../data/testdata/testdata13.json');
+//  loadJSONData('../../data/testdata/testdata13.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -367,6 +367,10 @@ function drawTreemap() {
       .attr("histoIndices", [])
       .on("click", function(d) {
         if(atTheBottom(d)){
+          console.log('at da bottom: '+ d.values[0].vulnid);
+          // TODO Mike Lane trigger nessus update here
+          // setNessusIDData(findNessusIDData(d.values[0].vulnid));
+          
           d3.select(this)
             .style("stroke", "black")
             .style("stroke-width", "2px")
@@ -429,12 +433,6 @@ function drawTreemap() {
     function transition(d) {
       if (transitioning || !d){ 
         return; 
-      }
-
-      if(atTheBottom(d)){
-        console.log('at da bottom: '+ d.values[0].vulnid);
-        // TODO Mike Lane trigger nessus update here
-        // setNessusIDData(findNessusIDData(d.values[0].vulnid));
       }
 
       transitioning = true;
@@ -596,56 +594,89 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     .on("click", function(d, iter) {
 
         var name = $(this).parent().parent().attr("id");
-        var nameIndex;  //for finding if "name" already exists in "histoNames"
-        var indexIndex;
+        var nameIndex,  //for finding if "name" already exists in "histoNames"
+            indexIndex;
+            
+        var duplicate = true;  //boolean to find out if you've seen the bar you've just clicked on or not
 
-        var histoNames = [],
-            histoIndices = [];
+        //temporary array to store exactly what bars you click on and off
+        var histoNames = {};
 
         var base = d3.select("#vis")
                       .select(".depth")
                       .selectAll(".children");
 
-        //are there anything in the "attribute arrays"?
+        //are there anything in the "attribute arrays"? if so, shove them into the temporary arrays to be edited
         if ( base.attr("histoNames").length > 0 ) {
-          histoNames = base.attr("histoNames").split(",");
-          histoIndices = base.attr("histoIndices").split(",");
+            
+            histoNames = base.attr("histoNames");
+            console.log(histoNames);
+
+            histoNames = jQuery.parseJSON(histoNames);
+        }
+        console.log(histoNames);
+
+        //has this histogram been clicked before?
+        if ( histoNames.hasOwnProperty(name) === false ) {  //no
+            histoNames[name] = [];
+            
+            for ( var i = 0; i < n; i++) {
+                histoNames[name][i] = 0;
+            }
+
+            histoNames[name][iter] = 1;
+            duplicate = false;
+        }
+        //has this bar been clicked before?
+        else if ( histoNames[name][iter] !== iter ) { //no
+            histoNames[name][iter] = 1;
+            duplicate = false;
         }
 
-        //has this bar been clicked before?
-        nameIndex = histoNames.indexOf(name);
-        indexIndex = histoIndices.indexOf(iter.toString());
+        console.log(histoNames);
 
-        if ( nameIndex !== -1 && indexIndex !== -1 ) { //yes
 
-            //remove histogram and its corresponding index
-            histoNames.splice(nameIndex, 1);
-            histoIndices.splice(indexIndex, 1);
+        if ( duplicate === true ) { //yes
+
+            //un-color bar in histogram
+            d3.select(this)
+              .style("fill", function() {
+                  return d3.hsl( d3.select(this).style("fill") ).brighter(2).toString();
+              });
+
+            //remove bar from histogram in array
+            histoNames[name][iter] = 0;
+
+            //convert object into string
+            var newString = arrtos(histoNames);
 
             //edit the "attribute arrays" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
-              .attr("histoNames", histoNames)
-              .attr("histoIndices", histoIndices);
+              .attr("histoNames", newString);
 
-            //re-color rectangles accordingly
-        
         }
         else {  //no
 
-            //push new histogram bar that has been clicked onto the arrays
-            histoNames.push(name);
-            histoIndices.push(iter);
+            //color bar in histogram
+            d3.select(this)
+              .style("fill", function() {
+                  return d3.hsl( d3.select(this).style("fill") ).darker(2).toString();
+              });
+
+            //convert object into string
+            var newString = arrtos(histoNames);
 
             //edit the "attribute arrays" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
-              .attr("histoNames", histoNames)
-              .attr("histoIndices", histoIndices);
+              .attr("histoNames", newString);
 
-            //label the clicked rectangles as "y"
+        }
+
+            /*label the clicked rectangles as "y"
             for ( var i = 0; i < d.length; i++) {
             
                 d3.select("#vis")
@@ -672,8 +703,16 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             d3.select("#vis")
               .select(".depth")
               .selectAll(".child")
-              .attr("clicked", "n");
-        }
+              .attr("clicked", "n");*/
+    
+        //TODO - Evan
+        //recolor treemap
+        d3.select("#vis")
+          .select(".depth")
+          .selectAll(".child")
+          .data(hist)
+          .style("fill", "blue");
+
     })
     .transition()
       .duration(1000)
@@ -689,6 +728,30 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
   d3.select(name).select(".maxarea")
     .text("max: "+max);
+}
+
+//helper function that converts an associative array into a string
+function arrtos(array) {
+
+  var cat = "{";  //string to be returned (to be concatinated on to)
+
+  for ( var key in array ) {
+      cat += "\"";
+      cat += key;
+      cat += "\"";
+      cat += ":";
+      cat += "[";
+      cat += array[key].toString();
+      cat += "]";
+      cat += ",";
+  }
+
+  //TODO - Lane - Here's where I stopped
+  if ( cat[cat.length-1] == "," ) cat[cat.length-1] = " ";
+
+  cat += "}";
+
+  return cat;
 }
 
 // initialize our nessus info area with labels
@@ -774,7 +837,7 @@ function loadJSONData(file){
 var groupList = [];
 
 function handleNBEAdd(){
-  $("#dataTab2").show()
+  //$("#dataTab2").show()
   $("#dataTab2Link").show()
   $("#dataTab1Link").html("Initial Data")
   $("#dataTab2Link").html("Updated Data")
@@ -816,8 +879,16 @@ function handleGroupsTab(){
 }
 
 function updateCurrentGroupTable(){
-  var nbeText = $("#nbeFile1").val();
-  var eventList = parseNBEFile( nbeText );
+  var eventList
+  //console.log( $("#dataTab2Link").css("display") ) 
+  if( ! ($("#dataTab2Link").css("display") === "none") ){
+    console.log("second data tab is visible ...")
+    var nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
+    var nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
+    eventList = mergeNBEs(nbeItems1, nbeItems2)
+  }else{
+    eventList = parseNBEFile( $("#nbeFile1").val() );
+  }
 
   //build default group list
   console.log("event list is " + JSON.stringify(eventList));
@@ -825,7 +896,7 @@ function updateCurrentGroupTable(){
   //console.log("have these IPs: " + JSON.stringify(ips));
 
   //add to the default group.
-  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table.
+  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table.  TODO might be cleaner to just do this in buildTable?  No other fns need this list currently.
   groups = {};
   for( var i=0; i < ips.length; i++ ){
     var groupName = findGroupName(ips[i]);
@@ -852,6 +923,57 @@ function updateCurrentGroupTable(){
   eventList = addGroupInfoToData(groups, eventList)
 
   setNBEData(eventList);
+}
+
+//TODO
+//this will be somewhat slow, O(n^2), no easy way around it.
+//note this will modify nbeItems2 and not modify nbeItems1.  Can change this if needed later.
+function mergeNBEs(nbeItems1, nbeItems2){
+  var result = [];
+  function compareEntries(a, b){ //true if equal, false if not
+    if(a.ip === b.ip && a.vulnid === b.vulnid && a.vulntype === b.vulntype && a.cvss === b.cvss && a.port === b.port){
+      return true
+    }else{
+      return false
+    }
+  }
+
+  var openItems = 0;
+  var changedItems = 0;
+  //iterate through first list, find matching items in second list. mark them 'open' in result and remove from second list.
+  //if no matching item is found, mark it as 'changed' in first.
+  var found;
+  for(var i=0; i<nbeItems1.length; i++){
+    found = false;
+    for(var j=0; j<nbeItems2.length; j++){
+      if( compareEntries(nbeItems1[i], nbeItems2[j]) ){
+        found = true;
+        var item = nbeItems1[i];
+        item.state = 'open';
+        result.push(item);
+        nbeItems2.splice(j, 1);
+        openItems +=1;
+        break;
+      }
+    }
+    if(found === false){
+      var item = nbeItems1[i];
+      item.state = 'fixed';
+      result.push(item);
+      changedItems +=1;
+    }
+  }
+  console.log("open items: " + openItems);
+  console.log("changed items: " + changedItems);
+  console.log("new items: " + nbeItems2.length);
+  //handle items remaining in second list. (append to result list, mark 'new')
+  while( nbeItems2.length > 0){
+    var item = nbeItems2.pop();
+    item.state = 'new';
+    result.push(item);
+  }
+
+  return result;
 }
 
 function findIPsInList(eventList){
@@ -973,7 +1095,7 @@ $().ready(function () {
   });
 
   //initially hide data tab 2 (for 'updated' nbe file)
-  $("#dataTab2").hide()
+  //$("#dataTab2").hide()
   $("#dataTab2Link").hide()
 
   // handle window resizes
