@@ -424,10 +424,10 @@ function drawTreemap() {
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
       .on("click", function(d) {
         if(atTheBottom(d)){
-          console.log('at da bottom: '+ d.values[0].vulnid);
+          console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
           // TODO Mike Lane trigger nessus update here
+          setNessusIDData( vulnIdInfo[d.values[0].vulnid] );
           // setNessusIDData(findNessusIDData(d.values[0].vulnid));
-          
           d3.select(this)
             .style("stroke", "black")
             .style("stroke-width", "2px")
@@ -754,6 +754,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
 // initialize our nessus info area with labels
 function initNessusInfo(){
+  /*
   var nessusInfoLabels = ['title', 'overview', 'synopsis', 'description', 'seealso', 'solution', 'riskfactor'];
   var div = d3.select('#nessusinfo');
 
@@ -769,7 +770,7 @@ function initNessusInfo(){
 
   // this p later modified by the setNessusIDData function
   nessussections.append('p');
-
+  
   // quick test of function below
   var testdata = [
     {key:"title", text:"3Com HiPer Access Router Card (HiperARC) IAC Packet Flood DoS"},
@@ -786,7 +787,8 @@ function initNessusInfo(){
     {key:"solution", text:"Add a telnet access list to your Hyperarc router. If the remote system is not a Hyperarc router, then contact your vendor for a patch."},
     {key:"riskfactor", text:"(CVSS2#AV:N/AC:L/Au:N/C:N/I:N/A:P)"}
   ];
-
+  */
+  var testdata = {title: "", description: ""};
   setNessusIDData(testdata);
 }
 
@@ -803,11 +805,30 @@ function setNBEData(dataset){
   redraw();
 }
 
-// updates the nessus data by id
+// updates the nessus data by id //TODO mike
 // TODO Lane throw this on stackoverflow to see if the $.each can be avoided
-function setNessusIDData(iddata){
-  var div = d3.select('#nessusinfo');
+function setNessusIDData(idData){
+  var div = $('#nessusinfo');
+  div.html('<p>');
+  div.append("Title: " + idData.title + '<br><br>');
+  if(idData.family && idData.family !== "")
+    div.append("Family: " + idData.family + '<br><br>');
+  if(idData.synopsis && idData.synopsis !== "")
+    div.append("Synopsis: " + idData.synopsis + '<br><br>');
+  if(idData.description && idData.description !== "")
+    div.append("Description: " + idData.description + '<br><br>');
+  if(idData.updateInfo && idData.updateInfo !== "")
+    div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
+  if(idData.solution && idData.solution !== "")
+    div.append("solution: " + idData.solution);
+  /* //TODO deal with these later.
+  div.append("bugtraqList: "   + idData.bugtraqList);
+  div.append("cveList: "       + idData.cveList);
+  div.append("otherInfoList: " + idData.otherInfoList);
+  */
+  div.append('</p>');
 
+  /*
   var enter = div.selectAll('.nessusinfosection')
     .data(iddata, function(d) { return d.key; })
     .enter();
@@ -817,6 +838,7 @@ function setNessusIDData(iddata){
     var text = v.__data__.text;
     d3.select('#nessus_'+key).select('p').html(text);
   });
+  */
 }
 
 function loadJSONData(file){
@@ -1068,7 +1090,7 @@ d3.selection.prototype.moveToFront = function() {
   }); 
 }; 
 
-
+var vulnIdInfo = {};
 
 // initialization
 $().ready(function () {
@@ -1090,6 +1112,19 @@ $().ready(function () {
   });
   $('#visTabLink').bind('click', function(event) {
     handleVisTab();
+  });
+
+  $.get("data/vulnIDs.json", function(data) {
+    console.log("Got the vulnIDs JSON file!");
+    //console.log(data)
+    tempData = data;//JSON.parse(data);
+    tempKeys = Object.keys(tempData);
+    for(var i=0; i<tempKeys.length; i++){
+      //console.log( tempData[tempKeys[i]])
+      vulnIdInfo[tempKeys[i]] = tempData[tempKeys[i]];
+    }
+    //var resp = $(data); // Now you can do whatever you want with it
+    //$("#contentMain", resp).appendTo("#nessusinfo");
   });
 
   //initially hide data tab 2 (for 'updated' nbe file)

@@ -88,14 +88,14 @@ for currID in ids:
     bugtraqList = tbody.contents[len(tbody.contents) -10].findAll('td')[1].findAll('a') #'list of bugtraq links'
     index = 0
     while index < len(bugtraqList):
-      bugtraqList[index] = str(bugtraqList[index])
+      bugtraqList[index] = str(bugtraqList[index]).replace('"', "'")
       index += 1
     if debug: print 'bugtraq: ' + str(bugtraqList) + '\n'
 
     cveList = tbody.contents[len(tbody.contents) -8].findAll('td')[1].findAll('a') #'CVE info'
     index = 0
     while index < len(cveList):
-      cveList[index] = str(cveList[index])
+      cveList[index] = str(cveList[index]).replace('"', "'")
       index += 1
     if debug: print 'cve: ' + str(cveList) + '\n'
 
@@ -103,7 +103,7 @@ for currID in ids:
     descListStrings = []
     for item in descList:
       if item != u'\n' and str(item) != u'<br />':
-        descListStrings.append(item.replace('\n',''))
+        descListStrings.append(item.replace('\n','').replace('"', "'"))
 
     #print all for debugging
     if debug and verbose: print 'desc: ' + str(descListStrings) + '\n'
