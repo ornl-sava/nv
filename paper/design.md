@@ -7,12 +7,12 @@ Nessus data in detail
 
 
 #### Use Case
-The primary goal of the system
+The primary goal of nv is to support sysadmins in identifying and analyzing vulnerabilities in their network, information which they may then use to better prioritize their (often) limited resources.
+Specifically, the main questions nv seeks to answer are as follows:
 
-The main questions sysadmins are able to answer with nv are as follows:
--
--
--
+- What vulnerabilities are most common across the network?
+- What machines or groups have the most severe vulnerabilities?
+- Are critical machines are vulnerable?
 
 #### Visualization and Interaction
 Nv consists of multiple coordinated views including a treemap, several histograms, and a detail-information area showing information on the selected Nessus id. Each of these are designed to support a specific aspect of the vulnerability analysis workflow
@@ -29,14 +29,11 @@ Since analysts can specify the criticality of both individual machines and group
 
 The color scales in the treemap were created using ColorBrewer2 (TODO cite). While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure). 
 
-Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids. These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis. For instance, by brushing over the highest values in the severity histogram, the appropriate nodes in the treemap are highlighted. This works by examining each child of each element in the current level of the hierarchy. Another use of the histograms is to easily highlight the most commonly occuring issues in the network. A possible drawback of this approach is that sometimes the least common issues can be the most damaging. However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find. 
+Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids. These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis. For instance, by brushing over the highest values in the severity histogram, the appropriate nodes in the treemap are highlighted. This works by examining each child of each element in the current level of the hierarchy. Another use of the histograms is to easily highlight the most commonly occuring issues in the network. A possible drawback of this approach is that sometimes the least common issues can be the most damaging. However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find. The histograms also operate in as conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
 
-NessusInfo
-
-Data input (grouping)
-
-Modification
-
+The Nessus information area is updated when the sysadmin drills down to the level at which Nessus issue-identification numbers are shown. The area then updates with detailed information about the currently selected Nessus id, including a synopsis, detailed description, vulnerability family, and solution (when available). Based on this information, the sysadmin has the option to mark the vulnerability as either fixed or as a non-issue, which re-colors the node in the treemap. This functionality is intended to serve as a way for analysts to avoid revisiting issues that have been addressed. 
 
 #### Implementation
-d3, no server-side, jquery, crossfilter
+Nv is implemented in Javascript. The d3.js toolkit is used as the basis for the visualizations and interaction. Crossfilter.js, an in-memory data structure for Javascript, is used to manage datasets in an efficient manner. Finally, the Nessus to JSON parsing and change-detection was developed for nv. (TODO citations for these libs).
+
+One crucial feature of nv is that everything was designed to avoid sending sensitive Nessus scans to servers. Our implementation therefore runs completely in the browser.

@@ -87,3 +87,13 @@ New, open, changed
 * System design
 * Use cases
 * Conclusion
+
+
+## TODO Lane
+- cite VAST data
+- cite d3
+- cite Nessus website
+- mention that code will be on github
+- "provide this as a free service and make code available with open source license."
+
+
