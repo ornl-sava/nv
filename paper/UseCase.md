@@ -31,7 +31,7 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 (SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
 
 **Screen shot of group level (criticality) should go around here.**
-
+![Alt Text](screenshots/SimulatedCriticalityGroupLevel.png)
 
 While in the criticality visualization mode the administrators attention is
 drawn to the very large LAPP server node.  The size is an indication of the
@@ -45,6 +45,7 @@ the Wordpress servers suffer from the same weak password vulnerability as the
 LAPP servers.
 
 **Screenshot of zoomed in tree map can go here.**
+![Alt Text](screenshots/SimulatedLAPPServerLevel.png)
 
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode the workstations'
@@ -71,6 +72,7 @@ machines and does not solve the problems that lead to some of the notes left
 open.
 
 **Screenshot of diff treemap.**
+![Alt Text](screenshots/SimulatedDiffGroupLevel.png)
 
 In this use case we did not patch all security notes that Nessus mentions
 because this would not be realistic for an actual system administrator.  Instead
@@ -117,6 +119,7 @@ Corporation has other machines and servers but they were not included in the
 Nessus scan data.
 
 ** Screenshot of over all **
+![Alt Text](screenshots/VastGroupLevel.png)
 
 We split the workstations into six groups with criticalities ranging from two to
 nine.  The major security holes in the group are concentrated in group four with a
@@ -137,6 +140,7 @@ networks because groups of IP addresses are aggregated in the tree and then the
 IP addresses themselves can also be aggregated into treemap nodes.  
 
 ** Screen Shot of a zoomed in node **
+![Alt Text](screenshots/VastWorkstationPortLevel.png)
 
 **LOOK AT THIS**
 
