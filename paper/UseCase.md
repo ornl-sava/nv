@@ -1,4 +1,4 @@
-## Use Cases
+## Use Cases and Work Flow
 
 We envision our system being useful for two types of use cases.  The first is
 analyzing the current vulnerabilities associated with machines on a network.
@@ -14,23 +14,21 @@ To test visualizing the static vulnerability state we use Nessus scan data from
 the VAST Challenge 2011. This data is from a simulated network for the
 fictitious All Freight Corporation.  The VAST challenge gives us a large network
 dataset to test how the Nessus Vulnerability Visualization scales to a large
-data set that contains many vulnerabilities.  This data set has more than one hundred
-fifty unique IP addresses from All Freight Corporation's various servers, firewalls and
-workstations.  The majority of All Freight Corporation's
-machines can be grouped into either their data center,  their office
-workstations or external web servers.  Most of the company's machines are running a
-version of Microsoft Windows with the servers running Windows Server 2008.
-The Nessus scan shows that numerous
+data set that contains many vulnerabilities.  This data set has more than one
+hundred fifty unique IP addresses associated with various workstations in the
+scan.  The Nessus scan shows that numerous
 machines on the network have some sort of security hole such as incorrectly
 configured telnet client, a font driver that allows privilege escalation and a
-vulnerability in an outdated version of Microsoft Excel.  The visualization
-shows that the workstation group is the most vulnerable while the data center
-appears to be relatively secure despite it's much higher criticality.
+vulnerability in an outdated version of Microsoft Excel.  The All Freight
+Corporation has other machines and servers but they were not included in the
+Nessus scan data.
 
-| Name         | IP Addresses| Security Notes | Security Holes |
-|:------------:|:-----------:|:--------------:|:--------------:|
-| Data Center  | 192.168.1.x | 10             | 0              |
-| Workstations | 192.168.2.x | 556            | 919            |
+TODO
+| Name                    | IP Addresses      | Security Notes | Security Holes |
+|:-----------------------:|:-----------------:|:--------------:|:--------------:|
+| Low Value Workstations  | 192.168.2.0-172   | 556            | 919            |
+| Mid Value Workstations  | 192.168.2.173-200 | 556            | 919            |
+| High Value Workstations | 192.168.2.201-255 | 556            | 919            |
 
 
 ### Dynamic Vulnerability State Network
@@ -54,12 +52,27 @@ vulnerabilities such as an FTP server that allows a remote user to execute
 arbitrary code, an incorrectly configured Windows file sharing software, weak secure shell
 (SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
 
-The Nessus Vulnerability Visualization draws the administrators attention to the most
-grievous security holes by using a darker colored rectangle.  In this example
-the Ubuntu workstations are darkly colored because the group contains two
-machines with gaping vulnerabilities.  The system also draws the administrators
-attention using the size of the rectangle.  In this case the workstations have a
-larger square because they contain many security vulnerabilities.
+While in the criticality visualization mode the administrators attention is
+drawn to the very large LAPP server section.  The size is an indication of the
+importance of the situation based on the number of security holes discovered,
+the severity of the security holes discovered and the assigned criticality of
+the machines in the group.  When the administrator zooms into the LAPP server
+section of the treemap he sees that all five of the machines seem to be equally
+at risk.  In this situation the LAPP servers all have the same
+weak root password security hole.
+
+When the administrator zooms back out to the
+group view and switches the visualization to severity mode the workstations'
+section grows, bringing it into greater prominence.  When the administrator
+zooms into the workstation group he can see that two IP addresses have much
+larger and darker sections than any of the other workstations.  If he zooms into
+one of these IP addresses he sees that the most severe of the vulnerabilities
+are associated with ports 445 and 80.  After further examination the
+administrator can see that the workstation is running a poorly configured Apache
+Web Server and a Windows share that can be accessed through the network.
+
+After further exploring his network the administrator patches the most critical
+vulnerabilities in his system.
 
 In this use case we did not patch all security notes that Nessus mentions
 because this would not be realistic for an actual system administrator.  Instead
@@ -80,12 +93,12 @@ The Fedora workstations were running Fedora 15.  We used the Metasploitable
 virtual machine image to simulate the two vulnerable workstations before they
 were upgraded to 11.10.
 
-| Name              | IP Addresses | Time period    |  Security Notes | Security Holes |
-|:-----------------:|:------------:|:---------------|:---------------:|:--------------:|
-| Workstations      | 192.168.56.x | Before Patches | 680             | 18             |
-|                   |              | After Patches  | 507             | 0              |
-| LAPP Servers      | 192.168.57.x | Before Patches | 205             | 5              |
-|                   |              | After Patches  | 200             | 0              |
-| Wordpress Servers | 192.168.58.x | Before Patches | 195             | 5              |
-|                   |              | After Patches  | 195             | 0              |
+| Name              | Criticality | IP Addresses | Time period    |  Security Notes | Security Holes |
+|:-----------------:|:-----------:|:------------:|:---------------|:---------------:|:--------------:|
+| Workstations      | 2           | 192.168.56.x | Before Patches | 680             | 18             |
+|                   |             |              | After Patches  | 507             | 0              |
+| LAPP Servers      | 9           | 192.168.57.x | Before Patches | 205             | 5              |
+|                   |             |              | After Patches  | 200             | 0              |
+| Wordpress Servers | 5           | 192.168.58.x | Before Patches | 195             | 5              |
+|                   |             |              | After Patches  | 195             | 0              |
 

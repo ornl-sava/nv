@@ -125,10 +125,10 @@ function init() {
   initTreemap();
 
   // initialize histograms
-  initHistogram("#cvssHistogramContainer", 10, "cvssHistogram");
-  initHistogram("#vulnTypeHistogramContainer", 3, "vulnTypeHistogram", vulntypeLabelMap);
-  initHistogram("#top20NoteHistogramContainer", 20, "top20NoteHistogram");
-  initHistogram("#top20HoleHistogramContainer", 20, "top20HoleHistogram");
+  initHistogram("#cvssHistogram", "Severity", null, 18);
+  initHistogram("#vulnTypeHistogram", 3, "Type", vulntypeLabelMap, 28);
+  initHistogram("#topHoleHistogram", 20, "Top Holes", null, 14);
+  initHistogram("#topNoteHistogram", 20, "Top Notes", null, 14);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -185,11 +185,11 @@ function nonissue() {
 // called after data load
 function redraw() {
   drawTreemap();
-  drawHistogram("#cvssHistogram", 10, "cvss");
+  drawHistogram("#cvssHistogram", 10, "cvss", null, 18);
   // TODO Lane check a possible bug with the labels here
-  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#top20NoteHistogram", 20, "vulnid", null, null, "note");
-  drawHistogram("#top20HoleHistogram", 20, "vulnid", null, null, "hole");
+  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap, 28);
+  drawHistogram("#topNoteHistogram", 20, "vulnid", null, null, "note", 14);
+  drawHistogram("#topHoleHistogram", 20, "vulnid", null, null, "hole", 14);
 }
 
 // called when window is resized
@@ -490,65 +490,64 @@ function drawTreemap() {
 }
 
 // function that initalizes one histogram
-//sel       -> d3 selection
+//container -> id of div container
 //n         -> number of bins
-//name      -> name of histogram (id)
+//label     -> label of histogram
 //labelmap  -> mapping numbers to labels
 //binWidth  -> width of each bar
-function initHistogram(sel, n, name, labelmap, binWidth) {
+function initHistogram(container, n, label, labelmap, binWidth) {
   
-  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+  var binWidth = binWidth ? binWidth : 16;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
 
   var histoW = binWidth*n,
-      histoH = 200;
+      histoH = 120,
+      labelsH = 40,
+      labels = d3.range(n),
+      noData = [];
 
-  var nothing = [];
-
-  for ( var i = 0; i < n; i++) nothing[i] = 0;
+  for ( var i = 0; i < n; i++) 
+    noData[i] = 0;
   
-  var hist = d3.select(sel)
-               .append("div")
-               .attr("id", name)
-               .attr("class", "histogram")
-               .append("svg")
-               .attr("width", histoW)
-               .attr("height", histoH);
+  var hist = d3.select(container)
+              .append("svg")
+                .attr("width", histoW)
+                .attr("height", histoH + labelsH);
 
   hist.selectAll("rect")
-      .data(nothing)
-      .enter().append("rect")
-      .attr("x", function(d, i) { return (histoW / n)*i - 0.5; })
+      .data(noData)
+    .enter().append("rect")
+      .attr("x", function(d, i) { return ( ((histoW / n) * i) - 0.5 ); })
+      .attr("y", histoH - 4)
       .attr("width", histoW / n)
-      .attr("y", histoH - n)
-      .attr("height", 0.05*histoH)
-      .style("fill", "purple")
-      .style("stroke", "white");
+      .attr("height", 4); // default height with no data
 
-  // labels
-  var labels = d3.range(n);
   
-  //x-axis
-  hist.selectAll("text#histogramlabel")
+  //x-axis labels for bars
+  hist.selectAll(".histogramlabel")
       .data(labels)
-      .enter().append("text")
+    .enter().append("text")
       .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
-      .attr("y", histoH - 11)
-      .text( function(d) { 
-        return labelmap ? labelmap[d] : d;
-      });
+      .attr("x", function(d, i) { return ( ((histoW / n) * i) + (binWidth/2) ); })
+      .attr("y", histoH)
+      .attr("dy", "0.8em")
+      .attr("text-anchor", "middle")
+      .text( function(d) { return labelmap ? labelmap[d] : d; });
 
   //title
   hist.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
-      .attr("y", histoH )
-      .text(name);
+      .attr("y", histoH + 22)
+      .attr("text-anchor", "middle")
+      .text(label);
 
+  //max value label
   hist.append("text")
-      .attr("x", histoW / 2 - 50 )
-      .attr("y", histoH )
-      .attr("class", "maxarea");
+      .attr("class", "maxarea")
+      .attr("x", histoW / 2 )
+      .attr("y", histoH + 34)
+      .attr("text-anchor", "middle");
+
 }
 
 // function that draws one histogram
@@ -558,10 +557,10 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
 //binWidth  -> width of each bar
 function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
-  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+  var binWidth = binWidth ? binWidth : 16;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
 
   var histoW = binWidth*n,
-      histoH = 200;
+      histoH = 120;
 
   // if typeFilter defined, filter
   if(typeFilter){
@@ -585,7 +584,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   var max = d3.max(hist, function(d, i) { return d.length; });
   var hScale = d3.scale.linear()
                   .domain([0,  max])
-                  .range([0, histoH - 50]);
+                  .range([0, histoH]);
 
   //TODO - Evan - add histogram interation w/treemap
   d3.select(name)
@@ -715,7 +714,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     })
     .transition()
       .duration(1000)
-      .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
+      .attr("y", function(d) { return histoH - hScale(d.length); })
       .attr("height", function(d) { return hScale(d.length); });
 
   // if the data in the hist is a vulnid, change labels to corresponding vulnids
