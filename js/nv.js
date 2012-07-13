@@ -62,10 +62,6 @@ var nodeColorOpen = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FC8D62")]); // white-orange
 
-var notSelected = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FFFFFF"), d3.hsl("#DCDCDC")]); // white-gray
-
 //associative array to store exactly what bars you click on and off
 var activeFilters = {};
 
@@ -100,6 +96,30 @@ var nbedata,
     byCVSS,
     byVulnID,
     byVulnType;
+
+  // TODO Lane - put this function somewhere else
+  function testIfChildHasValue(dee, kee, val){
+    var fv = findValue(dee, kee, val);
+    return fv > 0;
+  
+    function findValue(d, key, value){
+     if(d.values){
+        return d.values.reduce(function(p, v) { return p + findValue(v, key, value); }, 0);
+     } else {
+       if(typeof d[key] !== undefined){
+          if (d[key] === value){
+            console.log(d);
+            console.log(value);
+            return 1;
+          } else {
+            return 0;
+          }
+       } else {
+         return 0;
+       }
+     }
+    }
+  }
 
 // crossfilter setup
 function crossfilterInit(){
@@ -360,17 +380,6 @@ function drawTreemap() {
     return max_index;
   }
 
-  // TODO Evan John use testIfChildHasValue
-  function testIfChildHasValue(d, key, value){
-    return findValue(d, key, value) > 0;
-  
-    function findValue(d, key, value){
-    return d.values
-      ? d.values.reduce(function(p, v) { return p + testIfChildHasValue(v); }, 0)
-      : d[key] && d[key] === value ? 1 : 0;
-    }
-  }
-
 
   // Compute the treemap layout recursively such that each group of siblings
   // uses the same size (1×1) rather than the dimensions of the parent cell.
@@ -458,28 +467,27 @@ function drawTreemap() {
       .data(function(d) { return d.values || [d]; })
       .enter().append("rect")
       .attr("class", "child")
-      .attr("clicked", "n")
       .style("fill", function(d) { 
-        // if status, use appropriate color scale
-        if(d.state){
-          // reset d.state here according to max counts
-          // TODO Lane this is a hack, but will work for the paper
-          var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
-          //console.log('maxindex: ' +maxStateIndex);
-          d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
+          // if status, use appropriate color scale
+          if(d.state){
+            // reset d.state here according to max counts
+            // TODO Lane this is a hack, but will work for the paper
+            var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
+            //console.log('maxindex: ' +maxStateIndex);
+            d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
 
-          // choose which scale to use
-          if(d.state === 'new')
-            return nodeColorNew(d.cvss);
+            // choose which scale to use
+            if(d.state === 'new')
+              return nodeColorNew(d.cvss);
 
-          if(d.state === 'open')
-            return nodeColorOpen(d.cvss);
+            if(d.state === 'open')
+              return nodeColorOpen(d.cvss);
 
-          if(d.state === 'fixed')
-            return nodeColorFixed(d.cvss);
-        }
+            if(d.state === 'fixed')
+              return nodeColorFixed(d.cvss);
+          }
 
-        return nodeColor(d.cvss);
+          return nodeColor(d.cvss);
       })
     .call(rect);
 
@@ -581,6 +589,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
 
   hist.append("rect")
       .attr("id", function(d) { return dataField + "-" + d; })
+      .attr("data-clicked", "false")
       .attr("x", function(d, i) { return ( ((histoW / n) * i) - 0.5 ); })
       .attr("y", histoH - 4)
       .attr("width", histoW / n)
@@ -655,85 +664,56 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     .data(hist)
     .on("click", function(d, iter) {
 
-      console.log(d3.select(this).attr("id") );
-
+        //for filtering treemap children
+        var array = d3.select(this).attr("id").split("-");
+        var dataField = array[0];
+        var label = array[1];
+        
+        console.log(dataField);
+        console.log(label);
 
         var clickedBar = d3.select(this);
 
         //has this bar on this histogram been clicked before?
-        if ( clickedBar.attr("data-clicked") === true ) { //yes
+        if ( clickedBar.attr("data-clicked") === "true" ) { //yes
 
             //un-color bar in histogram
             clickedBar
-              .attr("data-clicked", false)
+              .attr("data-clicked", "false")
               .style("fill", function() {
                   return d3.hsl( d3.select(this).style("fill") ).brighter(2).toString();
               });
 
+            //color treemap
+            d3.selectAll('.child')
+              .filter(function(d) { 
+                  var rValue = testIfChildHasValue(d, dataField, label);
+                  
+                  if ( rValue === true ) return null;
+                  else return this;
+              })
+              .style("fill", function(d) { return nodeColor(d.cvss); });
         }
         else {  //no
 
             //color bar in histogram
             clickedBar
-              .attr("data-clicked", true)
+              .attr("data-clicked", "true")
               .style("fill", function() {
                   return d3.hsl( d3.select(this).style("fill") ).darker(2).toString();
               });
 
+            //color treemap
+            d3.selectAll('.child')
+              .filter(function(d) { 
+                  var rValue = testIfChildHasValue(d, dataField, label);
+                  
+                  if ( rValue === true ) return null;
+                  else return this;
+              })
+              .style("fill", "#aaa");
         }
 
-            /*label the clicked rectangles as "y"
-            for ( var i = 0; i < d.length; i++) {
-            
-                d3.select("#vis")
-                  .select(".depth")
-                  .select("#IP" + (d[i].ip).replace(/\./g, ""))
-                  .selectAll(".child")
-                  .attr("clicked", "y");
-
-            }
-
-            //gray out all rectangles who have clicked set as "n"
-            d3.select("#vis")
-              .select(".depth")
-              .selectAll(".child")
-              .filter(function() {
-                  if ( d3.select(this).attr("clicked") === "n") { return this; }
-                  else return null;
-              })
-              .style("fill", function(d) {
-                  return notSelected(d.values[0].cvss);
-              });
-
-            //reset "clicked" attribute
-            d3.select("#vis")
-              .select(".depth")
-              .selectAll(".child")
-              .attr("clicked", "n");*/
-    
-        //TODO - Evan
-        d3.selectAll('.child')
-          .filter(function(d) { 
-              d.par !== "fun" ? this : null; 
-              console.log(d);
-          })
-          .style('fill', function(d) { notSelected(d.cvss) });
-
-        /*recolor treemap
-        d3.select("#vis")
-          .select(".depth")
-          .selectAll(".child")
-          .data( function() {
-              
-              for ( var key in activeFilters) {
-                  //console.log(key);
-                 //console.log(activeFilters[key]);
-
-              }
-
-              return hist;
-          })
-          .style("fill", "blue");*/
 
     })
     .transition()
