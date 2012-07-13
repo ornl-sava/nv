@@ -168,8 +168,8 @@ function init() {
   // initialize histograms
   initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
   initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
-  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 28);
-  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 28);
+  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
+  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -627,7 +627,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
   hist.append("text")
       .attr("class", "histogramlabel")
       .attr("x", function(d, i) { return ( ((histoW / n) * i) + (binWidth/2) ); })
-      .attr("y", histoH)
+      .attr("y", histoH + 2)
       .attr("dy", "0.8em")
       .attr("text-anchor", "middle")
       .text( function(d) { return d !== -1 ? d : ''; });
@@ -636,7 +636,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
   histContainer.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
-      .attr("y", histoH + 22)
+      .attr("y", histoH + 26)
       .attr("text-anchor", "middle")
       .text(label);
 
@@ -644,7 +644,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
   histContainer.append("text")
       .attr("class", "maxarea")
       .attr("x", histoW / 2 )
-      .attr("y", histoH + 34)
+      .attr("y", histoH + 40)
       .attr("text-anchor", "middle");
 
 }
