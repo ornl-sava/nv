@@ -57,49 +57,50 @@ node grows, bringing it into greater prominence.  When the administrator
 zooms into the workstation group he can see that two IP addresses have much
 larger and darker node than any of the other workstations.  If he zooms into
 one of these IP addresses he sees that the most severe of the vulnerabilities
-are associated with ports 445 and 80.  After further examination the
-administrator can see that the workstation is running a poorly configured Apache
+are associated with ports 445 and 80.  The administrator can examine each port
+nodes' child and see information about the specific vulnerabilities in the right
+panel and see that the machine is running a poorly configured Apache
 Web Server and a Windows share that can be accessed through the network.
 
 After further exploring his network the administrator patches the most critical
 vulnerabilities in his system.  The Nessus Vulnerability Visualization system
 provides functionality to compare two nbe files to show changes between two
 vulnerability states such as before and after applying patches.  After patching
-his system the administrator can explore and compare his patched system and
-easily compare the differences.  The Nessus Visualization System shows corrected
+his system the administrator can rescan his network then explore and see the
+differences between the previous state and his newly patched system.
+The Nessus Visualization System shows corrected
 vulnerabilities in green, the remaining vulnerabilities in orange and any new
 vulnerabilities in pink.  The system administrator can easily see that the
 major workstations vulnerabilities have been patched.  Zooming into the
-workstation node the system administrator sees that while he patching the most
-severe vulnerabilities he inadvertently opens a new vulnerability on the two
-machines and does not solve the problems that lead to some of the notes left
-open.
+workstation node the system administrator sees that while he patched the most
+severe vulnerabilities he inadvertently opens new vulnerabilities on the two
+machines and did not address some of the vulnerabilities seen earlier.
 
 **Screenshot of diff treemap.**
 ![Alt Text](screenshots/SimulatedDiffGroupLevel.png)
 
-In this use case we did not patch all security notes that Nessus mentions
-because this would not be realistic for an actual system administrator.  Instead
-the system administrator would handle the most important vulnerabilities and
-system updates.  In this simulated use case we improved the weak root passwords
-and removed the poorly configured FTP on the servers.  We focused on updating
-and correcting the two most vulnerable workstations by making them up to date
-with the other ten Ubuntu machines.
-
-We simulated this use case using virtual machines (VM) networked through a host only
+We simulated this use case using virtual machines (VM) communicating through a host only
 network. Using a host only network allowed us to use Nessus from the host
 to scan the VMs.  We used one grouping of two different types of work station
 and two groupings of similar servers. Both of the groups of servers were using Ubuntu 10.10 LTS.
 Ten of the Ubuntu workstations were using Ubuntu 11.10 while the two workstations
-with the massive number of vulnerabilities were using Ubuntu 8.04 (CHECK) with
+with the massive number of vulnerabilities were using Ubuntu 8.04 with
 purposely unpatched and misconfigured software.
 The Fedora workstations were running Fedora 15.  We used the Metasploitable
 virtual machine image to simulate the two vulnerable workstations before they
 were upgraded to 11.10.
 
+In this use case we did not patch all security notes that Nessus mentions
+because this would not be realistic for an actual system administrator.  Instead
+the system administrator would handle the most important vulnerabilities and
+system updates.  In this simulated use case we improved the weak root passwords
+and corrected the poorly configured FTP server seen on the servers.  We focused on updating
+and correcting the two most vulnerable workstations by updating them to be the
+same as the other ten Ubuntu workstations.
+
 ### Static Vulnerability State Network
 
-To test visualizing the static vulnerability state we use Nessus scan data from
+To test visualizing a large static vulnerability state we use Nessus scan data from
 the VAST Challenge 2011. This data is from a simulated network for the
 fictitious All Freight Corporation.  The VAST challenge gives us a large network
 dataset to test how the Nessus Vulnerability Visualization scales to a large

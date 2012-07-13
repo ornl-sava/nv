@@ -451,8 +451,15 @@ function drawTreemap() {
         if(atTheBottom(d)){
             console.log(d);
           console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
+          console.log( d );
+          var nodeInfo = {id: d.values[0].vulnid, 
+            type: d.values[0].vulntype, 
+            port: d.values[0].port, 
+            ip:   d.values[0].ip, 
+            group: d.values[0].group};
+          console.log( nodeInfo );
           // TODO Mike Lane trigger nessus update here
-          setNessusIDData( vulnIdInfo[d.values[0].vulnid] );
+          setNessusIDData( vulnIdInfo[d.values[0].vulnid], nodeInfo );
           // setNessusIDData(findNessusIDData(d.values[0].vulnid));
             d3.select(this).select("text")
               .style("font-weight", "bold")
@@ -813,12 +820,23 @@ function setNBEData(dataset){
 
 // updates the nessus data by id //TODO mike
 // TODO Lane throw this on stackoverflow to see if the $.each can be avoided
-function setNessusIDData(idData){
+function setNessusIDData(idData, nodeInfo){
   var div = $('#nessusinfo');
-  div.html('<p>');
-  div.append("Title: " + idData.title + '<br><br>');
+  div.html('<hr><p>');
+  if(nodeInfo){
+    if(nodeInfo.type == 'hole')
+      div.append("Security Hole"+ '<br><br>');
+    else
+      div.append("Security Note"+ '<br><br>');
+    div.append("Group: " + nodeInfo.group + '<br>');
+    div.append("Address: " + nodeInfo.ip + '<br>');
+    div.append("Port: " + nodeInfo.group + '<br><br>');
+    div.append("Nessus ID: " + nodeInfo.id + '<br>');
+  }
+  div.append("Title: " + idData.title + '<br>');
   if(idData.family && idData.family !== "")
-    div.append("Family: " + idData.family + '<br><br>');
+    div.append("Family: " + idData.family + '<br>');
+  div.append('<br>');
   if(idData.synopsis && idData.synopsis !== "")
     div.append("Synopsis: " + idData.synopsis + '<br><br>');
   if(idData.description && idData.description !== "")
@@ -826,7 +844,7 @@ function setNessusIDData(idData){
   if(idData.updateInfo && idData.updateInfo !== "")
     div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
   if(idData.solution && idData.solution !== "")
-    div.append("solution: " + idData.solution);
+    div.append("Solution: " + idData.solution);
   /* //TODO deal with these later.
   div.append("bugtraqList: "   + idData.bugtraqList);
   div.append("cveList: "       + idData.cveList);
