@@ -110,6 +110,10 @@ var nbedata,
      else {
        if(typeof d[key] !== undefined){
          if ( !isNaN(d[key]) ){ //if value is a number
+          console.log("d[key]: " + d[key]);
+          console.log("value: " + value);
+
+          //find the value of each bar in the histograms
           if ( Math.floor(d[key]) === Math.floor(value) ){
             return 1;
           } 
@@ -611,7 +615,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
                           .append("g");
 
   hist.append("rect")
-      .attr("id", function(d) { return dataField + "-" + d; })
+      .attr("id", function(d) { return dataField + "-" + d; })  //to be possibly edited at the end of drawHistogram()
       .attr("data-clicked", "false")
       .attr("x", function(d, i) { return ( ((histoW / n) * i) - 0.5 ); })
       .attr("y", histoH - 4)
@@ -746,6 +750,15 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
       .text(function(d) { return d[0] ? d[0].vulnid : ''; });
+
+    //change ids as well
+    d3.select(name).selectAll("rect")
+      .data(hist)
+      .attr("id", function(d) { 
+          var temp = d3.select(this).attr("id").split("-");
+
+          return d[0] ? temp[0] + "-" + d[0].vulnid : ''; 
+      });
   }
 
   d3.select(name).select(".maxarea")
