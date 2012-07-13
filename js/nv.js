@@ -39,11 +39,12 @@
 // greenblue, orange, blue, pink, green
 
 // colors
-// http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
+// old -> http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
+// new -> http://colorbrewer2.org/index.php?type=sequential&scheme=PuBu&n=5
 var nodeColor = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
-    //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+    .domain([0.0, 2.0, 10.0])
+    .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
+//    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
 
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Greens&n=3
 // #E5F5E0; #A1D99B; #31A354; 
