@@ -16,6 +16,7 @@ class Entry:
     self.cvss = uniform(1, 11)
     self.group = 'financial' if '192.168.2' in self.ip else 'dns' if '192.168.3' in self.ip else 'workstation' 
     self.criticality = randrange(3, 6) if '192.168.2' in self.ip else randrange(2, 4) if '192.168.3' in self.ip else randrange(0, 2) 
+    self.state = 'new' if randrange(1, 11) < 4 else 'fixed' if randrange(1, 11) < 3 else 'open'
     self.value = 1
 
 lines = 1000;
