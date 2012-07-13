@@ -4,6 +4,8 @@
 Network vulnerability is a critical component of network security. Yet vulnerability analysis has received relatively little attention from the security visualization community.  
 
 ### Introduction
+
+
 Rather than monitoring a network to determine if an attack is occuring, analysts
 Analysts who are aware of the
 
@@ -17,7 +19,6 @@ Specifically, our contributions to the field of security visualization are as fo
 - A framework for building web-based visualizations that do not send sensitive data to servers
 
 In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
-
 ### Related Works in Vulnerability Analysis
 
 Currently most computer vulnerability analysis is done using graph based
@@ -128,7 +129,7 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 (SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
 
 **Screen shot of group level (criticality) should go around here.**
-![Alt Text](screenshots/SimulatedCriticalityGroupLevel.png)
+![Alt Text](screenshots/final/SimGroupSingle.png)
 
 While in the criticality visualization mode the administrators attention is
 drawn to the very large LAPP server node.  The size is an indication of the
@@ -146,7 +147,7 @@ the Wordpress servers suffer from the same weak password vulnerability as the
 LAPP servers.
 
 **Screenshot of zoomed in tree map can go here.**
-![Alt Text](screenshots/SimulatedLAPPServerLevel.png)
+![Alt Text](screenshots/final/LAPPServerSimPort.png)
 
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode the workstations'
@@ -174,7 +175,7 @@ severe vulnerabilities he inadvertently opens new vulnerabilities on the two
 machines and did not address some of the vulnerabilities seen earlier.
 
 **Screenshot of diff treemap.**
-![Alt Text](screenshots/SimulatedDiffGroupLevel.png)
+![Alt Text](screenshots/final/SimDiffGroup.png)
 
 We simulated this use case using virtual machines (VM) communicating through a host only
 network. Using a host only network allowed us to use Nessus from the host
@@ -212,7 +213,7 @@ Corporation has other machines and servers but they were not included in the
 Nessus scan data.
 
 ** Screenshot of over all **
-![Alt Text](screenshots/VastGroupLevel.png)
+![Alt Text](screenshots/final/VastGroup.png)
 
 We split the workstations into six groups with criticalities ranging from two to
 nine.  The major security holes in the group are concentrated in group four with a
@@ -233,7 +234,7 @@ networks because groups of IP addresses are aggregated in the tree and then the
 IP addresses themselves can also be aggregated into treemap nodes.  
 
 ** Screen Shot of a zoomed in node **
-![Alt Text](screenshots/VastWorkstationPortLevel.png)
+![Alt Text](screenshots/final/VASTWorkstationPort.png)
 
 ### Conclusion
 
