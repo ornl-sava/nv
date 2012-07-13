@@ -113,8 +113,8 @@ var nbedata,
      else {
        if(typeof d[key] !== undefined){
          if ( !isNaN(d[key]) ){ //if value is a number
-          console.log("d[key]: " + d[key]);
-          console.log("value: " + value);
+          //console.log("d[key]: " + d[key]);
+          //console.log("value: " + value);
 
           //find the value of each bar in the histograms
           if ( Math.floor(d[key]) === Math.floor(value) ){
