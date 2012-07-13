@@ -305,6 +305,7 @@ function drawTreemap() {
 //      console.log('open: '+d.openCount);
 //      console.log('new: '+d.newCount);
     }
+//      console.log(testIfChildHasValue(d, 'vulntype', 'note'));
 
     return d.values
       ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
@@ -354,6 +355,18 @@ function drawTreemap() {
     }
     return max_index;
   }
+
+  // TODO Evan John use testIfChildHasValue
+  function testIfChildHasValue(d, key, value){
+    return findValue(d, key, value) > 0;
+  
+    function findValue(d, key, value){
+    return d.values
+      ? d.values.reduce(function(p, v) { return p + testIfChildHasValue(v); }, 0)
+      : d[key] && d[key] === value ? 1 : 0;
+    }
+  }
+
 
   // Compute the treemap layout recursively such that each group of siblings
   // uses the same size (1×1) rather than the dimensions of the parent cell.
