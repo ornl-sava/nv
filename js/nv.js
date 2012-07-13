@@ -27,12 +27,40 @@
 //      alert(json.photos[1].photoUrl);
 //});
 
+
+// Alternate, colorblind safe colors
+// http://colorbrewer2.org/index.php?type=qualitative&scheme=Paired&n=4
+// #1F78B4; #B2DF8A; #33A02C; 
+// darkblue, lightgreen, darkgreen
+// fixed, new, open
+// and another
+// http://colorbrewer2.org/index.php?type=qualitative&scheme=Set2&n=5
+// #66C2A5; #FC8D62; #8DA0CB; #E78AC3; #A6D854; 
+// greenblue, orange, blue, pink, green
+
 // colors
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
 var nodeColor = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
     //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+
+// http://colorbrewer2.org/index.php?type=sequential&scheme=Greens&n=3
+// #E5F5E0; #A1D99B; #31A354; 
+var nodeColorFixed = d3.scale.linear()
+    .domain([0.0, 10.0])
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#66C2A5")]); // white-green
+
+// http://colorbrewer2.org/index.php?type=sequential&scheme=Reds&n=3
+// #FEE0D2; #FC9272; #DE2D26; 
+var nodeColorNew = d3.scale.linear()
+    .domain([0.0, 10.0])
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#E78AC3")]); // white-red
+
+// actually is same
+var nodeColorOpen = d3.scale.linear()
+    .domain([0.0, 10.0])
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#FC8D62")]); // white-orange
 
 var notSelected = d3.scale.linear()
     .domain([0.0, 10.0])
@@ -52,6 +80,8 @@ var margin = {top: 20, right: 0, bottom: 0, left: 0},
     height = 500 - margin.top - margin.bottom,
     formatNumber = d3.format(",d"),
     transitioning;
+
+var isChangeVis = true;
 
 // users can change this via buttons, which then redraws the treemap according to the new size metric
 // cvss, value, criticality
@@ -102,7 +132,7 @@ function init() {
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
-  //loadJSONData('../../data/testdata/testdata12.json');
+  loadJSONData('../../data/testdata/testdata13.json');
 
   // test changes of data using timeouts
   //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
@@ -128,21 +158,44 @@ function sizeByCount() {
    redraw(); 
 }
 
+// these buttons should toggle fixed/non-issue status
+// TODO must also change data in crossfilter before redraw (since data is set there)
+function fixed() {
+  // get selected node and change it
+  var d = d3.select('#changeable').datum();
+  d.state = 'fixed';
+  d3.select('#changeable').datum(d);
+  // toggle property
+  d3.select('#changeable').attr('id', '');
+  // redraw
+  //  redraw(); 
+}
+
+function nonissue() {
+  // get selected node and change it
+  var d = d3.select('#changeable').datum();
+  d.state = 'nonissue';
+  d3.select('#changeable').datum(d);
+  // toggle property
+  d3.select('#changeable').attr('id', '');
+  // redraw
+  //  redraw(); 
+}
 
 // called after data load
 function redraw() {
   drawTreemap();
   drawHistogram("#cvssHistogram", 10, "cvss");
+  // TODO Lane check a possible bug with the labels here
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
   drawHistogram("#top20NoteHistogram", 20, "vulnid", null, null, "note");
   drawHistogram("#top20HoleHistogram", 20, "vulnid", null, null, "hole");
-  //drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 }
 
 // called when window is resized
 function resize() {
   width = $('#vis').width();
-  console.log( 'width: ' + width);
+  //console.log( 'width: ' + width);
   x.domain([0, width]).range([0, width]);
   d3.select("#vis > svg").attr("width", width + margin.left + margin.right);
   d3.selectAll(".grandparent rect").attr("width", width);
@@ -194,7 +247,20 @@ function initTreemap(){
 }
 
 function drawTreemap() {
-  var root=d3.nest()
+
+  var root;
+  if(isChangeVis){
+    root=d3.nest()
+    .key(function(d) {return 'groups';})
+    .key(function(d) {return d.group;})
+    .key(function(d) {return d.ip;})
+    .key(function(d) {return d.state;})
+    .key(function(d) {return ":"+d.port;})
+    .key(function(d) {return "id:"+d.vulnid;})
+    .sortKeys(d3.ascending)
+    .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
+  } else {
+    root=d3.nest()
     .key(function(d) {return 'groups';})
     .key(function(d) {return d.group;})
     .key(function(d) {return d.ip;})
@@ -202,6 +268,7 @@ function drawTreemap() {
     .key(function(d) {return "id:"+d.vulnid;})
     .sortKeys(d3.ascending)
     .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
+  }
 
   // free the root from its original array
   root = root[0];
@@ -226,6 +293,8 @@ function drawTreemap() {
     nodes.push(d);
 
     d.cvss = accumulateCVSS(d);
+    if(isChangeVis)
+      d.state = accumulateState(d);
 
     return d.values
       ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
@@ -236,6 +305,12 @@ function drawTreemap() {
     return d.values
       ? d.cvss = d.values.reduce(function(p, v) { return Math.max(p, accumulateCVSS(v)); }, 0)
       : d.cvss;
+  }
+
+  function accumulateState(d){
+    return d.values
+      ? d.state = d.values.reduce(function(p, v) { return accumulateState(v); }, 0)
+      : d.state;
   }
 
   // Compute the treemap layout recursively such that each group of siblings
@@ -259,6 +334,16 @@ function drawTreemap() {
     }
   }
 
+
+  // tells you if the selected element is at the bottom of the hierarchy
+  // which is an id, in our case...
+  function atTheBottom(d){
+    if(d.values && d.values.length === 1 && d.values[0].vulnid)
+      return true;
+    else
+      return false;
+  }
+
   function display(d) {
     grandparent
       .datum(d.parent)
@@ -280,7 +365,16 @@ function drawTreemap() {
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
       .attr("histoNames", [])
       .attr("histoIndices", [])
-      .on("click", transition)
+      .on("click", function(d) {
+        if(atTheBottom(d)){
+          d3.select(this)
+            .style("stroke", "black")
+            .style("stroke-width", "2px")
+            .attr("id", "changeable");
+        } else {
+          transition(d);
+        }
+      })
       .on("mouseover", function(d) {
           
           d3.select(this).moveToFront();
@@ -305,6 +399,18 @@ function drawTreemap() {
       .attr("class", "child")
       .attr("clicked", "n")
       .style("fill", function(d) { 
+        // if status, use appropriate color scale
+        if(d.state){
+          if(d.state === 'new')
+            return nodeColorNew(d.cvss);
+
+          if(d.state === 'open')
+            return nodeColorOpen(d.cvss);
+
+          if(d.state === 'fixed')
+            return nodeColorFixed(d.cvss);
+        }
+
         return nodeColor(d.cvss);
       })
     .call(rect);
@@ -321,7 +427,16 @@ function drawTreemap() {
       .call(text);
 
     function transition(d) {
-      if (transitioning || !d) return;
+      if (transitioning || !d){ 
+        return; 
+      }
+
+      if(atTheBottom(d)){
+        console.log('at da bottom: '+ d.values[0].vulnid);
+        // TODO Mike Lane trigger nessus update here
+        // setNessusIDData(findNessusIDData(d.values[0].vulnid));
+      }
+
       transitioning = true;
 
       var g2 = display(d),
@@ -619,9 +734,9 @@ function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
   // test crossfilter here
-  console.log(nbedata.size());
+  //  console.log(nbedata.size());
   //  byCVSS.filter([2.0, 7.0]);
-  console.log(byAny.top(Infinity));
+  //console.log(byAny.top(Infinity));
   //  byCVSS.filterAll();
 
   redraw();
@@ -639,7 +754,6 @@ function setNessusIDData(iddata){
   $.each(enter[0], function(i, v) { 
     var key = v.__data__.key;
     var text = v.__data__.text;
-    console.log(key); 
     d3.select('#nessus_'+key).select('p').html(text);
   });
 }
