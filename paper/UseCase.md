@@ -19,7 +19,7 @@ functionality.  In this example virtual system machines are grouped into three
 different categories.  One group is a set of twenty-two workstations split
 between ten Fedora workstations and twelve Ubuntu workstations.  The second group is
 a set of five servers that serve the Wordpress blogging software.  The last
-grouping is a group of five Linux Apache PostgreSQL PHP (LAPP) servers.
+grouping is a set of five Linux Apache PostgreSQL PHP (LAPP) servers.
 Initially all of these groupings contain serious vulnerabilities.
 The LAPP servers are running a poorly configured file transfer protocol (FTP) server
 and both the LAPP and Wordpress servers both have very simple root passwords
@@ -30,22 +30,27 @@ vulnerabilities such as an FTP server that allows a remote user to execute
 arbitrary code, an incorrectly configured Windows file sharing software, weak secure shell
 (SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
 
+**Screen shot of group level (criticality) should go around here.**
+
+
 While in the criticality visualization mode the administrators attention is
-drawn to the very large LAPP server section.  The size is an indication of the
+drawn to the very large LAPP server node.  The size is an indication of the
 importance of the situation based on the number of security holes discovered,
 the severity of the security holes discovered and the assigned criticality of
 the machines in the group.  When the administrator zooms into the LAPP server
-section of the treemap he sees that all five of the machines seem to be equally
+node of the treemap he sees that all five of the machines seem to be equally
 at risk.  In this situation the LAPP servers all have the same
 weak root password security hole.  The system administrator will also find that
 the Wordpress servers suffer from the same weak password vulnerability as the
 LAPP servers.
 
+**Screenshot of zoomed in tree map can go here.**
+
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode the workstations'
-section grows, bringing it into greater prominence.  When the administrator
+node grows, bringing it into greater prominence.  When the administrator
 zooms into the workstation group he can see that two IP addresses have much
-larger and darker sections than any of the other workstations.  If he zooms into
+larger and darker node than any of the other workstations.  If he zooms into
 one of these IP addresses he sees that the most severe of the vulnerabilities
 are associated with ports 445 and 80.  After further examination the
 administrator can see that the workstation is running a poorly configured Apache
@@ -64,6 +69,8 @@ workstation node the system administrator sees that while he patching the most
 severe vulnerabilities he inadvertently opens a new vulnerability on the two
 machines and does not solve the problems that lead to some of the notes left
 open.
+
+**Screenshot of diff treemap.**
 
 In this use case we did not patch all security notes that Nessus mentions
 because this would not be realistic for an actual system administrator.  Instead
@@ -109,6 +116,8 @@ vulnerability in an outdated version of Microsoft Excel.  The All Freight
 Corporation has other machines and servers but they were not included in the
 Nessus scan data.
 
+** Screenshot of over all **
+
 We split the workstations into six groups with criticalities ranging from two to
 nine.  The major security holes in the group are concentrated in group four with a
 criticality of nine and in group five with a criticality of two.  When the
@@ -126,6 +135,8 @@ exploration allows the system administrator to easily discover vulnerabilities
 in his system and prioritize repair.  It also makes it easier to view large
 networks because groups of IP addresses are aggregated in the tree and then the
 IP addresses themselves can also be aggregated into treemap nodes.  
+
+** Screen Shot of a zoomed in node **
 
 **LOOK AT THIS**
 
