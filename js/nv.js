@@ -125,10 +125,10 @@ function init() {
   initTreemap();
 
   // initialize histograms
-  initHistogram("#cvssHistogramContainer", 10, "cvssHistogram");
-  initHistogram("#vulnTypeHistogramContainer", 3, "vulnTypeHistogram", vulntypeLabelMap);
-  initHistogram("#top20NoteHistogramContainer", 20, "top20NoteHistogram");
-  initHistogram("#top20HoleHistogramContainer", 20, "top20HoleHistogram");
+  initHistogram("#cvssHistogram", 10, "Severity", null, 18);
+  initHistogram("#vulnTypeHistogram", 3, "Type", vulntypeLabelMap, 28);
+  initHistogram("#topHoleHistogram", 20, "Top Holes", null, 14);
+  initHistogram("#topNoteHistogram", 20, "Top Notes", null, 14);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -185,11 +185,11 @@ function nonissue() {
 // called after data load
 function redraw() {
   drawTreemap();
-  drawHistogram("#cvssHistogram", 10, "cvss");
+  drawHistogram("#cvssHistogram", 10, "cvss", null, 18);
   // TODO Lane check a possible bug with the labels here
-  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#top20NoteHistogram", 20, "vulnid", null, null, "note");
-  drawHistogram("#top20HoleHistogram", 20, "vulnid", null, null, "hole");
+  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap, 28);
+  drawHistogram("#topNoteHistogram", 20, "vulnid", null, null, "note", 14);
+  drawHistogram("#topHoleHistogram", 20, "vulnid", null, null, "hole", 14);
 }
 
 // called when window is resized
@@ -490,65 +490,64 @@ function drawTreemap() {
 }
 
 // function that initalizes one histogram
-//sel       -> d3 selection
+//container -> id of div container
 //n         -> number of bins
-//name      -> name of histogram (id)
+//label     -> label of histogram
 //labelmap  -> mapping numbers to labels
 //binWidth  -> width of each bar
-function initHistogram(sel, n, name, labelmap, binWidth) {
+function initHistogram(container, n, label, labelmap, binWidth) {
   
-  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+  var binWidth = binWidth ? binWidth : 16;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
 
   var histoW = binWidth*n,
-      histoH = 200;
+      histoH = 120,
+      labelsH = 40,
+      labels = d3.range(n),
+      noData = [];
 
-  var nothing = [];
-
-  for ( var i = 0; i < n; i++) nothing[i] = 0;
+  for ( var i = 0; i < n; i++) 
+    noData[i] = 0;
   
-  var hist = d3.select(sel)
-               .append("div")
-               .attr("id", name)
-               .attr("class", "histogram")
-               .append("svg")
-               .attr("width", histoW)
-               .attr("height", histoH);
+  var hist = d3.select(container)
+              .append("svg")
+                .attr("width", histoW)
+                .attr("height", histoH + labelsH);
 
   hist.selectAll("rect")
-      .data(nothing)
-      .enter().append("rect")
-      .attr("x", function(d, i) { return (histoW / n)*i - 0.5; })
+      .data(noData)
+    .enter().append("rect")
+      .attr("x", function(d, i) { return ( ((histoW / n) * i) - 0.5 ); })
+      .attr("y", histoH - 4)
       .attr("width", histoW / n)
-      .attr("y", histoH - n)
-      .attr("height", 0.05*histoH)
-      .style("fill", "purple")
-      .style("stroke", "white");
+      .attr("height", 4); // default height with no data
 
-  // labels
-  var labels = d3.range(n);
   
-  //x-axis
-  hist.selectAll("text#histogramlabel")
+  //x-axis labels for bars
+  hist.selectAll(".histogramlabel")
       .data(labels)
-      .enter().append("text")
+    .enter().append("text")
       .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return ( (histoW / n)*i ); })
-      .attr("y", histoH - 11)
-      .text( function(d) { 
-        return labelmap ? labelmap[d] : d;
-      });
+      .attr("x", function(d, i) { return ( ((histoW / n) * i) + (binWidth/2) ); })
+      .attr("y", histoH)
+      .attr("dy", "0.8em")
+      .attr("text-anchor", "middle")
+      .text( function(d) { return labelmap ? labelmap[d] : d; });
 
   //title
   hist.append("text")
       .attr("class", "histogramtitle")
       .attr("x", histoW / 2 )
-      .attr("y", histoH )
-      .text(name);
+      .attr("y", histoH + 22)
+      .attr("text-anchor", "middle")
+      .text(label);
 
+  //max value label
   hist.append("text")
-      .attr("x", histoW / 2 - 50 )
-      .attr("y", histoH )
-      .attr("class", "maxarea");
+      .attr("class", "maxarea")
+      .attr("x", histoW / 2 )
+      .attr("y", histoH + 34)
+      .attr("text-anchor", "middle");
+
 }
 
 // function that draws one histogram
@@ -558,10 +557,10 @@ function initHistogram(sel, n, name, labelmap, binWidth) {
 //binWidth  -> width of each bar
 function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
-  binWidth = binWidth ? binWidth : 20;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
+  var binWidth = binWidth ? binWidth : 16;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
 
   var histoW = binWidth*n,
-      histoH = 200;
+      histoH = 120;
 
   // if typeFilter defined, filter
   if(typeFilter){
@@ -585,7 +584,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   var max = d3.max(hist, function(d, i) { return d.length; });
   var hScale = d3.scale.linear()
                   .domain([0,  max])
-                  .range([0, histoH - 50]);
+                  .range([0, histoH]);
 
   //TODO - Evan - add histogram interation w/treemap
   d3.select(name)
@@ -599,22 +598,20 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             
         var duplicate = true;  //boolean to find out if you've seen the bar you've just clicked on or not
 
-        //temporary array to store exactly what bars you click on and off
+        //temporary associative array to store exactly what bars you click on and off
         var histoNames = {};
 
         var base = d3.select("#vis")
                       .select(".depth")
-                      .selectAll(".children");
+                      .select(".children"); //only need one children's "histoNames" (all children have this same attribute)
 
-        //are there anything in the "attribute arrays"? if so, shove them into the temporary arrays to be edited
+        //are there anything in the "attribute arrays"? if so, shove them into the temporary array to be edited
         if ( base.attr("histoNames").length > 0 ) {
             
             histoNames = base.attr("histoNames");
-            console.log(histoNames);
 
             histoNames = jQuery.parseJSON(histoNames);
         }
-        console.log(histoNames);
 
         //has this histogram been clicked before?
         if ( histoNames.hasOwnProperty(name) === false ) {  //no
@@ -628,14 +625,12 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             duplicate = false;
         }
         //has this bar been clicked before?
-        else if ( histoNames[name][iter] !== iter ) { //no
+        else if ( histoNames[name][iter] !== 1 ) { //no
             histoNames[name][iter] = 1;
             duplicate = false;
         }
 
-        console.log(histoNames);
-
-
+        //has this bar on this histogram been clicked before?
         if ( duplicate === true ) { //yes
 
             //un-color bar in histogram
@@ -650,7 +645,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             //convert object into string
             var newString = arrtos(histoNames);
 
-            //edit the "attribute arrays" for each ".children"
+            //edit the "histoNames" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
@@ -668,13 +663,16 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             //convert object into string
             var newString = arrtos(histoNames);
 
-            //edit the "attribute arrays" for each ".children"
+            //edit the "histoNames" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
               .attr("histoNames", newString);
 
         }
+
+        console.log(histoNames);
+        console.log(hist);
 
             /*label the clicked rectangles as "y"
             for ( var i = 0; i < d.length; i++) {
@@ -716,7 +714,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
     })
     .transition()
       .duration(1000)
-      .attr("y", function(d) { return histoH - hScale(d.length) - 20; })
+      .attr("y", function(d) { return histoH - hScale(d.length); })
       .attr("height", function(d) { return hScale(d.length); });
 
   // if the data in the hist is a vulnid, change labels to corresponding vulnids
@@ -734,6 +732,9 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 function arrtos(array) {
 
   var cat = "{";  //string to be returned (to be concatinated on to)
+  var i = 0;
+
+  var length = Object.keys(array).length;
 
   for ( var key in array ) {
       cat += "\"";
@@ -743,11 +744,11 @@ function arrtos(array) {
       cat += "[";
       cat += array[key].toString();
       cat += "]";
-      cat += ",";
-  }
 
-  //TODO - Lane - Here's where I stopped
-  if ( cat[cat.length-1] == "," ) cat[cat.length-1] = " ";
+      i++;
+
+      if ( i < length ) cat += ",";
+  }
 
   cat += "}";
 

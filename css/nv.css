@@ -124,3 +124,27 @@ rect.parent {
 .grandparent:hover rect {
   fill: #aaa;
 }
+
+#filters rect {
+  stroke: white;
+  fill: steelblue;
+  shape-rendering: crispEdges;
+}
+
+#filters .histogramlabel {
+  font-size: 10px;
+  fill: #777;
+  text-rendering: optimizeLegibility
+}
+
+#filters .histogramtitle {
+  font-size: 13px;
+  fill: #aaa;
+  text-rendering: optimizeLegibility
+}
+
+#filters .maxarea {
+  font-size: 10px;
+  fill: #777;
+  text-rendering: optimizeLegibility
+}
