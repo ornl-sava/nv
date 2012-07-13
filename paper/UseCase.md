@@ -8,32 +8,10 @@ those machines using data from Nessus scans.  The second use case is visualizing
 the changes to the vulnerability states of machines on a network after a system
 administrator performs maintenance.
 
-### Static Vulnerability State Network
-
-To test visualizing the static vulnerability state we use Nessus scan data from
-the VAST Challenge 2011. This data is from a simulated network for the
-fictitious All Freight Corporation.  The VAST challenge gives us a large network
-dataset to test how the Nessus Vulnerability Visualization scales to a large
-data set that contains many vulnerabilities.  This data set has more than one
-hundred fifty unique IP addresses associated with various workstations in the
-scan.  The Nessus scan shows that numerous
-machines on the network have some sort of security hole such as incorrectly
-configured telnet client, a font driver that allows privilege escalation and a
-vulnerability in an outdated version of Microsoft Excel.  The All Freight
-Corporation has other machines and servers but they were not included in the
-Nessus scan data.
-
-TODO
-| Name                    | IP Addresses      | Security Notes | Security Holes |
-|:-----------------------:|:-----------------:|:--------------:|:--------------:|
-| Low Value Workstations  | 192.168.2.0-172   | 556            | 919            |
-| Mid Value Workstations  | 192.168.2.173-200 | 556            | 919            |
-| High Value Workstations | 192.168.2.201-255 | 556            | 919            |
-
 
 ### Dynamic Vulnerability State Network
 
-The second use case for our system is to make it easier for administrators to
+The first use case for our system is to make it easier for administrators to
 visualize that state of machines on a network before and after maintenance. 
 The grouping functionality allows
 the administrator to group together related machines by subnet, purpose of
@@ -79,8 +57,6 @@ provides functionality to compare two nbe files to show changes between two
 vulnerability states such as before and after applying patches.  After patching
 his system the administrator can explore and compare his patched system.  
 
-
-
 In this use case we did not patch all security notes that Nessus mentions
 because this would not be realistic for an actual system administrator.  Instead
 the system administrator would handle the most important vulnerabilities and
@@ -108,4 +84,48 @@ were upgraded to 11.10.
 |                   |             |              | After Patches  | 200             | 0              |
 | Wordpress Servers | 5           | 192.168.58.x | Before Patches | 195             | 5              |
 |                   |             |              | After Patches  | 195             | 0              |
+
+### Static Vulnerability State Network
+
+To test visualizing the static vulnerability state we use Nessus scan data from
+the VAST Challenge 2011. This data is from a simulated network for the
+fictitious All Freight Corporation.  The VAST challenge gives us a large network
+dataset to test how the Nessus Vulnerability Visualization scales to a large
+data set that contains many vulnerabilities spread across different machines and
+groups.  This data set has more than one
+hundred fifty unique IP addresses associated with various workstations in the
+scan.  The Nessus scan shows that numerous
+machines on the network have some sort of security hole such as incorrectly
+configured telnet client, a font driver that allows privilege escalation and a
+vulnerability in an outdated version of Microsoft Excel.  The All Freight
+Corporation has other machines and servers but they were not included in the
+Nessus scan data.
+
+We split the workstations into six groups with criticalities ranging from two to
+nine.  The major security holes in the group are concentrated in group four with a
+criticality of nine and in group five with a criticality of two.  When the
+system administrator looks at the groups level on the tree map it is immediately
+obvious where his attention is needed most.  Groups four and five dominate the
+treemap in all three visualization modes.  When the system administrator zooms
+into group four he sees that most of the vulnerabilities are locate on two IP
+addresses.  When he selects IP address 192.168.2.172 he sees that nearly all of
+the vulnerabilities are associated with port 445 and a Windows file sharing
+program.  He can also explore the other dominate IP address 192.168.2.171 and
+see that this machines vulnerabilities come from port 139 and NetBIOS.  The
+Nessus Vulnerability Visualization system makes the most critical and most
+severe vulnerabilities most prominent in the visualization This
+exploration allows the system administrator to easily discover vulnerabilities
+in his system and prioritize repair.  It also makes it easier to view large
+networks because groups of IP addresses are aggregated in the tree and then the
+IP addresses themselves can also be aggregated into treemap nodes.  
+
+**LOOK AT THIS**
+
+TODO
+| Name                    | IP Addresses      | Security Notes | Security Holes |
+|:-----------------------:|:-----------------:|:--------------:|:--------------:|
+| Low Value Workstations  | 192.168.2.0-172   | 556            | 919            |
+| Mid Value Workstations  | 192.168.2.173-200 | 556            | 919            |
+| High Value Workstations | 192.168.2.201-255 | 556            | 919            |
+
 
