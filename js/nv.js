@@ -599,22 +599,20 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             
         var duplicate = true;  //boolean to find out if you've seen the bar you've just clicked on or not
 
-        //temporary array to store exactly what bars you click on and off
+        //temporary associative array to store exactly what bars you click on and off
         var histoNames = {};
 
         var base = d3.select("#vis")
                       .select(".depth")
-                      .selectAll(".children");
+                      .select(".children"); //only need one children's "histoNames" (all children have this same attribute)
 
-        //are there anything in the "attribute arrays"? if so, shove them into the temporary arrays to be edited
+        //are there anything in the "attribute arrays"? if so, shove them into the temporary array to be edited
         if ( base.attr("histoNames").length > 0 ) {
             
             histoNames = base.attr("histoNames");
-            console.log(histoNames);
 
             histoNames = jQuery.parseJSON(histoNames);
         }
-        console.log(histoNames);
 
         //has this histogram been clicked before?
         if ( histoNames.hasOwnProperty(name) === false ) {  //no
@@ -628,14 +626,12 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             duplicate = false;
         }
         //has this bar been clicked before?
-        else if ( histoNames[name][iter] !== iter ) { //no
+        else if ( histoNames[name][iter] !== 1 ) { //no
             histoNames[name][iter] = 1;
             duplicate = false;
         }
 
-        console.log(histoNames);
-
-
+        //has this bar on this histogram been clicked before?
         if ( duplicate === true ) { //yes
 
             //un-color bar in histogram
@@ -650,7 +646,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             //convert object into string
             var newString = arrtos(histoNames);
 
-            //edit the "attribute arrays" for each ".children"
+            //edit the "histoNames" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
@@ -668,13 +664,16 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
             //convert object into string
             var newString = arrtos(histoNames);
 
-            //edit the "attribute arrays" for each ".children"
+            //edit the "histoNames" for each ".children"
             d3.select("#vis")
               .select(".depth")
               .selectAll(".children")
               .attr("histoNames", newString);
 
         }
+
+        console.log(histoNames);
+        console.log(hist);
 
             /*label the clicked rectangles as "y"
             for ( var i = 0; i < d.length; i++) {
@@ -734,6 +733,9 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 function arrtos(array) {
 
   var cat = "{";  //string to be returned (to be concatinated on to)
+  var i = 0;
+
+  var length = Object.keys(array).length;
 
   for ( var key in array ) {
       cat += "\"";
@@ -743,11 +745,11 @@ function arrtos(array) {
       cat += "[";
       cat += array[key].toString();
       cat += "]";
-      cat += ",";
-  }
 
-  //TODO - Lane - Here's where I stopped
-  if ( cat[cat.length-1] == "," ) cat[cat.length-1] = " ";
+      i++;
+
+      if ( i < length ) cat += ",";
+  }
 
   cat += "}";
 
