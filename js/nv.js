@@ -708,7 +708,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
                   if ( rValue === true ) return null;
                   else return this;
               })
-              .style("fill", "#aaa");
+              .style("fill", "#ddd");
         }
 
 
