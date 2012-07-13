@@ -142,13 +142,3 @@ IP addresses themselves can also be aggregated into treemap nodes.
 ** Screen Shot of a zoomed in node **
 ![Alt Text](screenshots/VastWorkstationPortLevel.png)
 
-**LOOK AT THIS**
-
-TODO
-| Name                    | IP Addresses      | Security Notes | Security Holes |
-|:-----------------------:|:-----------------:|:--------------:|:--------------:|
-| Low Value Workstations  | 192.168.2.0-172   | 556            | 919            |
-| Mid Value Workstations  | 192.168.2.173-200 | 556            | 919            |
-| High Value Workstations | 192.168.2.201-255 | 556            | 919            |
-
-
