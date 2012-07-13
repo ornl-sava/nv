@@ -433,6 +433,7 @@ function drawTreemap() {
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
       .on("click", function(d) {
         if(atTheBottom(d)){
+            console.log(d);
           console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
           // TODO Mike Lane trigger nessus update here
           setNessusIDData( vulnIdInfo[d.values[0].vulnid] );
