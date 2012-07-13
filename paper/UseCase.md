@@ -59,7 +59,9 @@ the severity of the security holes discovered and the assigned criticality of
 the machines in the group.  When the administrator zooms into the LAPP server
 section of the treemap he sees that all five of the machines seem to be equally
 at risk.  In this situation the LAPP servers all have the same
-weak root password security hole.
+weak root password security hole.  The system administrator will also find that
+the Wordpress servers suffer from the same weak password vulnerability as the
+LAPP servers.
 
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode the workstations'
@@ -72,7 +74,12 @@ administrator can see that the workstation is running a poorly configured Apache
 Web Server and a Windows share that can be accessed through the network.
 
 After further exploring his network the administrator patches the most critical
-vulnerabilities in his system.
+vulnerabilities in his system.  The Nessus Vulnerability Visualization system
+provides functionality to compare two nbe files to show changes between two
+vulnerability states such as before and after applying patches.  After patching
+his system the administrator can explore and compare his patched system.  
+
+
 
 In this use case we did not patch all security notes that Nessus mentions
 because this would not be realistic for an actual system administrator.  Instead
