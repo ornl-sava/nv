@@ -125,7 +125,7 @@ function init() {
   initTreemap();
 
   // initialize histograms
-  initHistogram("#cvssHistogram", "Severity", null, 18);
+  initHistogram("#cvssHistogram", 10, "Severity", null, 18);
   initHistogram("#vulnTypeHistogram", 3, "Type", vulntypeLabelMap, 28);
   initHistogram("#topHoleHistogram", 20, "Top Holes", null, 14);
   initHistogram("#topNoteHistogram", 20, "Top Notes", null, 14);
