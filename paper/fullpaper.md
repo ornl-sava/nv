@@ -1,9 +1,14 @@
 
 
+**Screen shot of overview here**
+![Alt Text](screenshots/overview.png)
+
 ### Abstract
 Network vulnerability is a critical component of network security. Yet vulnerability analysis has received relatively little attention from the security visualization community.  
 
 ### Introduction
+
+
 Rather than monitoring a network to determine if an attack is occuring, analysts
 Analysts who are aware of the
 
@@ -17,7 +22,6 @@ Specifically, our contributions to the field of security visualization are as fo
 - A framework for building web-based visualizations that do not send sensitive data to servers
 
 In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
-
 ### Related Works in Vulnerability Analysis
 
 Currently most computer vulnerability analysis is done using graph based
@@ -81,11 +85,18 @@ Since Nessus data is not stored in a hierarchical form by default, it could be v
 
 We also use data-accumulation and coloring methods to ensure that data is not obscured by the hierarchy. For instance, when comparing two Nessus scans, nodes are colored by the maximum count of issue states (fixed, open, or new issues) in their child nodes. A potential disadvantage of this approach is that a node could contain sligthly more fixed issues than open issues, and yet will still be colored green. To alleviate this problem, we add the option to split the nodes by issue-state higher in the hierarchy. Both options are shown in figure (TODO make figure). 
 
+
+**Screen shot of state_issue here**
+![Alt Text](screenshots/state_issue.png)
+
 The advantage to separating issue-states higher is that the analyst can explore only the fixed issues or only the open issues. However, the disadvantage of this approach is that the IPs are then separated since they can appear in any branch of the hierarchy (fixed, open, and new). To our knowledge, there exists no widely accepted visual technique that can effectively represent multiple attributes at every level in a treemap. However, we plan to explore other common approaches such as glyphs and combined color scales in future versions of nv. 
 
 Since analysts can specify the criticality of both individual machines and groups of machines in nv, the treemap includes sizing by criticality as an option. The most critical machines therefore appear as larger nodes, while still being colored by severity. Other sizing options include severity (the default) and by issue counts. Dual encoding severity with both color and size can be useful, as the darkest colored and largest nodes appear at the top left in each level of the histogram.
 
 The color scales in the treemap were created using ColorBrewer2 (TODO cite). While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure). 
+
+**Screen shot of cb here**
+![Alt Text](screenshots/cb_version_both.png)
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids. These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis. For instance, by brushing over the highest values in the severity histogram, the appropriate nodes in the treemap are highlighted. This works by examining each child of each element in the current level of the hierarchy. Another use of the histograms is to easily highlight the most commonly occuring issues in the network. A possible drawback of this approach is that sometimes the least common issues can be the most damaging. However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find. The histograms also operate in as conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
 
@@ -128,7 +139,7 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 (SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
 
 **Screen shot of group level (criticality) should go around here.**
-![Alt Text](screenshots/SimulatedCriticalityGroupLevel.png)
+![Alt Text](screenshots/SimSingleGroupCritGroup.png)
 
 While in the criticality visualization mode the administrators attention is
 drawn to the very large LAPP server node.  The size is an indication of the
@@ -146,7 +157,7 @@ the Wordpress servers suffer from the same weak password vulnerability as the
 LAPP servers.
 
 **Screenshot of zoomed in tree map can go here.**
-![Alt Text](screenshots/SimulatedLAPPServerLevel.png)
+![Alt Text](screenshots/SimLAPPSingle.png)
 
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode the workstations'
@@ -174,7 +185,7 @@ severe vulnerabilities he inadvertently opens new vulnerabilities on the two
 machines and did not address some of the vulnerabilities seen earlier.
 
 **Screenshot of diff treemap.**
-![Alt Text](screenshots/SimulatedDiffGroupLevel.png)
+![Alt Text](screenshots/final/SimDiffGroupLevel.png)
 
 We simulated this use case using virtual machines (VM) communicating through a host only
 network. Using a host only network allowed us to use Nessus from the host
@@ -233,7 +244,7 @@ networks because groups of IP addresses are aggregated in the tree and then the
 IP addresses themselves can also be aggregated into treemap nodes.  
 
 ** Screen Shot of a zoomed in node **
-![Alt Text](screenshots/VastWorkstationPortLevel.png)
+![Alt Text](screenshots/final/VASTPortLevel.png)
 
 ### Conclusion
 
