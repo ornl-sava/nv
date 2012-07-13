@@ -231,8 +231,8 @@ function resize() {
 // treemap functions
 function initTreemap(){
 
-  width = $('#vis').width();
-  console.log( 'width: ' + width);
+  width = 940; //TODO - set this dynamically based on size of window
+//  console.log( 'width: ' + width);
   
   x = d3.scale.linear()
       .domain([0, width])
@@ -669,9 +669,6 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
         var dataField = array[0];
         var label = array[1];
         
-        console.log(dataField);
-        console.log(label);
-
         var clickedBar = d3.select(this);
 
         //has this bar on this histogram been clicked before?
@@ -869,7 +866,7 @@ function updateCurrentGroupTable(){
   }
 
   //build default group list
-  console.log("event list is " + JSON.stringify(eventList));
+//  console.log("event list is " + JSON.stringify(eventList));
   var ips = findIPsInList(eventList);
   //console.log("have these IPs: " + JSON.stringify(ips));
 
