@@ -125,10 +125,10 @@ function init() {
   initTreemap();
 
   // initialize histograms
-  initHistogram("#histograms", 10, "cvssHistogram");
-  initHistogram("#histograms", 3, "vulnTypeHistogram", vulntypeLabelMap);
-  initHistogram("#histograms", 20, "top20NoteHistogram");
-  initHistogram("#histograms", 20, "top20HoleHistogram");
+  initHistogram("#cvssHistogramContainer", 10, "cvssHistogram");
+  initHistogram("#vulnTypeHistogramContainer", 3, "vulnTypeHistogram", vulntypeLabelMap);
+  initHistogram("#top20NoteHistogramContainer", 20, "top20NoteHistogram");
+  initHistogram("#top20HoleHistogramContainer", 20, "top20HoleHistogram");
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser

@@ -80,6 +80,11 @@ footer{
   margin-bottom: 20px;
 }
 
+#sizeoptions,
+#changeoptions {
+  margin-bottom: 5px;
+}
+
 text {
   pointer-events: none;
 }
