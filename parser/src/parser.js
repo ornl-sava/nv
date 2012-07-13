@@ -6,7 +6,7 @@
  * @return - structure containing th eip, vulnid, vulntype, cvss and port
  */
 var parseNessusResult = function(nessStr){
-    var scoreReg = /CVSS Base Score : (\d\.\d)/;
+    var scoreReg = /CVSS Base Score : (\d+\.\d+)/;
 
     var portReg = /\D+ \((\d{1,7})\D+\)/;
     var splitNess = nessStr.split("|");
@@ -26,6 +26,7 @@ var parseNessusResult = function(nessStr){
         var port = 'notes';
     }
     
+
     return {"ip": (ip === undefined ? "" : ip),
         "vulnid": (isNaN(code) ? 0 : code),
         "vulntype":(holeNote === undefined ? "" : holeNote.indexOf('Note') !== -1 ? 'note' : 'hole'),
