@@ -37,9 +37,13 @@ While in the criticality visualization mode the administrators attention is
 drawn to the very large LAPP server node.  The size is an indication of the
 importance of the situation based on the number of security holes discovered,
 the severity of the security holes discovered and the assigned criticality of
-the machines in the group.  When the administrator zooms into the LAPP server
+the machines in the group.  When the administrator zooms into the LAPP Server
 node of the treemap he sees that all five of the machines seem to be equally
-at risk.  In this situation the LAPP servers all have the same
+at risk.  To gain further insight the administrator zooms into the node for a
+specific machine where each node represent a port with an associated
+vulnerability.  At the specific port node the administrator can click on a
+vulnerability ID and the tool will display information about the vulnerability
+and potential solutions in the right panel.  In this situation the LAPP servers all have the same
 weak root password security hole.  The system administrator will also find that
 the Wordpress servers suffer from the same weak password vulnerability as the
 LAPP servers.
@@ -92,15 +96,6 @@ purposely unpatched and misconfigured software.
 The Fedora workstations were running Fedora 15.  We used the Metasploitable
 virtual machine image to simulate the two vulnerable workstations before they
 were upgraded to 11.10.
-
-| Name              | Criticality | IP Addresses | Time period    |  Security Notes | Security Holes |
-|:-----------------:|:-----------:|:------------:|:---------------|:---------------:|:--------------:|
-| Workstations      | 2           | 192.168.56.x | Before Patches | 680             | 18             |
-|                   |             |              | After Patches  | 507             | 0              |
-| LAPP Servers      | 9           | 192.168.57.x | Before Patches | 205             | 5              |
-|                   |             |              | After Patches  | 200             | 0              |
-| Wordpress Servers | 5           | 192.168.58.x | Before Patches | 195             | 5              |
-|                   |             |              | After Patches  | 195             | 0              |
 
 ### Static Vulnerability State Network
 
