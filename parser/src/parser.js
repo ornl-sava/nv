@@ -17,11 +17,6 @@ var parseNessusResult = function(nessStr){
         var score = parseFloat(scoreReg.exec(nessStr)[1]);
     }
     else{
-        if(code == 11255){
-            console.log("alksdjf");
-            console.log(score);
-        }
-        
         var score = 1.0;
     }
     if(portReg.test(nessStr)){
