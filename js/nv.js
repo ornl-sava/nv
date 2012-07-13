@@ -39,11 +39,12 @@
 // greenblue, orange, blue, pink, green
 
 // colors
-// http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
+// old -> http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
+// new -> http://colorbrewer2.org/index.php?type=sequential&scheme=PuBu&n=5
 var nodeColor = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
-    //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+    .domain([0.0, 2.0, 10.0])
+    .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
+//    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
 
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Greens&n=3
 // #E5F5E0; #A1D99B; #31A354; 
@@ -151,9 +152,9 @@ function init() {
 
   // initialize histograms
   initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
-  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 28);
-  initHistogram("#topHoleHistogram", "vulnid", 20, "Top Holes", null, 14);
-  initHistogram("#topNoteHistogram", "vulnid", 20, "Top Notes", null, 14);
+  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
+  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 28);
+  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 28);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -213,8 +214,8 @@ function redraw() {
   drawHistogram("#cvssHistogram", 10, "cvss", null);
   // TODO Lane check a possible bug with the labels here
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#topNoteHistogram", 20, "vulnid", null, null, "note");
-  drawHistogram("#topHoleHistogram", 20, "vulnid", null, null, "hole");
+  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
+  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
 }
 
 // called when window is resized
@@ -604,7 +605,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
       .attr("y", histoH)
       .attr("dy", "0.8em")
       .attr("text-anchor", "middle")
-      .text( function(d) { return d; });
+      .text( function(d) { return d !== -1 ? d : ''; });
 
   //title
   histContainer.append("text")
@@ -723,7 +724,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
+      .text(function(d) { return d[0] ? d[0].vulnid : ''; });
   }
 
   d3.select(name).select(".maxarea")
