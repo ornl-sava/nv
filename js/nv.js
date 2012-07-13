@@ -39,11 +39,12 @@
 // greenblue, orange, blue, pink, green
 
 // colors
-// http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
+// old -> http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
+// new -> http://colorbrewer2.org/index.php?type=sequential&scheme=PuBu&n=5
 var nodeColor = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
-    //.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]); // yellow blue
+    .domain([0.0, 2.0, 10.0])
+    .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
+//    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
 
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Greens&n=3
 // #E5F5E0; #A1D99B; #31A354; 
@@ -162,9 +163,9 @@ function init() {
 
   // initialize histograms
   initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
-  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 28);
-  initHistogram("#topHoleHistogram", "vulnid", 20, "Top Holes", null, 14);
-  initHistogram("#topNoteHistogram", "vulnid", 20, "Top Notes", null, 14);
+  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
+  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 28);
+  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 28);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -224,8 +225,8 @@ function redraw() {
   drawHistogram("#cvssHistogram", 10, "cvss", null);
   // TODO Lane check a possible bug with the labels here
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#topNoteHistogram", 20, "vulnid", null, null, "note");
-  drawHistogram("#topHoleHistogram", 20, "vulnid", null, null, "hole");
+  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
+  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
 }
 
 // called when window is resized
@@ -242,8 +243,8 @@ function resize() {
 // treemap functions
 function initTreemap(){
 
-  width = $('#vis').width();
-  console.log( 'width: ' + width);
+  width = 940; //TODO - set this dynamically based on size of window
+//  console.log( 'width: ' + width);
   
   x = d3.scale.linear()
       .domain([0, width])
@@ -444,10 +445,11 @@ function drawTreemap() {
       .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
       .on("click", function(d) {
         if(atTheBottom(d)){
-          console.log('at da bottom: '+ d.values[0].vulnid);
+            console.log(d);
+          console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
           // TODO Mike Lane trigger nessus update here
+          setNessusIDData( vulnIdInfo[d.values[0].vulnid] );
           // setNessusIDData(findNessusIDData(d.values[0].vulnid));
-          
             d3.select(this).select("text")
               .style("font-weight", "bold")
               .attr("id", "changeable");
@@ -455,7 +457,6 @@ function drawTreemap() {
             d3.select(this).select(".child")
               .style("stroke", "black")
               .style("stroke-width", "5px");
-
         } else {
           transition(d);
         }
@@ -618,7 +619,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
       .attr("y", histoH)
       .attr("dy", "0.8em")
       .attr("text-anchor", "middle")
-      .text( function(d) { return d; });
+      .text( function(d) { return d !== -1 ? d : ''; });
 
   //title
   histContainer.append("text")
@@ -684,9 +685,6 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
         var dataField = array[0];
         var label = array[1];
         
-        console.log(dataField);
-        console.log(label);
-
         var clickedBar = d3.select(this);
 
         //has this bar on this histogram been clicked before?
@@ -726,7 +724,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
                   if ( rValue === true ) return null;
                   else return this;
               })
-              .style("fill", "#aaa");
+              .style("fill", "#ddd");
         }
 
 
@@ -740,7 +738,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
+      .text(function(d) { return d[0] ? d[0].vulnid : ''; });
   }
 
   d3.select(name).select(".maxarea")
@@ -749,6 +747,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
 
 // initialize our nessus info area with labels
 function initNessusInfo(){
+  /*
   var nessusInfoLabels = ['title', 'overview', 'synopsis', 'description', 'seealso', 'solution', 'riskfactor'];
   var div = d3.select('#nessusinfo');
 
@@ -764,7 +763,7 @@ function initNessusInfo(){
 
   // this p later modified by the setNessusIDData function
   nessussections.append('p');
-
+  
   // quick test of function below
   var testdata = [
     {key:"title", text:"3Com HiPer Access Router Card (HiperARC) IAC Packet Flood DoS"},
@@ -781,7 +780,8 @@ function initNessusInfo(){
     {key:"solution", text:"Add a telnet access list to your Hyperarc router. If the remote system is not a Hyperarc router, then contact your vendor for a patch."},
     {key:"riskfactor", text:"(CVSS2#AV:N/AC:L/Au:N/C:N/I:N/A:P)"}
   ];
-
+  */
+  var testdata = {title: "", description: ""};
   setNessusIDData(testdata);
 }
 
@@ -798,11 +798,30 @@ function setNBEData(dataset){
   redraw();
 }
 
-// updates the nessus data by id
+// updates the nessus data by id //TODO mike
 // TODO Lane throw this on stackoverflow to see if the $.each can be avoided
-function setNessusIDData(iddata){
-  var div = d3.select('#nessusinfo');
+function setNessusIDData(idData){
+  var div = $('#nessusinfo');
+  div.html('<p>');
+  div.append("Title: " + idData.title + '<br><br>');
+  if(idData.family && idData.family !== "")
+    div.append("Family: " + idData.family + '<br><br>');
+  if(idData.synopsis && idData.synopsis !== "")
+    div.append("Synopsis: " + idData.synopsis + '<br><br>');
+  if(idData.description && idData.description !== "")
+    div.append("Description: " + idData.description + '<br><br>');
+  if(idData.updateInfo && idData.updateInfo !== "")
+    div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
+  if(idData.solution && idData.solution !== "")
+    div.append("solution: " + idData.solution);
+  /* //TODO deal with these later.
+  div.append("bugtraqList: "   + idData.bugtraqList);
+  div.append("cveList: "       + idData.cveList);
+  div.append("otherInfoList: " + idData.otherInfoList);
+  */
+  div.append('</p>');
 
+  /*
   var enter = div.selectAll('.nessusinfosection')
     .data(iddata, function(d) { return d.key; })
     .enter();
@@ -812,6 +831,7 @@ function setNessusIDData(iddata){
     var text = v.__data__.text;
     d3.select('#nessus_'+key).select('p').html(text);
   });
+  */
 }
 
 function loadJSONData(file){
@@ -884,7 +904,7 @@ function updateCurrentGroupTable(){
   }
 
   //build default group list
-  console.log("event list is " + JSON.stringify(eventList));
+//  console.log("event list is " + JSON.stringify(eventList));
   var ips = findIPsInList(eventList);
   //console.log("have these IPs: " + JSON.stringify(ips));
 
@@ -1063,7 +1083,7 @@ d3.selection.prototype.moveToFront = function() {
   }); 
 }; 
 
-
+var vulnIdInfo = {};
 
 // initialization
 $().ready(function () {
@@ -1085,6 +1105,19 @@ $().ready(function () {
   });
   $('#visTabLink').bind('click', function(event) {
     handleVisTab();
+  });
+
+  $.get("data/vulnIDs.json", function(data) {
+    console.log("Got the vulnIDs JSON file!");
+    //console.log(data)
+    tempData = data;//JSON.parse(data);
+    tempKeys = Object.keys(tempData);
+    for(var i=0; i<tempKeys.length; i++){
+      //console.log( tempData[tempKeys[i]])
+      vulnIdInfo[tempKeys[i]] = tempData[tempKeys[i]];
+    }
+    //var resp = $(data); // Now you can do whatever you want with it
+    //$("#contentMain", resp).appendTo("#nessusinfo");
   });
 
   //initially hide data tab 2 (for 'updated' nbe file)

@@ -125,6 +125,10 @@ rect.parent {
   fill: #aaa;
 }
 
+#filters {
+  text-align: center;
+}
+
 #filters rect {
   stroke: white;
   fill: steelblue;
