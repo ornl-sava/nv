@@ -603,7 +603,7 @@ function initHistogram(container, dataField, n, label, labelmap, binWidth) {
       .attr("y", histoH)
       .attr("dy", "0.8em")
       .attr("text-anchor", "middle")
-      .text( function(d) { return d; });
+      .text( function(d) { return d !== -1 ? d : ''; });
 
   //title
   histContainer.append("text")
@@ -722,7 +722,7 @@ function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
   if(typeFilter){
     d3.select(name).selectAll("text.histogramlabel")
       .data(hist)
-      .text(function(d) { return d[0] ? d[0].vulnid : -1; });
+      .text(function(d) { return d[0] ? d[0].vulnid : ''; });
   }
 
   d3.select(name).select(".maxarea")
