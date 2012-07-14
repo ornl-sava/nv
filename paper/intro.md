@@ -1,4 +1,7 @@
 
+**Screen shot of overview here**
+![Alt Text](screenshots/overview.png)
+
 ### Abstract
 Network vulnerability is a critical component of network security. Yet vulnerability analysis has received relatively little attention from the security visualization community.  
 
