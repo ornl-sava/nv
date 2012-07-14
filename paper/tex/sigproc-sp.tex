@@ -1,4 +1,4 @@
-a% THIS IS SIGPROC-SP.TEX - VERSION 3.1
+% THIS IS SIGPROC-SP.TEX - VERSION 3.1
 % WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
 %APRIL 2009
 
@@ -55,7 +55,7 @@ Further, it can be difficult to determine whether the overall vulnerability stat
 
 Nessus Vulnerability Visualization (nv) was developed by us at Oak Ridge National Laboratory. It is completely javascript-based and, using a few helpful javascript libraries, conveys usefully intuitive information to a system administrator about the current and past states of their network. We use visuals such as treemaps and histograms to represent large amounts of data that would otherwise have to be viewed in large lists. To add multiple dimensions to these visuals, different colors and sizes as well as clicking and hovering over the visuals displays even more useful information to the administrator as they manage large, security-vulnerability-prone networks.
 
-Nv also allows analysts to specify logical groupings that reflect analyst's situated knowledge\cite{Goodall:2004}. Additionally, nv enables analysts to capture criticality scores for individual and groups of machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that high-value machines receive the most attention.
+Nv also allows analysts to specify logical groupings that reflect analyst's situated knowledge~\cite{Goodall:2004}. Additionally, nv enables analysts to capture criticality scores for individual and groups of machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that high-value machines receive the most attention.
 
 Specifically, our contributions to the field of security visualization are as follows:
 
@@ -79,8 +79,7 @@ models easier to comprehend by an analyst. One aggregation method used by the TV
 visualization is to aggregate machines based on their ability to access other machines. A group of
 machines will be aggregated if each node in the group has access to every other
 node in that group.
-These groupings are then aggregated into a single node in the visualization.
-\cite{Noel:2009bu} 
+These groupings are then aggregated into a single node in the visualization~\cite{Noel:2009bu}.
 %**see Prole short paper from VizSec too.
 %\cite{Prole:2008:WCA:1431913.1431926}
 
@@ -89,8 +88,7 @@ representations of a network where each node is a state of the network and each
 transition represents an exploit.  This type of attack graph allows an analyst
 to focus efforts on patching exploits (edges) that create the largest
 disconnects in the graph. This type of analysis is convenient because we
-already have graph algorithms that can efficiently perform such analysis.
-\cite{Ammann:2002ty}
+already have graph algorithms that can efficiently perform such analysis~\cite{Ammann:2002ty}.
 
 Ou, Govindavajhala and Appel take a different approach to security analysis in
 their MulVAL project.
@@ -102,8 +100,7 @@ Assessment Language. After the systems, policies, and vulnerabilities are define
 the MulVAL system uses a two-phase algorithm to simulate both attacks and policy
 checking. The system generates all possible attacks based on the
 vulnerabilities and then compares those with the defined policies to detect
-violations.
-\cite{Ou:2005:MLN:1251398.1251406}
+violations~\cite{Ou:2005:MLN:1251398.1251406}.
 
 Few visualization systems have been developed to support vulnerability data analysis. 
 The most similar to nv in terms of data is NAVIGATOR, by Chu et al\., the backend for which incorporates Nessus data ~\cite{Chu:2010wx}.
@@ -112,9 +109,9 @@ In contrast, we use treemaps directly and leverage brushing and linking via hist
 Additionally, one limitation mentioned by Chu et al\. is the need for a tool that compares scans (what has changed, what has been fixed, etcetera). 
 We address this directly in nv by allowing users to specify two scans, which are then processed to detect various changes.
 
-A similar approach to nv in terms of visualization is found in (TODO cite Goodall), which addresses the problem of code vulnerability analysis. Code vulnerability analysis has several similarities with network vulnerability analysis, the most notable of which is a severity score which can be propogated through functions, classes, and other programming constructus. Similarly, attributes of Nessus scans can be aggregated from vulnerability identification number to port, IP, and any number of higher groups. As such, nv is similar to this work in that it uses hierarchical techniques to visualize data, as well as multiple coordinated views to navigate the data space.   
+A similar approach to nv in terms of visualization is found in ~\cite{Goodall:2010vi}, which addresses the problem of code vulnerability analysis. Code vulnerability analysis has several similarities with network vulnerability analysis, the most notable of which is a severity score which can be propogated through functions, classes, and other programming constructus. Similarly, attributes of Nessus scans can be aggregated from vulnerability identification number to port, IP, and any number of higher groups. As such, nv is similar to this work in that it uses hierarchical techniques to visualize data, as well as multiple coordinated views to navigate the data space.   
 
-Rasmussen et al\. explicitly visualize the criticality of systems in a network in (TODO cite). Nv is similar in that it allows the administrator to define groups in the hierarchy and assign either groups or machines a criticality score. This score is then used in the visualization. 
+Rasmussen et al\. explicitly visualize the criticality of systems in a network in ~\cite{Rasmussen:2010th}. Nv is similar in that it allows the administrator to define groups in the hierarchy and assign either groups or machines a criticality score. This score is then used in the visualization. 
 
 While these approaches provide a detailed assessment of the accessibility of vulnerable targets, our goal was to create a more widely applicable system. Nessus is the de facto standard for vulnerability assessment. Rather than build an entire system, we wanted to leverage data that is already commonly used in the security community. This approach increases the potential adoption and value to the security community. In addition to leveraging data that analysts already use to encourage adoption and use, we wanted our system to be usable without installing any software, so our approach is web-based, but does all processing of potentially sensitive data on the client within the browser.
 
@@ -245,7 +242,7 @@ The most critical machines therefore appear as larger nodes, while still being c
 Other sizing options include severity (the default) and by issue counts.
 Dual encoding severity with both color and size can be useful, as the darkest colored and largest nodes appear at the top left in each level of the histogram.
 
-The color scales in the treemap were created using ColorBrewer2/cite{colorbrewer2}.
+The color scales in the treemap were created using ColorBrewer2~\cite{colorbrewer2}.
 While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure).
 
 
@@ -288,11 +285,11 @@ To address this, we build a local cache of this information, which the client ca
 %(TODO presumably we won't be open-sourcing this part, heh.
 %I guess that's obvious enough that we don't need to say it...)
 
-The main treemap and the histograms were created using the d3 library\cite{d3}, which is decigned for "apply[ing] data-driven transformations" to the Document Object Model (DOM).
+The main treemap and the histograms were created using the d3 library~\cite{d3}, which is decigned for "apply[ing] data-driven transformations" to the Document Object Model (DOM).
  D3 is fast, flexible, and supports large datasets, which were our main requirements.
 %(TODO elaborate?  Should we maybe say that it's awesome but also a pain?  Not sure where to go with this ...)
 
-The crossfilter library\cite{crossfilter}, designed for accessing "large multivariate datasets in the browser", was used to store and access our Nessus scan results and all related information about the machines and subnets on the network.
+The crossfilter library~\cite{crossfilter}, designed for accessing "large multivariate datasets in the browser", was used to store and access our Nessus scan results and all related information about the machines and subnets on the network.
 This handles the data entirely in memory, and handles storage and access in an efficient manner.
 % (TODO same issue as above.)
 
@@ -453,7 +450,7 @@ the same vulnerability level as the other ten Ubuntu workstations.
 
 \subsection{Case Study 2: Static Vulnerability State Network }
 To test visualizing a large static vulnerability state we use Nessus scan data from
-the VAST Challenge 2011\cite{VAST2011}. This data is from a simulated network for the
+the VAST Challenge 2011~\cite{VAST2011}. This data is from a simulated network for the
 fictitious All Freight Corporation. The VAST Challenge gives us a large network
 dataset to test how the Nessus Vulnerability Visualization scales to a large
 data set that contains many vulnerabilities spread across a variety of machines and
@@ -523,7 +520,7 @@ Nv is designed to support sysadmins in the tasks of vulnerability discovery, ana
 %\end{document}  % This is where a 'short' article might terminate
 
 \bibliographystyle{abbrv}
-\bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
+\bibliography{nv}  % sigproc.bib is the name of the Bibliography in this case
 
 \subsection{References}
 \end{document}
