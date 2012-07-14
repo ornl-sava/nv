@@ -26,7 +26,6 @@ Since Nessus data is not stored in a hierarchical form by default, it can be vis
 
 We also use data-accumulation and coloring methods to ensure that data is not obscured by the hierarchy. For instance, when comparing two Nessus scans, nodes are colored by the maximum count of issue states (fixed, open, or new issues) in their child nodes. A potential disadvantage of this approach is that a node could contain slightly more fixed issues (colored in green) than open issues (colored in orange), and yet will still be colored green to mislead the user to thinking that a node has mostly fixed issues. To alleviate this problem, we add the option to split the nodes by issue-state higher in the hierarchy. Both options are shown in figure (TODO make figure). 
 
-
 **Screen shot of state_issue here**
 ![Alt Text](screenshots/state_issue.png)
 
