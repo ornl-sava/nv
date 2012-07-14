@@ -53,7 +53,7 @@ Traditional reporting tools present the data tabularly, often with color coding 
 But this data can be very large with little support for comparing individual or logical groupings of machines. 
 Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
 
-Increasingly, tools such as Nessus are used to assess networks.
+Increasingly, vulnerability scanners such as Nessus are used by administrators to assess the state of their networks.  While there are many alternative tools available, Nessus is currently the most commonly used choice, and has been for some time. (Cite: sectools did surveys according to wikipedia.)  These tools generally do a very thorough job of gathering the information, but generally present it as simply a large list of individual results, which on larger networks can quickly become difficult to prioritize.
 
 Nv also allows analysts to specify specific groupings and criticality scores for machines in their network. 
 This information is then used by to affect size and other visual features in the treemap, which helps ensure that the most important machines receive the most attention.
@@ -327,17 +327,17 @@ severe vulnerabilities they inadvertently opened new vulnerabilities on the two
 machines and did not address some of the vulnerabilities seen earlier.
 
 \begin{table}
-    \begin{tabular}{|l|l|l|l|l|l|}
-        \hline
-        Name              & Criticality & IP Addresses & Time Period        & Security Notes & Security Holes \\ \hline
-        Workstations      & 2           & 192.168.56.x & Before Maintenance & 680            & 18             \\ \hline
-        ~                 & ~           & ~            & After Maintenance  & 507            & 0              \\ \hline
-        LAPP Servers      & 9           & 192.168.57.x & Before Maintenance & 205            & 5              \\ \hline
-        ~                 & ~           & ~            & After Maintenance  & 200            & 0              \\ \hline
-        Wordpress Servers & 5           & 192.168.58.x & Before Maintenance & 195            & 5              \\ \hline
-        ~                 & ~           & ~            & After Maintenance  & 195            & 0              \\
-        \hline
-    \end{tabular}
+    \begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        Name:Criticality    & IP Addresses & Time Period        & Security Notes & Security Holes & Security Holes \\ \hline
+        Workstations:2      & 192.168.56.x & Before Maintenance & 680            & 18             & 18             \\ 
+        ~                   & ~            & After Maintenance  & 507            & 0              & 0              \\ 
+        LAPP Servers:9      & 192.168.57.x & Before Maintenance & 205            & 5              & 5              \\ 
+        ~                   & ~            & After Maintenance  & 200            & 0              & 0              \\ 
+        Wordpress Servers:5 & 192.168.58.x & Before Maintenance & 195            & 5              & 5              \\ 
+        ~                   & ~            & After Maintenance  & 195            & 0              & 0              \\
+        \hline
+    \end{tabular}
 \end{table}
 
 %**Screenshot of diff treemap.**
