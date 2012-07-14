@@ -39,9 +39,10 @@ Yet vulnerability analysis has received relatively little attention from the sec
 %**Screen shot of overview here**
 %![Alt Text](screenshots/overview.png)
 \begin{figure}
+  \label{OverviewFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/overview}
-  \caption{asdf}
+  \caption{Overview of the Nessus Vulnerability Visualization System.}
 \end{figure}
 
 \section{Introduction}
@@ -182,6 +183,7 @@ Both options are shown in figure (TODO make figure).
 %**Screen shot of state_issue here**
 %![Alt Text](screenshots/state_issue.png)
 \begin{figure}
+  \label{StateIssueFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/state_issue}
   \caption{asdf}
@@ -205,9 +207,10 @@ While the primary color scales shown in the paper are designed to have semantic 
 %**Screen shot of cb here**
 %![Alt Text](screenshots/cb_version_both.png)
 \begin{figure}
+  \label{CBFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/cb_version_both}
-  \caption{asdf}
+  \caption{Juxtaposition of color blind safe and non color blind safe color schemes.}
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
@@ -286,9 +289,10 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 %**Screen shot of group level (criticality) should go around here.**
 %![Alt Text](screenshots/final/SimGroupSingle.png)
 \begin{figure}
+  \label{SimOverviewFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/SimGroupSingle}
-  \caption{asdf}
+  \caption{Top level view showing the user's IP address groupings.}
 \end{figure}
 
 While in the criticality visualization mode the administrator's attention is
@@ -309,9 +313,10 @@ LAPP servers.
 %**Screenshot of zoomed in tree map can go here.**
 %![Alt Text](screenshots/final/LAPPServerSimPort.png)
 \begin{figure}
+  \label{LAPPServerPortFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/LappServerSimPort}
-  \caption{asdf}
+  \caption{View showing vulnerabilities distributed across a LAPP Server's ports.}
 \end{figure}
 
 When the administrator zooms back out to the
@@ -350,14 +355,15 @@ machines and did not address some of the vulnerabilities seen earlier.
     Wordpress Servers:5&192.168.58.x&Before Maintenance&195&5&5\\ \hline
     ~&~&After Maintenance&195&0&0\\\hline
   \end{tabular}
-  \caption{asdf}
+  \caption{The number of security notes and security holes by grouping before and after maintenance.}
 \end{table*}
 %**Screenshot of diff treemap.**
 %![Alt Text](screenshots/final/SimDiffGroup.png)
 \begin{figure}
+  \label{DiffSimFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/SimDiffGroup}
-  \caption{asdf}
+  \caption{Top level view showing vulnerability differences between two points in time.}
 \end{figure}
 \end{center}
 
@@ -400,9 +406,10 @@ Nessus scan data.
 %** Screenshot of over all **
 %![Alt Text](screenshots/final/VastGroup.png)
 \begin{figure}
+  \label{VASTTopLevelFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/VastGroup}
-  \caption{asdf}
+  \caption{Top level view of the large VAST Challenge 2011 dataset.}
 \end{figure}
 
 We split the workstations into six groups with criticalities ranging from two to
@@ -427,9 +434,10 @@ the individual IP addresses contained in that group.
 %** Screen Shot of a zoomed in node **
 %![Alt Text](screenshots/final/VASTWorkstationPort.png)
 \begin{figure}
+  \label{VastWorkstationPort}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/VASTWorkstationPort}
-  \caption{asdf}
+  \caption{Port level view of an All Freight Corporation workstation.}
 \end{figure}
 
 \section{Conclusion and Future Work}
