@@ -38,11 +38,20 @@ Yet vulnerability analysis has received relatively little attention from the sec
 
 %**Screen shot of overview here**
 %![Alt Text](screenshots/overview.png)
+<<<<<<< HEAD
 \begin{figure*}
   \centering
   \includegraphics[width=1.0\textwidth]{../screenshots/overview_new_cropped}
   \caption{Nv runs on the client side and does not require Nessus data to be sent to an outside server.}
 \end{figure*}
+=======
+\begin{figure}
+  \label{OverviewFig}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/overview}
+  \caption{Overview of the Nessus Vulnerability Visualization System.}
+\end{figure}
+>>>>>>> ce15551a43c10952b8322f1e987c6597bffa8e1a
 
 \section{Introduction}
 In order to assess the security posture of the servers and workstations on their network, system administrators and security analysts use vulnerability assessment tools such as Nessus. Such tools probe machines to determine which network ports are open, what services are running on the ports, and, most importantly, what versions of those services are running. Identifying the services and the versions enables these tools to match them with known vulnerabilities. Nessus and similar tools can produce an overwhelming amount of data for large networks. Traditional reporting tools present the data tabularly, often with color coding to attempt to provide an overview of each vulnerability's severity. But this data can be very large with little support for comparing individual or logical groupings of machines. Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
@@ -225,6 +234,7 @@ Both options are shown in figure (TODO make figure).
 %**Screen shot of state_issue here**
 %![Alt Text](screenshots/state_issue.png)
 \begin{figure}
+  \label{StateIssueFig}
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/state_issue}
   \caption{Nesting on different values gives different results. Top: splitting by issue-state before splitting by IP. Bottom: splitting by IP before issue-state..}
@@ -248,9 +258,15 @@ While the primary color scales shown in the paper are designed to have semantic 
 %**Screen shot of cb here**
 %![Alt Text](screenshots/cb_version_both.png)
 \begin{figure}
+  \label{CBFig}
   \centering
+<<<<<<< HEAD
   \includegraphics[width=0.35\textwidth]{../screenshots/cb_version_both}
   \caption{Top: Colorblind safe version in normal vision. Bottom: Colorblind safe in simulated Deuteranopia, which affects 5\% of all males.}
+=======
+  \includegraphics[width=0.5\textwidth]{../screenshots/cb_version_both}
+  \caption{Juxtaposition of color blind safe and non color blind safe color schemes.}
+>>>>>>> ce15551a43c10952b8322f1e987c6597bffa8e1a
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
@@ -329,16 +345,20 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 %**Screen shot of group level (criticality) should go around here.**
 %![Alt Text](screenshots/final/SimGroupSingle.png)
 \begin{figure}
+  \label{SimOverviewFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/SimGroupSingle}
-  \caption{asdf}
+  \caption{Top level view showing the user's IP address groupings.}
 \end{figure}
 
 While in the criticality visualization mode the administrator's attention is
 drawn to the large LAPP server node. The size is an indication of the
 importance of the situation based on the number of security holes discovered,
 the severity of the security holes discovered, and the assigned criticality of
-the machines in the group. When the administrator zooms into the LAPP Server
+the machines in the group.
+The administrator can also use the histograms at the bottom of the visualization to quickly get an overview of the situations.
+The histograms show the majority of the vulnerabilities have a low score and are unlikely to be particularly dangerous.
+When the administrator zooms into the LAPP Server
 node of the treemap they see that all five of the machines seem to be equally
 at risk. To gain further insight, the administrator zooms into the node for a
 specific machine where each node represents a port with an associated
@@ -352,9 +372,10 @@ LAPP servers.
 %**Screenshot of zoomed in tree map can go here.**
 %![Alt Text](screenshots/final/LAPPServerSimPort.png)
 \begin{figure}
+  \label{LAPPServerPortFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/LappServerSimPort}
-  \caption{asdf}
+  \caption{View showing vulnerabilities distributed across a LAPP Server's ports.}
 \end{figure}
 
 When the administrator zooms back out to the
@@ -393,14 +414,15 @@ machines and did not address some of the vulnerabilities seen earlier.
     Wordpress Servers:5&192.168.58.x&Before Maintenance&195&5&5\\ \hline
     ~&~&After Maintenance&195&0&0\\\hline
   \end{tabular}
-  \caption{asdf}
+  \caption{The number of security notes and security holes by grouping before and after maintenance.}
 \end{table*}
 %**Screenshot of diff treemap.**
 %![Alt Text](screenshots/final/SimDiffGroup.png)
 \begin{figure}
+  \label{DiffSimFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/SimDiffGroup}
-  \caption{asdf}
+  \caption{Top level view showing vulnerability differences between two points in time.}
 \end{figure}
 \end{center}
 
@@ -443,16 +465,19 @@ Nessus scan data.
 %** Screenshot of over all **
 %![Alt Text](screenshots/final/VastGroup.png)
 \begin{figure}
+  \label{VASTTopLevelFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/VastGroup}
-  \caption{asdf}
+  \caption{Top level view of the large VAST Challenge 2011 dataset.}
 \end{figure}
 
 We split the workstations into six groups with criticalities ranging from two to
 nine.  The major security holes in the group are concentrated in group four with a
 criticality of nine and in group five with a criticality of two.  When the
 system administrator looks at the groups level on the tree map it is immediately
-obvious where their attention is needed most. Groups four and five dominate the
+obvious where their attention is needed most.
+The administrator can see the there are many high scoring vulnerabilities that will require attention right awaya.
+Groups four and five dominate the
 treemap in all three visualization modes. When the system administrator zooms
 into group four, they see that most of the vulnerabilities are located on two IP
 addresses. When they select IP address 192.168.2.172, they see that nearly all of
@@ -470,9 +495,10 @@ the individual IP addresses contained in that group.
 %** Screen Shot of a zoomed in node **
 %![Alt Text](screenshots/final/VASTWorkstationPort.png)
 \begin{figure}
+  \label{VastWorkstationPort}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/VASTWorkstationPort}
-  \caption{asdf}
+  \caption{Port level view of an All Freight Corporation workstation.}
 \end{figure}
 
 \section{Conclusion and Future Work}
