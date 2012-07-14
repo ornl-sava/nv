@@ -179,7 +179,7 @@ Other references : OSVDB:65217,MSFT:MS10-037
 % Work (CSCW), ACM Press, 2004, 342-345.
 
 
-The primary goal of nv is to support sysadmins in understanding the
+The primary goal of nv is to support system administrators in understanding the
 vulnerabilities within their network in order to support their
 decision-making in determining how to allocate and prioritize their
 limited resources in order to reduce the security vulnerability of
@@ -207,11 +207,12 @@ We chose to use a treemap over other hierarchical visualization methods such as 
 First, our goal with nv is to support the analysis of Nessus scans on large networks.
 While information on the network topology is useful for vulnerability analysis, it is important to note that in large dynamic networks, a complete network topology is often either unavailable or too large to be visualized directly.
 The space-filling aspects of treemaps make them more scalable in this regard.
-Another reason we used treemaps was for their ability to effectively make use of both size and color for encoding data attributes.
 
+The treemap allows us to easily identify machines with the most severe vulnerabilities. The administrator's eye will be naturally drawn to the darkest-colored node in the treemap, revealing the machines with the largest amount of these severe vulnerabilites. The treemap allows the system administrator to group machines together in a way that makes sense to them personally. Often times the system administrator has a mental picture of how their network is laid out and benefit from using a flexible environment that lets them customize it as they see fit. Again, using custom grouping, the system administrator can easily group high-value machines into a single group and can be monitored closely for vulnerabilities. Allowing the administrators to compare two different points in time of their network is also crucial. They can use these snapshots to not only monitor how efficient the network is being patched but also see how many times the network has been receiving vulnerabilites over a period of time. If there are more "new" nodes than "fixed" nodes, then they can assume that either attention to that group of machines as been depleted or that the group has become more suseptible to vulneratibilies over time. All of these analyses are important to administrators and can help them to monitor and protect their network more efficiently and effectively.
+
+Another reason we used treemaps was for their ability to effectively make use of both size and color for encoding data attributes.
 Since Nessus data is not stored in a hierarchical form by default, it could be visualized using many multi-dimensional visualization techniques, such as parallel coordinates or scatterplot matrices.
 However, because the scalability of the visualization was a primary concern, we opted to nest the data from individual vulnerabilities and ports up to IPs and groups of IPs.
-
 
 We also use data-accumulation and coloring methods to ensure that data is not obscured by the hierarchy.
 For instance, when comparing two Nessus scans, nodes are colored by the maximum count of issue states (fixed, open, or new issues) in their child nodes.
@@ -352,7 +353,7 @@ LAPP servers.
 %![Alt Text](screenshots/final/LAPPServerSimPort.png)
 \begin{figure}
   \centering
-  \includegraphics[width=0.5\textwidth]{../screenshots/final/LAPPServerSimPort}
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/LappServerSimPort}
   \caption{asdf}
 \end{figure}
 
@@ -381,17 +382,18 @@ workstation node the system administrator sees that while they were patching the
 severe vulnerabilities they inadvertently opened new vulnerabilities on the two
 machines and did not address some of the vulnerabilities seen earlier.
 
-%\begin{table}
-%  \begin{tabular}{|l|l|l|l|l|l|}
-%    Name.Criticality   & IP Addresses & Time Period     & Security Notes & Security Holes & Security Holes \\ \hline
-%    Workstations.2    & 192.168.56.x & Before Maintenance & 680       & 18       & 18       \\ \hline
-%    ~          & ~       & After Maintenance  & 507       & 0        & 0        \\ \hline
-%    LAPP Servers.9    & 192.168.57.x & Before Maintenance & 205       & 5        & 5        \\ \hline
-%    ~          & ~       & After Maintenance  & 200       & 0        & 0        \\ \hline
-%    Wordpress Servers.5 & 192.168.58.x & Before Maintenance & 195       & 5        & 5        \\ \hline
-%    ~          & ~       & After Maintenance  & 195       & 0        & 0        \\
-%  \end{tabular}
-%\end{table}
+\begin{table}
+  \begin{tabular}{|l|l|l|l|l|l|}
+    \hline Name:Criticality&IP Addresses&Time Period&Security Notes&Security Holes&Security Holes\\ \hline
+    Workstations:2&192.168.56.x&Before Maintenance&680&18&18\\ \hline
+    ~&~&After Maintenance&507&0&0\\ \hline
+    LAPP Servers:9&192.168.57.x&Before Maintenance&205&5&5\\ \hline
+    ~&~&After Maintenance&200&0&0\\ \hline
+    Wordpress Servers:5&192.168.58.x&Before Maintenance&195&5&5\\ \hline
+    ~&~&After Maintenance&195&0&0\\\hline
+  \end{tabular}
+  \caption{asdf}
+\end{table}
 %**Screenshot of diff treemap.**
 %![Alt Text](screenshots/final/SimDiffGroup.png)
 \begin{figure}
