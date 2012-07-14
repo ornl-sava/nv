@@ -38,11 +38,11 @@ Yet vulnerability analysis has received relatively little attention from the sec
 
 %**Screen shot of overview here**
 %![Alt Text](screenshots/overview.png)
-\begin{figure}
+\begin{figure*}
   \centering
-  \includegraphics[width=0.5\textwidth]{../screenshots/overview}
-  \caption{asdf}
-\end{figure}
+  \includegraphics[width=1.0\textwidth]{../screenshots/overview_new_cropped}
+  \caption{Nv runs on the client side and does not require Nessus data to be sent to an outside server.}
+\end{figure*}
 
 \section{Introduction}
 In order to assess the security posture of the servers and workstations on their network, system administrators and security analysts use vulnerability assessment tools such as Nessus. Such tools probe machines to determine which network ports are open, what services are running on the ports, and, most importantly, what versions of those services are running. Identifying the services and the versions enables these tools to match them with known vulnerabilities. Nessus and similar tools can produce an overwhelming amount of data for large networks. Traditional reporting tools present the data tabularly, often with color coding to attempt to provide an overview of each vulnerability's severity. But this data can be very large with little support for comparing individual or logical groupings of machines. Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
@@ -227,7 +227,7 @@ Both options are shown in figure (TODO make figure).
 \begin{figure}
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/state_issue}
-  \caption{asdf}
+  \caption{Nesting on different values gives different results. Top: splitting by issue-state before splitting by IP. Bottom: splitting by IP before issue-state..}
 \end{figure}
 
 The advantage to separating issue-states higher is that the analyst can explore only the fixed issues or only the open issues.
@@ -250,7 +250,7 @@ While the primary color scales shown in the paper are designed to have semantic 
 \begin{figure}
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/cb_version_both}
-  \caption{asdf}
+  \caption{Top: Colorblind safe version in normal vision. Bottom: Colorblind safe in simulated Deuteranopia, which affects 5\% of all males.}
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
