@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  13 JUL 2012 21:03
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  13 JUL 2012 21:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -297,19 +297,19 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 43--44
  []
 
 
-Overfull \hbox (2.99513pt too wide) in paragraph at lines 48--55
+Overfull \hbox (2.99513pt too wide) in paragraph at lines 48--49
 \T1/aer/m/n/9 of data for large net-works. Tra-di-tional re-port-ing tools pres
 ent
  []
 
 
-Overfull \hbox (1.15923pt too wide) in paragraph at lines 56--57
+Overfull \hbox (1.15923pt too wide) in paragraph at lines 50--51
 \T1/aer/m/n/9 by ad-min-is-tra-tors to as-sess the state of their net-works. Wh
 ile
  []
 
 
-Overfull \hbox (8.36783pt too wide) in paragraph at lines 56--57
+Overfull \hbox (8.36783pt too wide) in paragraph at lines 50--51
 \T1/aer/m/n/9 some time. (Cite: sec-tools did sur-veys ac-cord-ing to wikipedia
 .)
  []
@@ -318,54 +318,58 @@ Overfull \hbox (8.36783pt too wide) in paragraph at lines 56--57
 
 
  <../screenshots/overview.png>]
-Overfull \hbox (6.08208pt too wide) in paragraph at lines 147--149
+Overfull \hbox (6.08208pt too wide) in paragraph at lines 159--161
 \T1/aer/m/n/9 Nv con-sists of mul-ti-ple co-or-di-nated views in-clud-ing a tre
 emap,
  []
 
-<../screenshots/state_issue.png, id=13, 948.54375pt x 1003.75pt>
+[2] <../screenshots/state_issue.png, id=16, 948.54375pt x 1003.75pt>
 File: ../screenshots/state_issue.png Graphic file (type png)
 
 <use ../screenshots/state_issue.png>
-Package pdftex.def Info: ../screenshots/state_issue.png used on input line 173.
+Package pdftex.def Info: ../screenshots/state_issue.png used on input line 185.
 
 (pdftex.def)             Requested size: 252.0pt x 266.66638pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 173--174
+Overfull \hbox (12.0pt too wide) in paragraph at lines 185--186
  [][] 
  []
 
-[2] <../screenshots/cb_version_both.png, id=17, 1083.04625pt x 1036.87375pt>
+<../screenshots/cb_version_both.png, id=17, 1083.04625pt x 1036.87375pt>
 File: ../screenshots/cb_version_both.png Graphic file (type png)
 
 <use ../screenshots/cb_version_both.png>
 Package pdftex.def Info: ../screenshots/cb_version_both.png used on input line 
-196.
+208.
 (pdftex.def)             Requested size: 252.0pt x 241.24469pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 196--197
+Overfull \hbox (12.0pt too wide) in paragraph at lines 208--209
  [][] 
  []
 
 [3 <../screenshots/state_issue.png> <../screenshots/cb_version_both.png>]
-Overfull \hbox (8.3313pt too wide) in paragraph at lines 231--234
+Overfull \hbox (8.3313pt too wide) in paragraph at lines 243--246
 \T1/aer/m/n/9 which were our main re-quire-ments. (TODO elab-o-rate? Should
  []
 
 
-Overfull \hbox (3.70605pt too wide) in paragraph at lines 253--253
+Overfull \hbox (3.70605pt too wide) in paragraph at lines 265--265
 []\secfnt Case Study 1: Dy-namic Vul-ner-a-bil-ity State
  []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 
 <../screenshots/final/SimGroupSingle.png, id=23, 1927.2pt x 1084.05pt>
 File: ../screenshots/final/SimGroupSingle.png Graphic file (type png)
 
 <use ../screenshots/final/SimGroupSingle.png>
 Package pdftex.def Info: ../screenshots/final/SimGroupSingle.png used on input 
-line 277.
+line 289.
 (pdftex.def)             Requested size: 252.0pt x 141.74196pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 277--278
+Overfull \hbox (12.0pt too wide) in paragraph at lines 289--290
  [][] 
  []
 
@@ -374,23 +378,20 @@ File: ../screenshots/final/LAPPServerSimPort.png Graphic file (type png)
 
 <use ../screenshots/final/LAPPServerSimPort.png>
 Package pdftex.def Info: ../screenshots/final/LAPPServerSimPort.png used on inp
-ut line 300.
+ut line 312.
 (pdftex.def)             Requested size: 252.0pt x 141.74196pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 300--301
+Overfull \hbox (12.0pt too wide) in paragraph at lines 312--313
  [][] 
  []
 
-[4 <../screenshots/final/SimGroupSingle.png> <../screenshots/final/LAPPServerSi
-mPort.png>]
-Overfull \hbox (12.52415pt too wide) in paragraph at lines 315--328
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4 <../screenshots/final/SimGroupSingle.png>]
+Overfull \hbox (12.52415pt too wide) in paragraph at lines 327--340
 []\T1/aer/m/n/9 After fur-ther ex-plor-ing their net-work, the ad-min-is-tra-to
 r patches
- []
-
-
-Overfull \hbox (220.62993pt too wide) in paragraph at lines 330--339
-[][] 
  []
 
 <../screenshots/final/SimDiffGroup.png, id=28, 1927.2pt x 1084.05pt>
@@ -398,15 +399,15 @@ File: ../screenshots/final/SimDiffGroup.png Graphic file (type png)
 
 <use ../screenshots/final/SimDiffGroup.png>
 Package pdftex.def Info: ../screenshots/final/SimDiffGroup.png used on input li
-ne 344.
+ne 356.
 (pdftex.def)             Requested size: 252.0pt x 141.74196pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 344--345
+Overfull \hbox (12.0pt too wide) in paragraph at lines 356--357
  [][] 
  []
 
 
-Underfull \vbox (badness 1540) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 <../screenshots/final/VastGroup.png, id=29, 1927.2pt x 1084.05pt>
@@ -414,23 +415,24 @@ File: ../screenshots/final/VastGroup.png Graphic file (type png)
 
 <use ../screenshots/final/VastGroup.png>
 Package pdftex.def Info: ../screenshots/final/VastGroup.png used on input line 
-388.
+400.
 (pdftex.def)             Requested size: 252.0pt x 141.74196pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 388--389
+Overfull \hbox (12.0pt too wide) in paragraph at lines 400--401
  [][] 
  []
 
-[5 <../screenshots/final/SimDiffGroup.png> <../screenshots/final/VastGroup.png>
-] <../screenshots/final/VASTWorkstationPort.png, id=33, 1927.2pt x 1084.05pt>
+[5 <../screenshots/final/LAPPServerSimPort.png> <../screenshots/final/SimDiffGr
+oup.png> <../screenshots/final/VastGroup.png>]
+<../screenshots/final/VASTWorkstationPort.png, id=33, 1927.2pt x 1084.05pt>
 File: ../screenshots/final/VASTWorkstationPort.png Graphic file (type png)
 
 <use ../screenshots/final/VASTWorkstationPort.png>
 Package pdftex.def Info: ../screenshots/final/VASTWorkstationPort.png used on i
-nput line 415.
+nput line 427.
 (pdftex.def)             Requested size: 252.0pt x 141.74196pt.
 
-Overfull \hbox (12.0pt too wide) in paragraph at lines 415--416
+Overfull \hbox (12.0pt too wide) in paragraph at lines 427--428
  [][] 
  []
 
@@ -445,14 +447,14 @@ Here is how much of TeX's memory you used:
  6037 multiletter control sequences out of 15000+200000
  42524 words of font info for 59 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
- 41i,7n,26p,1119b,235s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,6n,26p,1119b,235s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/loca
 l/texlive/2012/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2012/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/texlive/2012/te
 xmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2012/texmf
 -dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2012/texmf-dist/f
 onts/type1/urw/times/utmb8a.pfb>
-Output written on sigproc-sp.pdf (6 pages, 1730313 bytes).
+Output written on sigproc-sp.pdf (6 pages, 1730481 bytes).
 PDF statistics:
  52 PDF objects out of 1000 (max. 8388607)
  28 compressed objects within 1 object stream
