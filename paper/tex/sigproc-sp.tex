@@ -16,11 +16,14 @@
 %       \affaddr{Oak Ridge National Lab}\\
 %       \email{trovato@corporation.com}
 % 2nd.
-author
+%author
 }
 
 \maketitle
 \begin{abstract}
+
+Network vulnerability is a critical component of network security. Yet vulnerability analysis has received relatively little attention from the security visualization community.  
+
 \end{abstract}
 
 % A category with the (minimum) three required fields
@@ -32,7 +35,31 @@ author
 
 %\keywords{ACM proceedings, \LaTeX, text tagging} % NOT required for Proceedings
 
+%**Screen shot of overview here**
+%![Alt Text](screenshots/overview.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/overview}
+  \caption{asdf}
+\end{figure}
+
+
+
 \section{Introduction}
+Rather than monitoring a network to determine if an attack is occuring, analysts
+Analysts who are aware of the
+
+Increasingly, tools such as Nessus are used to assess networks.
+
+Nv also allows analysts to specify specific groupings and criticality scores for machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that the most important machines receive the most attention.
+
+Specifically, our contributions to the field of security visualization are as follows:
+
+- A visualization tool that supports security vulnerability awareness, analysis, and tracking
+- A framework for building web-based visualizations that do not send sensitive data to servers
+
+In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
+
 
 \section{Related Work}
 Currently most computer vulnerability analysis is done using graph based
@@ -97,7 +124,7 @@ These results also indicate whether this is an actual vulnerability or just a ge
 The results also often give information about how this vulnerability can be patched or otherwise mitigated.
 Figure nnnnnnnnnnnnnnnnnnnnnnnnnnnnn (TODO) shows an example; this particular example is from the VAST Challenge 2011 data set.
 
-results|192.168.2|192.168.2.175|cifs (445/tcp)|46844|Security Hole|Synopsis :\n\nThe remote Windows host contains a font driver that is affected by\na privilege escalation vulnerability.\n\nDescription :\n\nThe remote Windows host contains a version of the OpenType Compact\nFont Format (CFF) Font Driver that fails to properly validate certain\ndata passed from user mode to kernel mode.\n\nBy viewing content rendered in a specially crafted CFF font, a local\nattacker may be able to exploit this vulnerability to execute \narbitrary code in kernel mode and take complete control of the \naffected system.\n\nSolution :\n\nMicrosoft has released a set of patches for Windows 2000, XP, 2003,\nVista, 2008, 7, and 2008 R2 :\n\nhttp://www.microsoft.com/technet/security/Bulletin/MS10-037.mspx\n\nRisk factor :\n\nHigh / CVSS Base Score : 9.3\n(CVSS2#AV:N/AC:M/Au:N/C:C/I:C/A:C)\n\n\nPlugin output :\n- C:\\WINDOWS\\System32\\Atmfd.dll has not been patched\n    Remote version : 5.1.2.226\n    Should be : 5.1.2.228\n\n\n\nCVE : CVE-2010-0819\nBID : 40572\nOther references : OSVDB:65217,MSFT:MS10-037\n
+%results|192.168.2|192.168.2.175|cifs (445/tcp)|46844|Security Hole|Synopsis :\n\nThe remote Windows host contains a font driver that is affected by\na privilege escalation vulnerability.\n\nDescription :\n\nThe remote Windows host contains a version of the OpenType Compact\nFont Format (CFF) Font Driver that fails to properly validate certain\ndata passed from user mode to kernel mode.\n\nBy viewing content rendered in a specially crafted CFF font, a local\nattacker may be able to exploit this vulnerability to execute \narbitrary code in kernel mode and take complete control of the \naffected system.\n\nSolution :\n\nMicrosoft has released a set of patches for Windows 2000, XP, 2003,\nVista, 2008, 7, and 2008 R2 :\n\nhttp://www.microsoft.com/technet/security/Bulletin/MS10-037.mspx\n\nRisk factor :\n\nHigh / CVSS Base Score : 9.3\n(CVSS2#AV:N/AC:M/Au:N/C:C/I:C/A:C)\n\n\nPlugin output :\n- C:\\WINDOWS\\System32\\Atmfd.dll has not been patched\n    Remote version : 5.1.2.226\n    Should be : 5.1.2.228\n\n\n\nCVE : CVE-2010-0819\nBID : 40572\nOther references : OSVDB:65217,MSFT:MS10-037\n
 
 \subsection{Use Case}
 The primary goal of nv is to support sysadmins in identifying and analyzing vulnerabilities in their network, information which they may then use to better prioritize their (often) limited resources.
@@ -132,8 +159,8 @@ Both options are shown in figure (TODO make figure).
 
 
 
-**Screen shot of state_issue here**
-![Alt Text](screenshots/state_issue.png)
+%**Screen shot of state_issue here**
+%![Alt Text](screenshots/state_issue.png)
 
 The advantage to separating issue-states higher is that the analyst can explore only the fixed issues or only the open issues.
 However, the disadvantage of this approach is that the IPs are then separated since they can appear in any branch of the hierarchy (fixed, open, and new).
@@ -150,8 +177,8 @@ The color scales in the treemap were created using ColorBrewer2 (TODO cite).
 While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure).
 
 
-**Screen shot of cb here**
-![Alt Text](screenshots/cb_version_both.png)
+%**Screen shot of cb here**
+%![Alt Text](screenshots/cb_version_both.png)
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
 These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis.
@@ -195,10 +222,146 @@ The crossfilter library (TODO cite), designed for accessing "large multivariate 
 As with everything, jquery was used for massive convenience when manipulating elements and such.
 (TODO what else can we actually say about it?  TODO merge these 3 into one paragraph?)
 
+\section{Case Studies}
+We envision our system being useful for two types of use cases. The first is to
+analyze the current vulnerabilities associated with all machines on a network.
+This use case is to allow a system administrator to prioritize maintenance based
+on the value of the machines and the criticality of the vulnerabilities found on
+those machines using data from Nessus scans. The second use case is visualizing 
+the changes to the vulnerability states of machines on a network after a system
+administrator performs maintenance.
 
-\section{Case Study 1: Dynamic Vulnerability State Network }
 
-\section{Case Study 2: Static Vulnerability State Network }
+
+\subsection{Case Study 1: Dynamic Vulnerability State Network }
+The first use case for our system is to make it easier for administrators to
+visualize the state of all machines on a network before and after maintenance. 
+The grouping functionality allows
+the administrator to group together related machines by subnet, purpose of
+functionality. In this example, virtual system machines are grouped into three
+different categories. One group is a set of twenty-two workstations split
+between ten Fedora workstations and twelve Ubuntu workstations. The second group is
+a set of five servers that serve the Wordpress blogging software.  The last
+grouping is a set of five Linux Apache PostgreSQL PHP (LAPP) servers.
+Initially all of these groupings contain serious vulnerabilities.
+The LAPP servers are running a poorly configured file transfer protocol (FTP) server
+and both the LAPP and Wordpress servers have simple root passwords
+which Nessus shows as a security hole. The majority of the workstations are properly configured
+save for two that contain multiple security holes. Both of these workstations are
+running outdated versions of the Ubuntu operating system and have
+vulnerabilities such as an FTP server that allows a remote user to execute
+arbitrary code, an incorrectly configured Windows file sharing software, weak secure shell
+(SSH) keys and a Samba server that is vulnerable to buffer overflow attacks.
+
+%**Screen shot of group level (criticality) should go around here.**
+%![Alt Text](screenshots/final/SimGroupSingle.png)
+
+While in the criticality visualization mode the administrator's attention is
+drawn to the large LAPP server node. The size is an indication of the
+importance of the situation based on the number of security holes discovered,
+the severity of the security holes discovered, and the assigned criticality of
+the machines in the group. When the administrator zooms into the LAPP Server
+node of the treemap they see that all five of the machines seem to be equally
+at risk. To gain further insight, the administrator zooms into the node for a
+specific machine where each node represents a port with an associated
+vulnerability. At this specific port node the administrator can click on a
+vulnerability ID and the tool will display information about the vulnerability
+and potential solutions in the right-most panel of the tool. In this situation the LAPP servers all have the same
+weak root password security hole. The system administrator will also find that
+the Wordpress servers suffer from the same weak password vulnerability as the
+LAPP servers.
+
+%**Screenshot of zoomed in tree map can go here.**
+%![Alt Text](screenshots/final/LAPPServerSimPort.png)
+
+When the administrator zooms back out to the
+group view and switches the visualization to severity mode, the workstation's
+node grows bringing it into greater prominence. When the administrator
+zooms into the workstation group they can see that two IP addresses have much
+larger and darker nodes than any of the other workstations. If they zoom into
+one of these IP addresses, they see that the most severe of the vulnerabilities
+are associated with ports 445 and 80. The administrator can examine each port
+node's child, seeing information about the specific vulnerabilities in the right-most
+panel, discovering that the machine is running a poorly configured Apache
+Web Server and that a Windows share that can be accessed through the network.
+
+After further exploring their network, the administrator patches the most critical
+vulnerabilities in the system. The Nessus Vulnerability Visualization system
+provides functionality to compare two nbe files to show changes between two
+vulnerability states, such as before and after applying patches. After patching
+their system the administrator can rescan the network, then explore and see the
+differences between the previous state and the newly patched system.
+The Nessus Visualization System shows corrected
+vulnerabilities in green, the remaining vulnerabilities in orange, and any new
+vulnerabilities in pink. The system administrator can easily see that the
+major workstations vulnerabilities have been patched. Zooming into the
+workstation node the system administrator sees that while they were patching the most
+severe vulnerabilities they inadvertently opened new vulnerabilities on the two
+machines and did not address some of the vulnerabilities seen earlier.
+
+%**Screenshot of diff treemap.**
+%![Alt Text](screenshots/final/SimDiffGroup.png)
+
+We simulated this use case using virtual machines (VM) communicating through a host-only
+network. Using a host-only network allowed us to use Nessus from the host
+to scan the VMs. We used one grouping of two different types of work station
+and two groupings of similar servers. Both groups of servers were using Ubuntu 10.10 LTS.
+Ten of the Ubuntu workstations were using Ubuntu 11.10 while the two workstations
+with the massive number of vulnerabilities were using Ubuntu 8.04 with
+purposely unpatched and misconfigured software.
+The Fedora workstations were running Fedora 15.  We used the Metasploitable
+virtual machine image to simulate the two vulnerable workstations before they
+were upgraded to 11.10.
+
+In this use case we did not patch all security notes that Nessus mentioned
+because this would not be realistic for an actual system administrator. Instead,
+the system administrator would only handle the most important vulnerabilities and
+system updates. In this simulated use case we improved the weak root passwords
+and corrected the poorly configured FTP server seen on the servers. We focused on updating
+and correcting the two most vulnerable workstations by updating them to be the
+same as the other ten Ubuntu workstations.
+
+
+
+\subsection{Case Study 2: Static Vulnerability State Network }
+To test visualizing a large static vulnerability state we use Nessus scan data from
+the VAST Challenge 2011 (TODO cite). This data is from a simulated network for the
+fictitious All Freight Corporation. The VAST Challenge gives us a large network
+dataset to test how the Nessus Vulnerability Visualization scales to a large
+data set that contains many vulnerabilities spread across a variety of machines and
+groups. This data set has more than one
+hundred-fifty unique IP addresses associated with various workstations in the
+scan. The Nessus scan shows that numerous
+machines on the network have some sort of security hole such as incorrectly
+configured telnet client, a font driver that allows privilege escalation, and a
+vulnerability in an outdated version of Microsoft Excel. The All Freight
+Corporation has other machines and servers but they were not included in the
+Nessus scan data.
+
+%** Screenshot of over all **
+%![Alt Text](screenshots/final/VastGroup.png)
+
+We split the workstations into six groups with criticalities ranging from two to
+nine.  The major security holes in the group are concentrated in group four with a
+criticality of nine and in group five with a criticality of two.  When the
+system administrator looks at the groups level on the tree map it is immediately
+obvious where their attention is needed most. Groups four and five dominate the
+treemap in all three visualization modes. When the system administrator zooms
+into group four, they see that most of the vulnerabilities are located on two IP
+addresses. When they select IP address 192.168.2.172, they see that nearly all of
+the vulnerabilities are associated with port 445 and a Windows file sharing
+program. The system administrator can also explore the other dominate IP address 192.168.2.171 and
+see that this machines vulnerabilities come from port 139 and NetBIOS. The
+Nessus Vulnerability Visualization system makes the most critical and most
+severe vulnerabilities most prominent in the visualization. This
+exploration allows the system administrator to easily discover vulnerabilities
+in the system and prioritize repair accordingly. It also makes it easier to view large
+networks because the IP addresses are aggregated into nodes that can be expanded to view
+the individual IP addresses contained in that group.
+
+
+%** Screen Shot of a zoomed in node **
+%![Alt Text](screenshots/final/VASTWorkstationPort.png)
 
 \section{Conclusion and Future Work}
 
