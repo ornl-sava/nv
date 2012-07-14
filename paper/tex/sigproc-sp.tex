@@ -53,7 +53,7 @@ Traditional reporting tools present the data tabularly, often with color coding 
 But this data can be very large with little support for comparing individual or logical groupings of machines. 
 Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
 
-Nv intro...
+Nessus Vulnerability Visualization (nv) was developed by us at Oak Ridge National Laboratory. It is completely javascript-based and, using a few helpful javascript libraries, conveys usefully intuitive information to a system administrator about the current and past states of their network. We use visuals such as treemaps and histograms to represent large amounts of data that would otherwise have to be viewed in large lists. To add multiple dimensions to these visuals, different colors and sizes as well as clicking and hovering over the visuals displays even more useful information to the administrator as they manage large, security-vulnerability-prone networks.
 
 Nv also allows analysts to specify logical groupings that reflect analyst's situated knowledge\cite{Goodall:2004}. Additionally, nv enables analysts to capture criticality scores for individual and groups of machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that high-value machines receive the most attention.
 
@@ -244,7 +244,6 @@ While the primary color scales shown in the paper are designed to have semantic 
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/cb_version_both}
   \caption{Top: Colorblind safe version in normal vision. Bottom: Colorblind safe in simulated Deuteranopia, which affects 5\% of all males.}
->>>>>>> d319af5cbf02d33e3cedd55264c4ade034cb665d
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
@@ -290,7 +289,7 @@ This handles the data entirely in memory, and handles storage and access in an e
 %(TODO what else can we actually say about it?  TODO merge these 3 into one paragraph?)
 
 \section{Case Studies}
-We envision our system being useful for two types of use cases. The first is to
+We envision our system being useful for two types of use cases: The first is to
 analyze the current vulnerabilities associated with all machines on a network.
 This use case is to allow a system administrator to prioritize maintenance based
 on the value of the machines and the criticality of the vulnerabilities found on
@@ -304,11 +303,11 @@ administrator performs maintenance.
 The first use case for our system is to make it easier for administrators to
 visualize the state of all machines on a network before and after maintenance. 
 The grouping functionality allows
-the administrator to group together related machines by subnet, purpose of
+the administrator to group together related machines by subnet, purpose, or
 functionality. In this example, virtual system machines are grouped into three
-different categories. One group is a set of twenty-two workstations split
+different categories: One group is a set of twenty-two workstations split
 between ten Fedora workstations and twelve Ubuntu workstations. The second group is
-a set of five servers that serve the Wordpress blogging software.  The last
+a set of five servers that serve the Wordpress blogging software. The last
 grouping is a set of five Linux Apache PostgreSQL PHP (LAPP) servers.
 Initially all of these groupings contain serious vulnerabilities.
 The LAPP servers are running a poorly configured file transfer protocol (FTP) server
@@ -334,7 +333,7 @@ drawn to the large LAPP server node. The size is an indication of the
 importance of the situation based on the number of security holes discovered,
 the severity of the security holes discovered, and the assigned criticality of
 the machines in the group, see Figure \ref{SimOverview:fig}
-The administrator can also use the histograms at the bottom of the visualization to quickly get an overview of the situations.
+The administrator can also use the histograms at the bottom of the visualization to quickly get an overview of the network's current issues.
 The histograms show the majority of the vulnerabilities have a low score and are unlikely to be particularly dangerous.
 When the administrator zooms into the LAPP Server
 node of the treemap they see that all five of the machines seem to be equally
@@ -359,13 +358,27 @@ LAPP servers.
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode, as in figure \ref{LAPPServerPort:fig}, the workstation's
 node grows bringing it into greater prominence. When the administrator
-zooms into the workstation group they can see that two IP addresses have much
+zooms into the workstation group, they can see that two IP addresses have much
 larger and darker nodes than any of the other workstations. If they zoom into
 one of these IP addresses, they see that the most severe of the vulnerabilities
 are associated with ports 445 and 80. The administrator can examine each port
 node's child, seeing information about the specific vulnerabilities in the right-most
 panel, discovering that the machine is running a poorly configured Apache
 Web Server and that a Windows share that can be accessed through the network.
+
+After further exploring their network, the administrator patches the most critical
+vulnerabilities in the system. The Nessus Vulnerability Visualization system
+provides functionality to compare two nbe files to show changes between two
+vulnerability states, such as before and after applying patches. After patching
+their system the administrator can rescan the network and explore and see the
+differences between the previous state and the newly patched system.
+The Nessus Visualization System shows corrected
+vulnerabilities in green, the remaining vulnerabilities in orange, and any new
+vulnerabilities in purple. The system administrator can easily see that the
+major workstations vulnerabilities have been patched. Zooming into the
+workstation node the system administrator sees that while they were patching the most
+severe vulnerabilities they inadvertently opened new vulnerabilities on the two
+machines and did not address some of the vulnerabilities seen earlier.
 
 \begin{center}
 \begin{table*}
@@ -422,8 +435,8 @@ because this would not be realistic for an actual system administrator. Instead,
 the system administrator would only handle the most important vulnerabilities and
 system updates. In this simulated use case we improved the weak root passwords
 and corrected the poorly configured FTP server seen on the servers. We focused on updating
-and correcting the two most vulnerable workstations by updating them to be the
-same as the other ten Ubuntu workstations.
+and correcting the two most vulnerable workstations by updating them to be at
+the same vulnerability level as the other ten Ubuntu workstations.
 
 
 
@@ -451,18 +464,19 @@ Nessus scan data.
   \label{VASTTopLevel:fig}
 \end{figure}
 
-We split the workstations into six groups with criticalities ranging from two to
-nine.  The major security holes in the group are concentrated in group four with a
-criticality of nine and in group five with a criticality of two.  When the
+We split the workstations into six groups with criticality scores ranging from two to
+nine. The major security holes in the group are concentrated in group four with a
+criticality score of nine and in group five with a criticality score of two.  When the
 system administrator looks at the groups level on the tree map it is immediately
 obvious where their attention is needed most.
-The administrator can see in figure \ref{VASTTopLevel:fig} that there are many high scoring vulnerabilities that will require attention right away.
+The administrator can see in figure \ref{VASTTopLevel:fig} that there are many high-scoring vulnerabilities that will require attention right away.
 Groups four and five dominate the
 treemap in all three visualization modes. When the system administrator zooms
 into group four, they see that most of the vulnerabilities are located on two IP
 addresses. When they select IP address 192.168.2.172, they see that nearly all of
 the vulnerabilities are associated with port 445 and a Windows file sharing
-program. 
+program. The Nessus Vulnerability Visualization system makes the most critical and most
+severe vulnerabilities most prominent in the visualization. It also makes it easier to view large
 
 %** Screen Shot of a zoomed in node **
 %![Alt Text](screenshots/final/VASTWorkstationPort.png)
@@ -479,8 +493,12 @@ Nessus Vulnerability Visualization system makes the most critical and most
 severe vulnerabilities most prominent in the visualization. This
 exploration allows the system administrator to easily discover vulnerabilities
 in the system and prioritize repair accordingly. It also makes it easier to view large
+>>>>>>> cadced3f4dbc494189227268431a8467aea623f9
 networks because the IP addresses are aggregated into nodes that can be expanded to view
-the individual IP addresses contained in that group.
+the individual IP addresses contained in that group. The system administrator can also explore the other dominate IP address 192.168.2.171 and
+see that this machines vulnerabilities come from port 139 and NetBIOS. This
+exploration allows the system administrator to easily discover vulnerabilities
+in the system and prioritize repair accordingly. 
 
 
 
