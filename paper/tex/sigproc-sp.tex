@@ -24,6 +24,11 @@
 
 Network vulnerability is a critical component of network security. 
 Yet vulnerability analysis has received relatively little attention from the security visualization community.  
+In this paper we describe nv, a web-based Nessus vulnerability visualization. 
+Nv utilizes treemaps and linked histograms to allow system administrators to discover, analyze, and manage vulnerabilities on their networks. 
+In addition to visualizing single Nessus scans, nv supports the analysis of sequential scans by showing which vulnerabilities have been fixed, remain open, or are newly discovered.
+Nv was also designed to operate completely in-browser, to avoid sending sensitive data to outside servers.
+We discuss the design of nv, as well as provide case studies demonstrating vulnerability analysis workflows which include a multiple-node testbed and data from the 2011 VAST Challenge.
 
 \end{abstract}
 
@@ -53,15 +58,15 @@ Traditional reporting tools present the data tabularly, often with color coding 
 But this data can be very large with little support for comparing individual or logical groupings of machines. 
 Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
 
-Nessus Vulnerability Visualization (nv) was developed by us at Oak Ridge National Laboratory. It is completely javascript-based and, using a few helpful javascript libraries, conveys usefully intuitive information to a system administrator about the current and past states of their network. We use visuals such as treemaps and histograms to represent large amounts of data that would otherwise have to be viewed in large lists. To add multiple dimensions to these visuals, different colors and sizes as well as clicking and hovering over the visuals displays even more useful information to the administrator as they manage large, security-vulnerability-prone networks.
+Nessus Vulnerability Visualization (nv) was developed to support system administrators in discovering, analyzing, and managing vulnerabilities in their networks in both individual and sequential Nessus scans. The visualizations in nv consist of treemaps and histograms, which facilitate the exploration of vulnerabilities in large networks. Several interactions are provided to help uncover pertinent information to the administrator as they manage large, vulnerable networks.
 
-Nv also allows analysts to specify logical groupings that reflect analyst's situated knowledge~\cite{Goodall:2004}. Additionally, nv enables analysts to capture criticality scores for individual and groups of machines in their network. This information is then used to affect size and other visual features in the treemap, which helps ensure that high-value machines receive the most attention.
+Nv also allows analysts to specify logical groupings that reflect analyst's situated knowledge~\cite{Goodall:2004}. Additionally, nv enables analysts to capture and manage criticality scores for individual and groups of machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that high-value machines receive the most attention.
 
 Specifically, our contributions to the field of security visualization are as follows:
 
 \begin{itemize}
   \item A visualization tool that supports security vulnerability awareness, analysis, and tracking; and
-  \item A framework for building web-based visualizations that does not send sensitive data to servers
+  \item A framework for building web-based visualizations that avoid sending sensitive data to servers
 \end{itemize}
 
 In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
@@ -122,8 +127,6 @@ Some of these are described in the Case Studies sections.
 This section covers the visualization and interaction design.
 
 \subsection{Data}
-Nessus data in detail
-
 The Nessus scan results provide significant detail about the state of all machines on the specified network.
 (TODO talk about how the scan actually works?) This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
 These results also indicate whether this is an actual vulnerability or just a general security notice, and it also provides a severity score and several unique identifiers related to this vulnerability, which can be used to find additional information.
@@ -523,7 +526,6 @@ Sending sensitive data, like vulnerability scans, over a network introduces an u
 \bibliographystyle{abbrv}
 \bibliography{nv}  % sigproc.bib is the name of the Bibliography in this case
 
-\subsection{References}
 \end{document}
 
 %%% Sample citation, table, conclusion
