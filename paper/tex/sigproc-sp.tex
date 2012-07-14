@@ -22,7 +22,8 @@
 \maketitle
 \begin{abstract}
 
-Network vulnerability is a critical component of network security. Yet vulnerability analysis has received relatively little attention from the security visualization community.  
+Network vulnerability is a critical component of network security. 
+Yet vulnerability analysis has received relatively little attention from the security visualization community.  
 
 \end{abstract}
 
@@ -43,30 +44,36 @@ Network vulnerability is a critical component of network security. Yet vulnerabi
   \caption{asdf}
 \end{figure}
 
-
-
 \section{Introduction}
-Rather than monitoring a network to determine if an attack is occuring, analysts
-Analysts who are aware of the
+In order to assess the security posture of the servers and workstations on their network, system administrators and security analysts use vulnerability assessment tools such as Nessus. 
+Such tools probe machines to determine which network ports are open, what services are running on the ports, and, most importantly, what versions of those services are running. 
+Identifying the services and the versions enables these tools to match them with known vulnerabilities. 
+Nessus and similar tools can produce an overwhelming amount of data for large networks. 
+Traditional reporting tools present the data tabularly, often with color coding to attempt to provide an overview of each vulnerability's severity. 
+But this data can be very large with little support for comparing individual or logical groupings of machines. 
+Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
 
 Increasingly, vulnerability scanners such as Nessus are used by administrators to assess the state of their networks.  While there are many alternative tools available, Nessus is currently the most commonly used choice, and has been for some time. (Cite: sectools did surveys according to wikipedia.)  These tools generally do a very thorough job of gathering the information, but generally present it as simply a large list of individual results, which on larger networks can quickly become difficult to prioritize.
 
-Nv also allows analysts to specify specific groupings and criticality scores for machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that the most important machines receive the most attention.
+Nv also allows analysts to specify specific groupings and criticality scores for machines in their network. 
+This information is then used by to affect size and other visual features in the treemap, which helps ensure that the most important machines receive the most attention.
 
 Specifically, our contributions to the field of security visualization are as follows:
 
 - A visualization tool that supports security vulnerability awareness, analysis, and tracking
 - A framework for building web-based visualizations that do not send sensitive data to servers
 
-In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
-
+In the following section, we discuss related work in vulnerability visualization and analysis. 
+Afterwards, we discuss the design of nv. 
+We then present several case studies involving Nessus scans from multiple systems. 
+We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
 
 \section{Related Work}
 Currently most computer vulnerability analysis is done using graph based
 techniques to model the state of the system.
- One such technique is known as
+One such technique is known as
 Topological Vulnerability Analysis (TVA).
- TVA uses the network state and attack
+TVA uses the network state and attack
 vectors between machines to create an attach graph that will model all possible attack paths in a
 network.
  To generate these attack graphs TVA uses information from scanning
@@ -161,6 +168,11 @@ Both options are shown in figure (TODO make figure).
 
 %**Screen shot of state_issue here**
 %![Alt Text](screenshots/state_issue.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/state_issue}
+  \caption{asdf}
+\end{figure}
 
 The advantage to separating issue-states higher is that the analyst can explore only the fixed issues or only the open issues.
 However, the disadvantage of this approach is that the IPs are then separated since they can appear in any branch of the hierarchy (fixed, open, and new).
@@ -179,6 +191,11 @@ While the primary color scales shown in the paper are designed to have semantic 
 
 %**Screen shot of cb here**
 %![Alt Text](screenshots/cb_version_both.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/cv_version_both}
+  \caption{asdf}
+\end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
 These histograms serve dual purposes, as both overviews of the data and as filters by which sysadmins may guide their analysis.
@@ -255,6 +272,11 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 
 %**Screen shot of group level (criticality) should go around here.**
 %![Alt Text](screenshots/final/SimGroupSingle.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/SimGroupSingle}
+  \caption{asdf}
+\end{figure}
 
 While in the criticality visualization mode the administrator's attention is
 drawn to the large LAPP server node. The size is an indication of the
@@ -273,6 +295,11 @@ LAPP servers.
 
 %**Screenshot of zoomed in tree map can go here.**
 %![Alt Text](screenshots/final/LAPPServerSimPort.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/LAPPServerSimPort}
+  \caption{asdf}
+\end{figure}
 
 When the administrator zooms back out to the
 group view and switches the visualization to severity mode, the workstation's
@@ -299,8 +326,27 @@ workstation node the system administrator sees that while they were patching the
 severe vulnerabilities they inadvertently opened new vulnerabilities on the two
 machines and did not address some of the vulnerabilities seen earlier.
 
+\begin{table}
+    \begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        Name              & Criticality & IP Addresses & Time Period        & Security Notes & Security Holes \\ \hline
+        Workstations      & 2           & 192.168.56.x & Before Maintenance & 680            & 18             \\ \hline
+        ~                 & ~           & ~            & After Maintenance  & 507            & 0              \\ \hline
+        LAPP Servers      & 9           & 192.168.57.x & Before Maintenance & 205            & 5              \\ \hline
+        ~                 & ~           & ~            & After Maintenance  & 200            & 0              \\ \hline
+        Wordpress Servers & 5           & 192.168.58.x & Before Maintenance & 195            & 5              \\ \hline
+        ~                 & ~           & ~            & After Maintenance  & 195            & 0              \\
+        \hline
+    \end{tabular}
+\end{table}
+
 %**Screenshot of diff treemap.**
 %![Alt Text](screenshots/final/SimDiffGroup.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/SimDiffGroup}
+  \caption{asdf}
+\end{figure}
 
 We simulated this use case using virtual machines (VM) communicating through a host-only
 network. Using a host-only network allowed us to use Nessus from the host
@@ -340,6 +386,11 @@ Nessus scan data.
 
 %** Screenshot of over all **
 %![Alt Text](screenshots/final/VastGroup.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/VastGroup}
+  \caption{asdf}
+\end{figure}
 
 We split the workstations into six groups with criticalities ranging from two to
 nine.  The major security holes in the group are concentrated in group four with a
@@ -362,6 +413,11 @@ the individual IP addresses contained in that group.
 
 %** Screen Shot of a zoomed in node **
 %![Alt Text](screenshots/final/VASTWorkstationPort.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/VASTWorkstationPort}
+  \caption{asdf}
+\end{figure}
 
 \section{Conclusion and Future Work}
 
