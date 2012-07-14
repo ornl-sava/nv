@@ -112,10 +112,53 @@ Nessus data in detail
 The Nessus scan results provide significant detail about the state of all machines on the specified network.
 (TODO talk about how the scan actually works?) This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
 These results also indicate whether this is an actual vulnerability or just a general security notice, and it also provides a severity score and several unique identifiers related to this vulnerability, which can be used to find additional information.
-The results also often give information about how this vulnerability can be patched or otherwise mitigated.
-Figure nnnnnnnnnnnnnnnnnnnnnnnnnnnnn (TODO) shows an example; this particular example is from the VAST Challenge 2011 data set.
+The results also often give information about how this vulnerability can be patched or otherwise mitigated. The following shows an example; this particular example is from the VAST Challenge 2011 data set.
 
-%results|192.168.2|192.168.2.175|cifs (445/tcp)|46844|Security Hole|Synopsis :\n\nThe remote Windows host contains a font driver that is affected by\na privilege escalation vulnerability.\n\nDescription :\n\nThe remote Windows host contains a version of the OpenType Compact\nFont Format (CFF) Font Driver that fails to properly validate certain\ndata passed from user mode to kernel mode.\n\nBy viewing content rendered in a specially crafted CFF font, a local\nattacker may be able to exploit this vulnerability to execute \narbitrary code in kernel mode and take complete control of the \naffected system.\n\nSolution :\n\nMicrosoft has released a set of patches for Windows 2000, XP, 2003,\nVista, 2008, 7, and 2008 R2 :\n\nhttp://www.microsoft.com/technet/security/Bulletin/MS10-037.mspx\n\nRisk factor :\n\nHigh / CVSS Base Score : 9.3\n(CVSS2#AV:N/AC:M/Au:N/C:C/I:C/A:C)\n\n\nPlugin output :\n- C:\\WINDOWS\\System32\\Atmfd.dll has not been patched\n    Remote version : 5.1.2.226\n    Should be : 5.1.2.228\n\n\n\nCVE : CVE-2010-0819\nBID : 40572\nOther references : OSVDB:65217,MSFT:MS10-037\n
+\begin{verbatim}
+results|192.168.2|192.168.2.175|cifs 
+(445/tcp)|46844|Security Hole|
+
+Synopsis :
+The remote Windows host contains a 
+font driver that is affected by
+a privilege escalation vulnerability.
+
+Description :
+The remote Windows host contains a 
+version of the OpenType Compact
+Font Format (CFF) 
+Font Driver that fails to properly validate 
+certain
+data passed from user mode to kernel mode.
+By viewing content rendered in a specially crafted 
+CFF font, a local
+attacker may be able to exploit 
+this vulnerability to execute 
+arbitrary code in 
+kernel mode and take complete control of the 
+affected system.
+
+Solution :
+Microsoft has released a set of patches 
+for Windows 2000, XP, 2003,
+Vista, 2008, 7, and 2008 R2 :
+http://www.microsoft.com/
+technet/security/Bulletin/MS10-037.mspx
+
+Risk factor :
+High / CVSS Base Score : 9.3
+
+(CVSS2#AV:N/AC:M/Au:N/C:C/I:C/A:C)
+
+Plugin output :
+- C:\\WINDOWS\\System32\\Atmfd.dll has not been patched    
+Remote version : 5.1.2.226    
+Should be : 5.1.2.228
+
+CVE : CVE-2010-0819
+BID : 40572
+Other references : OSVDB:65217,MSFT:MS10-037
+\end{verbatim}
 
 
 %it would be great if the use case section, see below for my edits, was
@@ -182,7 +225,7 @@ Both options are shown in figure (TODO make figure).
 %![Alt Text](screenshots/state_issue.png)
 \begin{figure}
   \centering
-  \includegraphics[width=0.5\textwidth]{../screenshots/state_issue}
+  \includegraphics[width=0.35\textwidth]{../screenshots/state_issue}
   \caption{asdf}
 \end{figure}
 
@@ -205,7 +248,7 @@ While the primary color scales shown in the paper are designed to have semantic 
 %![Alt Text](screenshots/cb_version_both.png)
 \begin{figure}
   \centering
-  \includegraphics[width=0.5\textwidth]{../screenshots/cb_version_both}
+  \includegraphics[width=0.35\textwidth]{../screenshots/cb_version_both}
   \caption{asdf}
 \end{figure}
 
