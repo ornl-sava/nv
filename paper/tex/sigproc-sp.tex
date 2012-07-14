@@ -98,6 +98,17 @@ vulnerabilities and then compares those with the defined policies to detect
 violations.
 **Ou**
 
+Few visualization systems have been developed to support vulnerability data analysis. 
+The most similar to nv in terms of data is NAVIGATOR, by Chu et al\., the backend for which incorporates Nessus data ~\cite{Chu:2010wx}.
+While NAVIGATOR also uses treemaps in part of its visualization, it uses them as part of a node-link diagram. 
+In contrast, we use treemaps directly and leverage brushing and linking via histograms to explore the Nessus data space.
+Additionally, one limitation mentioned by Chu et al\. is the need for a tool that compares scans (what has changed, what has been fixed, etcetera). 
+We address this directly in nv by allowing users to specify two scans, which are then processed to detect various changes.
+
+A similar approach to nv in terms of visualization is found in (TODO cite Goodall), which addresses the problem of code vulnerability analysis. Code vulnerability analysis has several similarities with network vulnerability analysis, the most notable of which is a severity score which can be propogated through functions, classes, and other programming constructus. Similarly, attributes of Nessus scans can be aggregated from vulnerability identification number to port, IP, and any number of higher groups. As such, nv is similar to this work in that it uses hierarchical techniques to visualize data, as well as multiple coordinated views to navigate the data space.   
+
+Rasmussen et al\. explicitly visualize the criticality of systems in a network in (TODO cite). Nv is similar in that it allows the administrator to define groups in the hierarchy and assign either groups or machines a criticality score. This score is then used in the visualization. 
+
 While these approaches provide a detailed assessment of the accessibility of vulnerable targets, our goal was to create a more widely applicable system. Nessus is the de facto standard for vulnerability assessment. Rather than build an entire system, we wanted to leverage data that is already commonly used in the security community. This approach increases the potential adoption and value to the security community. In addition to leveraging data that analysts already use to encourage adoption and use, we wanted our system to be usable without installing any software, so our approach is web-based, but does all processing of potentially sensitive data on the client within the browser.
 
 \section{System Design}
