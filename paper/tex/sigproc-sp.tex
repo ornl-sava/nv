@@ -39,10 +39,10 @@ Yet vulnerability analysis has received relatively little attention from the sec
 %**Screen shot of overview here**
 %![Alt Text](screenshots/overview.png)
 \begin{figure}
-  \label{OverviewFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/overview}
   \caption{Overview of the Nessus Vulnerability Visualization System.}
+  \label{Overview:fig}
 \end{figure}
 
 \section{Introduction}
@@ -183,10 +183,10 @@ Both options are shown in figure (TODO make figure).
 %**Screen shot of state_issue here**
 %![Alt Text](screenshots/state_issue.png)
 \begin{figure}
-  \label{StateIssueFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/state_issue}
   \caption{asdf}
+  \label{StateIssue:fig}
 \end{figure}
 
 The advantage to separating issue-states higher is that the analyst can explore only the fixed issues or only the open issues.
@@ -207,10 +207,10 @@ While the primary color scales shown in the paper are designed to have semantic 
 %**Screen shot of cb here**
 %![Alt Text](screenshots/cb_version_both.png)
 \begin{figure}
-  \label{CBFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/cb_version_both}
   \caption{Juxtaposition of color blind safe and non color blind safe color schemes.}
+  \label{CB:fig}
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
@@ -289,17 +289,17 @@ arbitrary code, an incorrectly configured Windows file sharing software, weak se
 %**Screen shot of group level (criticality) should go around here.**
 %![Alt Text](screenshots/final/SimGroupSingle.png)
 \begin{figure}
-  \label{SimOverviewFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/SimGroupSingle}
   \caption{Top level view showing the user's IP address groupings.}
+  \label{SimOverview:fig}
 \end{figure}
 
-While in the criticality visualization mode the administrator's attention is
+While in the top level visualization mode the administrator's attention is
 drawn to the large LAPP server node. The size is an indication of the
 importance of the situation based on the number of security holes discovered,
 the severity of the security holes discovered, and the assigned criticality of
-the machines in the group.
+the machines in the group, see Figure \ref{SimOverview:fig}
 The administrator can also use the histograms at the bottom of the visualization to quickly get an overview of the situations.
 The histograms show the majority of the vulnerabilities have a low score and are unlikely to be particularly dangerous.
 When the administrator zooms into the LAPP Server
@@ -316,14 +316,14 @@ LAPP servers.
 %**Screenshot of zoomed in tree map can go here.**
 %![Alt Text](screenshots/final/LAPPServerSimPort.png)
 \begin{figure}
-  \label{LAPPServerPortFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/LappServerSimPort}
   \caption{View showing vulnerabilities distributed across a LAPP Server's ports.}
+  \label{LAPPServerPort:fig}
 \end{figure}
 
 When the administrator zooms back out to the
-group view and switches the visualization to severity mode, the workstation's
+group view and switches the visualization to severity mode, as in figure \ref{LAPPServerPort:fig}, the workstation's
 node grows bringing it into greater prominence. When the administrator
 zooms into the workstation group they can see that two IP addresses have much
 larger and darker nodes than any of the other workstations. If they zoom into
@@ -332,20 +332,6 @@ are associated with ports 445 and 80. The administrator can examine each port
 node's child, seeing information about the specific vulnerabilities in the right-most
 panel, discovering that the machine is running a poorly configured Apache
 Web Server and that a Windows share that can be accessed through the network.
-
-After further exploring their network, the administrator patches the most critical
-vulnerabilities in the system. The Nessus Vulnerability Visualization system
-provides functionality to compare two nbe files to show changes between two
-vulnerability states, such as before and after applying patches. After patching
-their system the administrator can rescan the network, then explore and see the
-differences between the previous state and the newly patched system.
-The Nessus Visualization System shows corrected
-vulnerabilities in green, the remaining vulnerabilities in orange, and any new
-vulnerabilities in pink. The system administrator can easily see that the
-major workstations vulnerabilities have been patched. Zooming into the
-workstation node the system administrator sees that while they were patching the most
-severe vulnerabilities they inadvertently opened new vulnerabilities on the two
-machines and did not address some of the vulnerabilities seen earlier.
 
 \begin{center}
 \begin{table*}
@@ -359,16 +345,32 @@ machines and did not address some of the vulnerabilities seen earlier.
     ~&~&After Maintenance&195&0&0\\\hline
   \end{tabular}
   \caption{The number of security notes and security holes by grouping before and after maintenance.}
+  \label{Hole:tab}
 \end{table*}
+
+After further exploring their network, the administrator patches the most critical
+vulnerabilities in the system. Table \ref{Hole:tab} shows the number of security notes and holes before and after maintenance.
+The Nessus Vulnerability Visualization system
+provides functionality to compare two nbe files to show changes between two
+vulnerability states, such as before and after applying patches. After patching
+their system the administrator can rescan the network, then explore and see the
+differences between the previous state and the newly patched system.
 %**Screenshot of diff treemap.**
 %![Alt Text](screenshots/final/SimDiffGroup.png)
 \begin{figure}
-  \label{DiffSimFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/SimDiffGroup}
   \caption{Top level view showing vulnerability differences between two points in time.}
+  \label{DiffSim:fig}
 \end{figure}
 \end{center}
+The Nessus Visualization System shows corrected
+vulnerabilities in green, the remaining vulnerabilities in orange, and any new
+vulnerabilities in pink, as in figure \ref{DiffSim:fig}. The system administrator can easily see that the
+major workstations vulnerabilities have been patched. Zooming into the
+workstation node the system administrator sees that while they were patching the most
+severe vulnerabilities they inadvertently opened new vulnerabilities on the two
+machines and did not address some of the vulnerabilities seen earlier.
 
 We simulated this use case using virtual machines (VM) communicating through a host-only
 network. Using a host-only network allowed us to use Nessus from the host
@@ -409,10 +411,10 @@ Nessus scan data.
 %** Screenshot of over all **
 %![Alt Text](screenshots/final/VastGroup.png)
 \begin{figure}
-  \label{VASTTopLevelFig}
   \centering
   \includegraphics[width=0.5\textwidth]{../screenshots/final/VastGroup}
   \caption{Top level view of the large VAST Challenge 2011 dataset.}
+  \label{VASTTopLevel:fig}
 \end{figure}
 
 We split the workstations into six groups with criticalities ranging from two to
@@ -420,13 +422,24 @@ nine.  The major security holes in the group are concentrated in group four with
 criticality of nine and in group five with a criticality of two.  When the
 system administrator looks at the groups level on the tree map it is immediately
 obvious where their attention is needed most.
-The administrator can see the there are many high scoring vulnerabilities that will require attention right awaya.
+The administrator can see in figure \ref{VASTTopLevel:fig} that there are many high scoring vulnerabilities that will require attention right away.
 Groups four and five dominate the
 treemap in all three visualization modes. When the system administrator zooms
 into group four, they see that most of the vulnerabilities are located on two IP
 addresses. When they select IP address 192.168.2.172, they see that nearly all of
 the vulnerabilities are associated with port 445 and a Windows file sharing
-program. The system administrator can also explore the other dominate IP address 192.168.2.171 and
+program. 
+
+%** Screen Shot of a zoomed in node **
+%![Alt Text](screenshots/final/VASTWorkstationPort.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../screenshots/final/VASTWorkstationPort}
+  \caption{Port level view of an All Freight Corporation workstation.}
+  \label{VastWorkstationPort:fig}
+\end{figure}
+
+The system administrator can also explore the other dominate IP address 192.168.2.171 and
 see that this machines vulnerabilities come from port 139 and NetBIOS. The
 Nessus Vulnerability Visualization system makes the most critical and most
 severe vulnerabilities most prominent in the visualization. This
@@ -436,14 +449,6 @@ networks because the IP addresses are aggregated into nodes that can be expanded
 the individual IP addresses contained in that group.
 
 
-%** Screen Shot of a zoomed in node **
-%![Alt Text](screenshots/final/VASTWorkstationPort.png)
-\begin{figure}
-  \label{VastWorkstationPort}
-  \centering
-  \includegraphics[width=0.5\textwidth]{../screenshots/final/VASTWorkstationPort}
-  \caption{Port level view of an All Freight Corporation workstation.}
-\end{figure}
 
 \section{Conclusion and Future Work}
 
