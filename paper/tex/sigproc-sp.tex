@@ -22,7 +22,8 @@
 \maketitle
 \begin{abstract}
 
-Network vulnerability is a critical component of network security. Yet vulnerability analysis has received relatively little attention from the security visualization community.  
+Network vulnerability is a critical component of network security. 
+Yet vulnerability analysis has received relatively little attention from the security visualization community.  
 
 \end{abstract}
 
@@ -43,30 +44,36 @@ Network vulnerability is a critical component of network security. Yet vulnerabi
   \caption{asdf}
 \end{figure}
 
-
-
 \section{Introduction}
-Rather than monitoring a network to determine if an attack is occuring, analysts
-Analysts who are aware of the
+In order to assess the security posture of the servers and workstations on their network, system administrators and security analysts use vulnerability assessment tools such as Nessus. 
+Such tools probe machines to determine which network ports are open, what services are running on the ports, and, most importantly, what versions of those services are running. 
+Identifying the services and the versions enables these tools to match them with known vulnerabilities. 
+Nessus and similar tools can produce an overwhelming amount of data for large networks. 
+Traditional reporting tools present the data tabularly, often with color coding to attempt to provide an overview of each vulnerability's severity. 
+But this data can be very large with little support for comparing individual or logical groupings of machines. 
+Further, it can be difficult to determine whether the overall vulnerability state of a network has increased or gotten worse between scans from different points in time.
 
 Increasingly, tools such as Nessus are used to assess networks.
 
-Nv also allows analysts to specify specific groupings and criticality scores for machines in their network. This information is then used by to affect size and other visual features in the treemap, which helps ensure that the most important machines receive the most attention.
+Nv also allows analysts to specify specific groupings and criticality scores for machines in their network. 
+This information is then used by to affect size and other visual features in the treemap, which helps ensure that the most important machines receive the most attention.
 
 Specifically, our contributions to the field of security visualization are as follows:
 
 - A visualization tool that supports security vulnerability awareness, analysis, and tracking
 - A framework for building web-based visualizations that do not send sensitive data to servers
 
-In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
-
+In the following section, we discuss related work in vulnerability visualization and analysis. 
+Afterwards, we discuss the design of nv. 
+We then present several case studies involving Nessus scans from multiple systems. 
+We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
 
 \section{Related Work}
 Currently most computer vulnerability analysis is done using graph based
 techniques to model the state of the system.
- One such technique is known as
+One such technique is known as
 Topological Vulnerability Analysis (TVA).
- TVA uses the network state and attack
+TVA uses the network state and attack
 vectors between machines to create an attach graph that will model all possible attack paths in a
 network.
  To generate these attack graphs TVA uses information from scanning
