@@ -24,6 +24,11 @@
 
 Network vulnerability is a critical component of network security. 
 Yet vulnerability analysis has received relatively little attention from the security visualization community.  
+In this paper we describe nv, a web-based Nessus vulnerability visualization. 
+Nv utilizes treemaps and linked histograms to allow system administrators to discover, analyze, and manage vulnerabilities on their networks. 
+In addition to visualizing single Nessus scans, nv supports the analysis of sequential scans by showing which vulnerabilities have been fixed, remain open, or are newly discovered.
+Nv was also designed to operate completely in-browser, to avoid sending sensitive data to outside servers.
+We discuss the design of nv, as well as provide case studies demonstrating vulnerability analysis workflows which include a multiple-node testbed and data from the 2011 VAST Challenge.
 
 \end{abstract}
 
@@ -510,8 +515,10 @@ in the system and prioritize repair accordingly.
 \section{Conclusion and Future Work}
 
 We have introduced nv, a Nessus vulnerability visualization system.
-
 Nv is designed to support sysadmins in the tasks of vulnerability discovery, analysis, and management through an interactive visualization.
+This tool abstracts and aggregates the massive amounts of data produced by tools like Nessus so as not to overwhelm the analyst or administrator.
+Nv is also designed to protect the privacy of users through client side computation.
+Sending sensitive data, like vulnerability scans, over a network introduces an unnecessary vulenerability and potential attack vector.
 
 
 %\end{document}  % This is where a 'short' article might terminate
