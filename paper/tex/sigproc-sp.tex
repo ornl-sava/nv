@@ -128,7 +128,7 @@ This section covers the visualization and interaction design.
 
 \subsection{Data}
 The Nessus scan results provide significant detail about the state of all machines on the specified network.
-(TODO talk about how the scan actually works?) This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
+This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
 These results also indicate whether this is an actual vulnerability or just a general security notice, and it also provides a severity score and several unique identifiers related to this vulnerability, which can be used to find additional information.
 The results also often give information about how this vulnerability can be patched or otherwise mitigated. The following shows an example; this particular example is from the VAST Challenge 2011 data set.
 
@@ -222,7 +222,7 @@ We also use data-accumulation and coloring methods to ensure that data is not ob
 For instance, when comparing two Nessus scans, nodes are colored by the maximum count of issue states (fixed, open, or new issues) in their child nodes.
 A potential disadvantage of this approach is that a node could contain sligthly more fixed issues than open issues, and yet will still be colored green.
 To alleviate this problem, we add the option to split the nodes by issue-state higher in the hierarchy.
-Both options are shown in figure (TODO make figure).
+Both options are shown in figure.
 
 
 
@@ -246,7 +246,7 @@ Other sizing options include severity (the default) and by issue counts.
 Dual encoding severity with both color and size can be useful, as the darkest colored and largest nodes appear at the top left in each level of the histogram.
 
 The color scales in the treemap were created using ColorBrewer2~\cite{colorbrewer2}.
-While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure).
+While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure.
 
 
 %**Screen shot of cb here**
@@ -279,7 +279,7 @@ To address this concern, the NV tool runs entirely in the browser client, withou
 We were able to achieve this in a highly scalable implementation by combining several existing components, including the crossfilter data model library and the d3 library for data-driven DOM manipulation.
 We also developed a custom parser for the .nbe files, and related code to compare and merge these results.
  We were also able to handle these tasks in the browser with good performance.
-For additional peace-of-mind to any users, the entire technology stack is open source, and the NV tool itself will also soon be open sourced.(TODO make less 'meh')
+For additional peace-of-mind to any users, the entire technology stack is open source, and the NV tool itself will also soon be open sourced.
 
 One difficulty caused by the requirement of not leaking scan results was how to look up additional details about the results.
 Nessus provides an interface to access significant additional information about any specific vulnerability ID, including useful details such as related CVE and Bugrtaq IDs, and information about how to patch or otherwise address each issue.
@@ -390,7 +390,6 @@ major workstations vulnerabilities have been patched. Zooming into the
 workstation node the system administrator sees that while they were patching the most
 severe vulnerabilities they inadvertently opened new vulnerabilities on the two
 machines and did not address some of the vulnerabilities seen earlier.
-
 \begin{center}
 \begin{table*}
   \begin{tabular}{|l|l|l|l|l|l|}
@@ -405,14 +404,6 @@ machines and did not address some of the vulnerabilities seen earlier.
   \caption{The number of security notes and security holes by grouping before and after maintenance.}
   \label{Hole:tab}
 \end{table*}
-
-After further exploring their network, the administrator patches the most critical
-vulnerabilities in the system. Table \ref{Hole:tab} shows the number of security notes and holes before and after maintenance.
-The Nessus Vulnerability Visualization system
-provides functionality to compare two nbe files to show changes between two
-vulnerability states, such as before and after applying patches. After patching
-their system the administrator can rescan the network, then explore and see the
-differences between the previous state and the newly patched system.
 %**Screenshot of diff treemap.**
 %![Alt Text](screenshots/final/SimDiffGroup.png)
 \begin{figure}
