@@ -125,9 +125,10 @@ This section covers the visualization and interaction design.
 Nessus data in detail
 
 The Nessus scan results provide significant detail about the state of all machines on the specified network.
-(TODO talk about how the scan actually works?) This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
+%(TODO talk about how the scan actually works?) 
+This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
 These results also indicate whether this is an actual vulnerability or just a general security notice, and it also provides a severity score and several unique identifiers related to this vulnerability, which can be used to find additional information.
-The results also often give information about how this vulnerability can be patched or otherwise mitigated. The following shows an example; this particular example is from the VAST Challenge 2011 data set.
+The results often also give information about how this vulnerability can be patched or otherwise mitigated. The following shows an example; this particular example is from the VAST Challenge 2011 data set \cite{VAST11}.
 
 \begin{verbatim}
 results|192.168.2|192.168.2.175|cifs 
@@ -243,7 +244,7 @@ Other sizing options include severity (the default) and by issue counts.
 Dual encoding severity with both color and size can be useful, as the darkest colored and largest nodes appear at the top left in each level of the histogram.
 
 The color scales in the treemap were created using ColorBrewer2~\cite{colorbrewer2}.
-While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure (TODO figure).
+While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure \ref{cb-mode}.
 
 
 %**Screen shot of cb here**
@@ -252,6 +253,7 @@ While the primary color scales shown in the paper are designed to have semantic 
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/cb_version_both}
   \caption{Top: Colorblind safe version in normal vision. Bottom: Colorblind safe in simulated Deuteranopia, which affects 5\% of all males.}
+\label{cb-mode}
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
@@ -261,7 +263,7 @@ This works by examining each child of each element in the current level of the h
 Another use of the histograms is to easily highlight the most commonly occuring issues in the network.
 A possible drawback of this approach is that sometimes the least common issues can be the most damaging.
 However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find.
-The histograms also operate in as conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
+The histograms also operate in conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
 
 The Nessus information area is updated when the sysadmin drills down to the level at which Nessus issue-identification numbers are shown.
 The area then updates with detailed information about the currently selected Nessus id, including a synopsis, detailed description, vulnerability family, and solution (when available).
@@ -276,7 +278,8 @@ To address this concern, the NV tool runs entirely in the browser client, withou
 We were able to achieve this in a highly scalable implementation by combining several existing components, including the crossfilter data model library and the d3 library for data-driven DOM manipulation.
 We also developed a custom parser for the .nbe files, and related code to compare and merge these results.
  We were also able to handle these tasks in the browser with good performance.
-For additional peace-of-mind to any users, the entire technology stack is open source, and the NV tool itself will also soon be open sourced.(TODO make less 'meh')
+For additional peace-of-mind to any users, the entire technology stack is open source, and the NV tool itself will also soon be open sourced.
+%(TODO make less 'meh')
 
 One difficulty caused by the requirement of not leaking scan results was how to look up additional details about the results.
 Nessus provides an interface to access significant additional information about any specific vulnerability ID, including useful details such as related CVE and Bugrtaq IDs, and information about how to patch or otherwise address each issue.
