@@ -59,9 +59,10 @@ Nv also allows analysts to specify logical groupings that reflect analyst's situ
 
 Specifically, our contributions to the field of security visualization are as follows:
 
-- A visualization tool that supports security vulnerability awareness, analysis, and tracking; and
-
-- A framework for building web-based visualizations that do not send sensitive data to servers
+\begin{itemize}
+  \item A visualization tool that supports security vulnerability awareness, analysis, and tracking; and
+  \item A framework for building web-based visualizations that do not send sensitive data to servers
+\end{itemize}
 
 In the following section, we discuss related work in vulnerability visualization and analysis. Afterwards, we discuss the design of nv. We then present several case studies involving Nessus scans from multiple systems. We conclude with a brief discussion on web-based security visualization tools and on our future plans for nv.
 
@@ -182,16 +183,13 @@ high-value targets within their network.
 
 Specifically, the main tasks that nv seeks to support are:
 
-- Identifying the individual machines that have the most severe vulnerabilities.
-- Discovering the services that have the most vulnerabilities within
-their network.
-- Identifying the exposure to vulnerabilities within groups of
-machines where those groupings reflect the analyst's mental model of
-their network.
-- Determining the high-value machines that are vulnerable to exploitation.
-- Comparing point-in-time snapshots of the security state of the
-machines in the network and understanding the differences between the
-two points.
+\begin{itemize}
+  \item Identifying the individual machines that have the most severe vulnerabilities.
+  \item Discovering the services that have the most vulnerabilities within their network.
+  \item Identifying the exposure to vulnerabilities within groups of machines, where those groupings reflect the analyst's mental model of their network.
+  \item Determining the high-value machines that are vulnerable to exploitation.
+  \item Comparing point-in-time snapshots of the security state of the machines in the network, and understanding the differences between these two points.
+\end{itemize}
 
 \subsection{Visualization and Interaction}
 Nv consists of multiple coordinated views including a treemap, several histograms, and a detail-information area showing information on the selected Nessus id.
