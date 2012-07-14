@@ -128,9 +128,10 @@ This section covers the visualization and interaction design.
 
 \subsection{Data}
 The Nessus scan results provide significant detail about the state of all machines on the specified network.
+%(TODO talk about how the scan actually works?) 
 This information includes the port the vulnerable service is running on, what service and what version is running, what other versions of this software share this vulnerability, and a general description of the vulnerability.
 These results also indicate whether this is an actual vulnerability or just a general security notice, and it also provides a severity score and several unique identifiers related to this vulnerability, which can be used to find additional information.
-The results also often give information about how this vulnerability can be patched or otherwise mitigated. The following shows an example; this particular example is from the VAST Challenge 2011 data set.
+The results often also give information about how this vulnerability can be patched or otherwise mitigated. The following shows an example; this particular example is from the VAST Challenge 2011 data set \cite{VAST11}.
 
 \begin{verbatim}
 results|192.168.2|192.168.2.175|cifs 
@@ -222,7 +223,7 @@ We also use data-accumulation and coloring methods to ensure that data is not ob
 For instance, when comparing two Nessus scans, nodes are colored by the maximum count of issue states (fixed, open, or new issues) in their child nodes.
 A potential disadvantage of this approach is that a node could contain sligthly more fixed issues than open issues, and yet will still be colored green.
 To alleviate this problem, we add the option to split the nodes by issue-state higher in the hierarchy.
-Both options are shown in figure.
+Both options are shown in figure \ref{state-issue}.
 
 
 
@@ -232,6 +233,7 @@ Both options are shown in figure.
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/state_issue}
   \caption{Nesting on different values gives different results. Top: splitting by issue-state before splitting by IP. Bottom: splitting by IP before issue-state..}
+\label{state-issue}
 \end{figure}
 
 The advantage to separating issue-states higher is that the analyst can explore only the fixed issues or only the open issues.
@@ -246,7 +248,7 @@ Other sizing options include severity (the default) and by issue counts.
 Dual encoding severity with both color and size can be useful, as the darkest colored and largest nodes appear at the top left in each level of the histogram.
 
 The color scales in the treemap were created using ColorBrewer2~\cite{colorbrewer2}.
-While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure.
+While the primary color scales shown in the paper are designed to have semantic meanings (green for fixed, red for new, orange for open), we also include a colorblind-safe version, which is shown in figure \ref{cb-mode}.
 
 
 %**Screen shot of cb here**
@@ -255,6 +257,7 @@ While the primary color scales shown in the paper are designed to have semantic 
   \centering
   \includegraphics[width=0.35\textwidth]{../screenshots/cb_version_both}
   \caption{Top: Colorblind safe version in normal vision. Bottom: Colorblind safe in simulated Deuteranopia, which affects 5\% of all males.}
+\label{cb-mode}
 \end{figure}
 
 Nv includes several histograms, including issue-type (note, hole, or open port), severity (CVSS score), top Nessus note ids, and top Nessus hole ids.
@@ -264,7 +267,7 @@ This works by examining each child of each element in the current level of the h
 Another use of the histograms is to easily highlight the most commonly occuring issues in the network.
 A possible drawback of this approach is that sometimes the least common issues can be the most damaging.
 However, this issue is mitigated by the fact that the treemap can be be sized and colored by severity, which makes the most damaging issues easy to find.
-The histograms also operate in as conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
+The histograms also operate in conjunction (AND), meaning that the sysadmin can specify queries such as all issues of type hole with severity of 5 or greater.
 
 The Nessus information area is updated when the sysadmin drills down to the level at which Nessus issue-identification numbers are shown.
 The area then updates with detailed information about the currently selected Nessus id, including a synopsis, detailed description, vulnerability family, and solution (when available).
@@ -511,8 +514,6 @@ This tool abstracts and aggregates the large amounts of data produced by tools l
 Nv is also designed to protect the privacy of users through client side computation, since sending sensitive data, like vulnerability scans, over a network introduces an unnecessary vulenerability and potential attack vector.
 We have also provided case studies, which suggest that nv is appropriate for a range of common vulnerability analysis tasks.
 Finally, nv will be made available online and released as open-source.
-
-
 
 %\end{document}  % This is where a 'short' article might terminate
 
