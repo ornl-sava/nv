@@ -13,15 +13,15 @@ sub replaceIP{
 }
 
 my %inputs = (
-    "ubuntu" => [101, 10, "patched/ubuntuWorkstation.nbe", "192.168.56.101", 56],
-    "fedora" => [111, 10, "patched/fedoraWorkstation.nbe", "192.168.56.102", 56],
-    "LAPP" => [101, 5, "patched/lappServer.nbe", "192.168.56.104", 57],
-    "wordpress" => [101, 5, "patched/wordpressServer.nbe", "192.168.56.103", 58],
-    "MS" => [121, 2, "patched/ubuntuWorkstation.nbe", "192.168.56.101", 56]
+    "ubuntu" => [0, 256, "patched/ubuntuWorkstation.nbe", "192.168.56.101", 56],
+    "fedora" => [0, 256, "patched/fedoraWorkstation.nbe", "192.168.56.102", 57],
+    "LAPP" => [0, 256, "patched/lappServer.nbe", "192.168.56.103", 59],
+    "wordpress" => [0, 256, "patched/wordpressServer.nbe", "192.168.56.104", 60],
+    "MS" => [0, 64, "patched/ubuntuWorkstation.nbe", "192.168.56.105", 58]
 );
 
 my $outputNBE;
-my $outputFile = "testNetworkPatched.nbe";
+my $outputFile = "largeTestNetworkPatched.nbe";
 
 foreach my $key (keys %inputs){
     my $ip_start = $inputs{$key}[0];
