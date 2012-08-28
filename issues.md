@@ -20,3 +20,7 @@ With this in mind, we should consider adding a node-link diagram to the right of
 This node link diagram would show a focus machine in the center, with all of its neighbors surrounding it, and their relative vulnerabilities.
 Interaction in the node-link view supports the use case of focusing on a node, and examining the vulnerabilities in its immediate neighbors.
 Switching focus to a neighbor will change the treemap (focusing on a different node), as well as the node link diagram.
+
+### hierarchy changes via gui
+While coding nv, we found that different hierarchy arrangements supported different use cases.
+To support this further, we should have a simple drag and drop hierarchy arrangement area in the gui, which changes how the treemap is computed.
