@@ -100,6 +100,7 @@ var nbedata,
     byCVSS,
     byVulnID,
     byVulnType;
+var eventList;
 
   // TODO Lane - put this function somewhere else
   function testIfChildHasValue(dee, kee, val){
@@ -901,7 +902,7 @@ function handleGroupAdd(){
   groupList.push(newGroup);
   console.log("added group: " + JSON.stringify(newGroup));
   console.log("group list now contains: " + JSON.stringify(groupList));
-  updateCurrentGroupTable();
+  updateCurrentGroupTable(); //why is this needed here?  Somehow affects table re-drawing?
 }
 
 function handleDataPageAdd(){
@@ -910,23 +911,26 @@ function handleDataPageAdd(){
 
 function handleDataTab1(){
   console.log("Data tab 1 active");
+  eventList = null; //in case it's changed.
 }
 
 function handleDataTab2(){
   console.log("Data tab 2 active");
-}
-
-function handleVisTab(){
-  console.log("Vis tab active");
+  eventList = null; //in case it's changed.
 }
 
 function handleGroupsTab(){
   console.log("Groups tab active");
+  if( ! eventList ) updateEventList();
   updateCurrentGroupTable();
 }
 
-function updateCurrentGroupTable(){
-  var eventList
+function handleVisTab(){
+  console.log("Vis tab active");
+  if( ! eventList ) updateEventList(); //in case groups tab did not set it.
+}
+
+function updateEventList(){
   //console.log( $("#dataTab2Link").css("display") ) 
   if( ! ($("#dataTab2Link").css("display") === "none") ){
     console.log("second data tab is visible ...")
@@ -935,6 +939,14 @@ function updateCurrentGroupTable(){
     eventList = mergeNBEs(nbeItems1, nbeItems2)
   }else{
     eventList = parseNBEFile( $("#nbeFile1").val() );
+  }
+}
+
+function updateCurrentGroupTable(){
+
+  if( ! eventList ){ //have never seen this happen, but leaving in for now --mdi
+    console.log("updateCurrentGroupTable needed to update eventList: this is unexpected.");
+    updateEventList();
   }
 
   //build default group list
