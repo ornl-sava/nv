@@ -884,12 +884,14 @@ function loadJSONData(file){
 
 var groupList = [];
 
+/*
 function handleNBEAdd(){
   //$("#dataTab2").show()
   $("#dataTab2Link").show()
   $("#dataTab1Link").html("Initial Data")
   $("#dataTab2Link").html("Updated Data")
 }
+*/
 
 function handleGroupAdd(){
   //TODO make sure each IP is only in one group(?)
@@ -914,11 +916,6 @@ function handleDataTab1(){
   eventList = null; //in case it's changed.
 }
 
-function handleDataTab2(){
-  console.log("Data tab 2 active");
-  eventList = null; //in case it's changed.
-}
-
 function handleGroupsTab(){
   console.log("Groups tab active");
   if( ! eventList ) updateEventList();
@@ -931,14 +928,14 @@ function handleVisTab(){
 }
 
 function updateEventList(){
-  //console.log( $("#dataTab2Link").css("display") ) 
-  if( ! ($("#dataTab2Link").css("display") === "none") ){
-    console.log("second data tab is visible ...")
+  //TODO need to update this cond. to work with files also
+  if( $("#nbeFile2").val().trim() === "" ){
+    eventList = parseNBEFile( $("#nbeFile1").val() );
+  }else{
+    console.log("using second nbe text also ...")
     var nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
     var nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
     eventList = mergeNBEs(nbeItems1, nbeItems2)
-  }else{
-    eventList = parseNBEFile( $("#nbeFile1").val() );
   }
 }
 
@@ -1133,18 +1130,32 @@ var vulnIdInfo = {};
 
 // initialization
 $().ready(function () {
+  $("#nbeTextAreas").hide()
+  $('#hideTextareas').hide()
+
+  $('#showTextareas').bind('click', function(event) {
+    $("#nbeTextAreas").show()
+    $('#showTextareas').hide()
+    $('#hideTextareas').show()
+  });
+  $('#hideTextareas').bind('click', function(event) {
+    $("#nbeTextAreas").hide()
+    $('#showTextareas').show()
+    $('#hideTextareas').hide()
+  });
+
+
   // set up needed event listeners, etc.
+/*
   $('#addNBEBtn').bind('click', function(event) {
     handleNBEAdd();
   });
+*/
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
   });
   $('#dataTab1Link').bind('click', function(event) {
     handleDataTab1();
-  });
-  $('#dataTab2Link').bind('click', function(event) {
-    handleDataTab2();
   });
   $('#groupsTabLink').bind('click', function(event) {
     handleGroupsTab();
@@ -1167,8 +1178,8 @@ $().ready(function () {
   });
 
   //initially hide data tab 2 (for 'updated' nbe file)
-  //$("#dataTab2").hide()
-  $("#dataTab2Link").hide()
+  ////$("#dataTab2").hide()
+  //$("#dataTab2Link").hide()
 
   // handle window resizes
   $(window).resize(function() {
