@@ -99,8 +99,10 @@ var nbedata,
     byPort,
     byCVSS,
     byVulnID,
-    byVulnType;
+    byVulnType
 var eventList;
+var nbeText1;
+var nbeText2;
 
   // TODO Lane - put this function somewhere else
   function testIfChildHasValue(dee, kee, val){
@@ -1126,10 +1128,51 @@ d3.selection.prototype.moveToFront = function() {
   }); 
 }; 
 
+//TODO has to be on a server for this to work?  Go figure.
+//rather loosely based on these examples http://www.html5rocks.com/en/tutorials/file/dndfiles/
+function handleFileSelect(evt) {
+  var files = evt.target.files; // FileList object
+
+  // files is a FileList of File objects.
+  //there should only be one item here, the input only allows to select one.
+  var f = evt.target.files[0];
+  var reader = new FileReader();
+
+  reader.onload = (function(theFile) {
+    //console.log("!!"+JSON.stringify(theFile));
+    return function(e) {
+      //console.log("!!"+e.target.result);
+      if(evt.target.id === "file1")
+        nbeText1 = e.target.result;
+      if(evt.target.id === "file2")
+        nbeText2 = e.target.result;
+    };
+  })(f);
+
+  try{  // try to read file as text.
+    reader.readAsText(f); //utf-8 encoding is default
+  } catch(e){
+    //can't check the mime types, since not known for .nbe, so just catch errors instead
+    //TODO: most (all?) bin files will still not throw this exception, just make junk text.  other ideas?
+    console.error("could not parse file " + f.name + " as text" + e);
+  }
+}
+
 var vulnIdInfo = {};
 
 // initialization
 $().ready(function () {
+
+  //stuff for file upload and related
+  // Check for the various File API support.
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    // Great success! All the File APIs are supported.
+    document.getElementById('file1').addEventListener('change', handleFileSelect, false);
+  } else {
+    console.error('The File APIs are not fully supported in this browser.')
+  }
+
+  //stuff for c&p of NBE file
   $("#nbeTextAreas").hide()
   $('#hideTextareas').hide()
 
@@ -1146,11 +1189,6 @@ $().ready(function () {
 
 
   // set up needed event listeners, etc.
-/*
-  $('#addNBEBtn').bind('click', function(event) {
-    handleNBEAdd();
-  });
-*/
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
   });
@@ -1164,6 +1202,7 @@ $().ready(function () {
     handleVisTab();
   });
 
+  //TODO kind of a dumb reason to need a server running...
   $.get("data/vulnIDs.json", function(data) {
     console.log("Got the vulnIDs JSON file!");
     //console.log(data)
@@ -1177,9 +1216,6 @@ $().ready(function () {
     //$("#contentMain", resp).appendTo("#nessusinfo");
   });
 
-  //initially hide data tab 2 (for 'updated' nbe file)
-  ////$("#dataTab2").hide()
-  //$("#dataTab2Link").hide()
 
   // handle window resizes
   $(window).resize(function() {
