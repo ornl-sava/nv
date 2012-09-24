@@ -40,13 +40,14 @@
             <div class="tab-content">
               <div class="tab-pane active" id="dataTab1">
                 <div class="tab-instructions">Please paste your Nessus data file (.nbe) below. This data is not sent to a server; it is only parsed locally in the browser. If you want to compare two scans, click on "Load second scan" after uploading the first scan.</div>
-                <form>
+                <form id="filesForm">
                   <!-- it is surprisingly difficult to make the file input look like a bootstrap-style button -->
                   <!--input id="uploadFirstFile" class="btn btn-primary" type="button" value="Select NBE file"-->
                   <input type="file" id="file1" name="file1" >
                   <!--input id="uploadSecondFile" class="btn btn-primary" type="button" value="Select second NBE file (optional)"-->
                   <input type="file" id="file2" name="file2" >
-
+                </form> <!-- separating these, so that the above can be reset w/o changing anything else's state -->
+                <form>
                   <input id="showTextareas" type="button" value="Show NBE text area">
                   <input id="hideTextareas" type="button" value="Hide NBE text area">
                 </form>

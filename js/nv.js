@@ -101,8 +101,8 @@ var nbedata,
     byVulnID,
     byVulnType
 var eventList;
-var nbeText1;
-var nbeText2;
+var nbeText1 = "";
+var nbeText2 = "";
 
   // TODO Lane - put this function somewhere else
   function testIfChildHasValue(dee, kee, val){
@@ -930,14 +930,27 @@ function handleVisTab(){
 }
 
 function updateEventList(){
-  //TODO need to update this cond. to work with files also
-  if( $("#nbeFile2").val().trim() === "" ){
-    eventList = parseNBEFile( $("#nbeFile1").val() );
-  }else{
-    console.log("using second nbe text also ...")
-    var nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
-    var nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
-    eventList = mergeNBEs(nbeItems1, nbeItems2)
+  var nbeItems1 = ""
+  var nbeItems2 = ""
+
+  var useFiles = ( $('#nbeTextAreas:visible').length <= 0 )
+  //console.log('usefiles flag is ' + useFiles)
+
+  if(useFiles){
+    nbeItems1 = parseNBEFile( nbeText1 );
+    eventList = nbeItems1;
+    if(nbeText2.trim() !== ""){
+      nbeItems2 = parseNBEFile( nbeText2 );
+      eventList = mergeNBEs(nbeItems1, nbeItems2);
+    }
+  }else{ //else using text areas
+    nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
+    eventList = nbeItems1;
+    if( $("#nbeFile2").val().trim() !== "" ){
+      console.log("using second nbe text also ...")
+      nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
+      eventList = mergeNBEs(nbeItems1, nbeItems2)
+    }
   }
 }
 
@@ -1180,6 +1193,11 @@ $().ready(function () {
     $("#nbeTextAreas").show()
     $('#showTextareas').hide()
     $('#hideTextareas').show()
+
+    //TODO confirm this is desired behavior
+    $('#filesForm')[0].reset() 
+    nbeText1 = ""
+    nbeText2 = ""
   });
   $('#hideTextareas').bind('click', function(event) {
     $("#nbeTextAreas").hide()
