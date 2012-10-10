@@ -24,3 +24,17 @@ Switching focus to a neighbor will change the treemap (focusing on a different n
 ### hierarchy changes via gui
 While coding nv, we found that different hierarchy arrangements supported different use cases.
 To support this further, we should have a simple drag and drop hierarchy arrangement area in the gui, which changes how the treemap is computed.
+
+### Non-critical bugs:
+
+assigning a criticality/weight to individual machines has no effect.
+
+IPs should be in order on 'groups' tab
+
+Features to revisit sometime after submission:
+
+some way to remove groups
+checking that groups don't overlap, how to handle if they do
+set weight to 0/'ignore' to remove machines from results?
+
+some way to hide the second data tab, and go back to only one nbe file
