@@ -815,6 +815,7 @@ function initNessusInfo(){
 function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
+  NV.nessus.setData(dataset); // TODO backbone remove others
   // test crossfilter here
   //  console.log(nbedata.size());
   //  byCVSS.filter([2.0, 7.0]);
