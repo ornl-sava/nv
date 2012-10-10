@@ -63,8 +63,6 @@ var Nessus = Backbone.Model.extend({
   setData: function(dataset){
     this.logs.add(dataset);
     this.trigger('dataset updated');
-    console.log('omg');
-    console.log(this.logs.size());
   },
 
   // filters come from URLs, so we must parse them here
@@ -113,10 +111,105 @@ var Nessus = Backbone.Model.extend({
 });
 
 
+var Histogram = Backbone.Model.extend({
+  initialize: function() {
+    // respond to app-level events
+    this.get('datasource').on('dataset updated', this.updateData, this);
+  },
+
+  updateData: function(){
+    var attribute        = this.get('attribute')
+      , filterOptions    = this.get('filters') || {
+          attribute: attribute
+        };
+
+    // histograms are used in two cases: the filter/overview histograms and 
+    //  accumulation histograms on cards. One requires ips and the other doesn't.
+    //  We handle those cases here:
+    var rawData = this.get('datasource').getData(filterOptions);
+
+    // compute histogram
+    var histogram = d3.layout.histogram()
+             .value(function(d) { return d[attribute]; })
+             (rawData); 
+
+    // Convert array of object arrays to array of their lengths
+    var histlengths = histogram.map(function(d) { return d.length; });
+
+    // set data (this triggers an update event)
+    this.set('data', histlengths);
+  }
+});
 
 
 
 
+var HistogramView = Backbone.View.extend({
+
+  initialize: function() {
+    // listen for model changes
+    this.model.on('change', this.render, this);
+
+    // init a d3 histogram
+    d3.select(this.options.target)
+      .append('svg')
+      .attr('width', this.options.w)
+      .attr('height', this.options.h);
+  },
+
+  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
+  render: function(){
+    var vis       = d3.select(this.options.target).select('svg')
+      , app       = this.model.get('app')
+      , data      = this.model.get('data')
+      , range     = this.options.range
+      , numBins   = this.options.numBins
+      , attribute = this.model.get('attribute')
+      , view      = this
+      , w         = this.options.w
+      , h         = this.options.h
+      , barwidth  = 15
+      , barspace  = Math.floor( w/data.length - w/barwidth )
+      , rect      = vis.selectAll('.bar');
+
+    // y scale for bars
+    var y = d3.scale.linear()
+              .domain([0, d3.max(data)])
+              .range([1, h]);
+
+    // label scale (use rangeRound to get integers)
+    var labelScale = d3.scale.linear()
+                       .domain([0, numBins])
+                       .range(range);
+    // enter
+    rect.data(data)
+        .enter().append('rect')
+        .classed('bar', true)
+        .on('click', function() { barClick(this); })
+        .attr('data-rangeMin', function(d, i) { return labelScale(i); }) 
+        .attr('data-rangeMax', function(d, i) { return labelScale(i+1); })
+        .attr('width', barwidth)
+        .attr('height', function(d, i) { return y(d); })
+        .attr('x', function(d, i) { return i*(barwidth+barspace); })
+        .attr('y', function(d, i) { return h - y(d); });
+
+    // update
+    rect.transition().duration(250)
+        .attr('width', barwidth)
+        .attr('height', function(d, i) { return y(d); })
+        .attr('x', function(d, i) { return i*(barwidth+barspace); })
+        .attr('y', function(d, i) { return h - y(d); });
+
+
+    // on bar click, trigger a filter
+    var barClick = function barClick(d) {   
+      var rmin = d3.select(d).attr('data-rangeMin')
+        , rmax = d3.select(d).attr('data-rangeMax');
+
+      app.navigate('filter:'+attribute+','+rmin+','+rmax, true);
+    };
+  }
+});
 
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
@@ -135,25 +228,25 @@ var NV = new (Backbone.Router.extend({
                                            'vulnid',
                                            'vulntype']
                            });
-//    
+
 //  // the models + views
 //    // cvss (severity) histogram
-//    this.cvssHistogram        =   new Histogram({  
-//                                  app: this,
-//                                  datasource: this.nessus, 
-//                                  attribute: 'cvssScore',
-//                                  range: [0.0, 10.0],
-//                                  numBins: 10
-//                               });
-//
-//    this.cvssHistogramView    =   new HistogramView({
-//                                  app: this,
-//                                  model: this.severityHistogram,
-//                                  target:'#severityHistogram',
-//                                  w: 200,
-//                                  h: 200
-//                               });
-//    
+    this.cvssHistogram        =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  attribute: 'cvss'
+                               });
+
+    this.cvssHistogramView    =   new HistogramView({
+                                  app: this,
+                                  model: this.cvssHistogram,
+                                  target:'#cvssHistogram',
+                                  range: [0.0, 10.0],
+                                  numBins: 10,
+                                  w: 200,
+                                  h: 200
+                               });
+    
     // top notes
     // top holes
     // type
@@ -990,7 +1083,7 @@ function initNessusInfo(){
 function setNBEData(dataset){
   crossfilterInit();
   nbedata.add(dataset);
-  NV.nessus.setData(dataset);
+  NV.nessus.setData(dataset); // TODO backbone remove others
   // test crossfilter here
   //  console.log(nbedata.size());
   //  byCVSS.filter([2.0, 7.0]);

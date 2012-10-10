@@ -18,22 +18,22 @@ var NV = new (Backbone.Router.extend({
 
 //  // the models + views
 //    // cvss (severity) histogram
-//    this.cvssHistogram        =   new Histogram({  
-//                                  app: this,
-//                                  datasource: this.nessus, 
-//                                  attribute: 'cvssScore',
-//                                  range: [0.0, 10.0],
-//                                  numBins: 10
-//                               });
-//
-//    this.cvssHistogramView    =   new HistogramView({
-//                                  app: this,
-//                                  model: this.severityHistogram,
-//                                  target:'#severityHistogram',
-//                                  w: 200,
-//                                  h: 200
-//                               });
-//    
+    this.cvssHistogram        =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  attribute: 'cvss'
+                               });
+
+    this.cvssHistogramView    =   new HistogramView({
+                                  app: this,
+                                  model: this.cvssHistogram,
+                                  target:'#cvssHistogram',
+                                  range: [0.0, 10.0],
+                                  numBins: 10,
+                                  w: 200,
+                                  h: 200
+                               });
+    
     // top notes
     // top holes
     // type
