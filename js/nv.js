@@ -172,7 +172,7 @@ function init() {
   initTreemap();
 
   // initialize histograms
-  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
+//  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
   initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
   initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
   initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
@@ -232,7 +232,7 @@ function nonissue() {
 // called after data load
 function redraw() {
   drawTreemap();
-  drawHistogram("#cvssHistogram", 10, "cvss", null);
+//  drawHistogram("#cvssHistogram", 10, "cvss", null);
   // TODO Lane check a possible bug with the labels here
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
   drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");

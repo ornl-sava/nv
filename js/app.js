@@ -170,12 +170,13 @@ var HistogramView = Backbone.View.extend({
       , h         = this.options.h
       , barwidth  = 15
       , barspace  = Math.floor( w/data.length - w/barwidth )
-      , rect      = vis.selectAll('.bar');
+      , rect      = vis.selectAll('.bar')
+      , labels    = vis.selectAll('.histogramLabel');
 
     // y scale for bars
     var y = d3.scale.linear()
               .domain([0, d3.max(data)])
-              .range([1, h]);
+              .range([5, h-40]);
 
     // label scale (use rangeRound to get integers)
     var labelScale = d3.scale.linear()
@@ -191,14 +192,35 @@ var HistogramView = Backbone.View.extend({
         .attr('width', barwidth)
         .attr('height', function(d, i) { return y(d); })
         .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - y(d); });
+        .attr('y', function(d, i) { return h - 45 - y(d); });
 
     // update
-    rect.transition().duration(250)
-        .attr('width', barwidth)
-        .attr('height', function(d, i) { return y(d); })
-        .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - y(d); });
+    // rect.transition().duration(250)
+
+    //x-axis labels for bars
+    labels.data(data)
+      .enter().append("text")
+      .attr("class", "histogramlabel")
+      .attr("x", function(d, i) { return ( ((w / data.length) * i) + (barspace+barwidth)/2 ); })
+      .attr("y", h - 35)
+      .attr("text-anchor", "middle")
+      .text( function(d, i) { return i; });
+
+    // //title
+    // histContainer.append("text")
+    //   .attr("class", "histogramtitle")
+    //   .attr("x", w / 2 )
+    //   .attr("y", h + 26)
+    //   .attr("text-anchor", "middle")
+    //   .text(label);
+
+    // //max value label
+    // histContainer.append("text")
+    //   .attr("class", "maxarea")
+    //   .attr("x", w / 2 )
+    //   .attr("y", h + 40)
+    //   .attr("text-anchor", "middle");
+
 
 
     // on bar click, trigger a filter
@@ -243,8 +265,8 @@ var NV = new (Backbone.Router.extend({
                                   target:'#cvssHistogram',
                                   range: [0.0, 10.0],
                                   numBins: 10,
-                                  w: 200,
-                                  h: 200
+                                  w: 180,
+                                  h: 165
                                });
     
     // top notes
@@ -440,7 +462,7 @@ function init() {
   initTreemap();
 
   // initialize histograms
-  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
+//  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
   initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
   initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
   initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
@@ -500,7 +522,7 @@ function nonissue() {
 // called after data load
 function redraw() {
   drawTreemap();
-  drawHistogram("#cvssHistogram", 10, "cvss", null);
+//  drawHistogram("#cvssHistogram", 10, "cvss", null);
   // TODO Lane check a possible bug with the labels here
   drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
   drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");

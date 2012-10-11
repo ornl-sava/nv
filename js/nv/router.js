@@ -30,8 +30,8 @@ var NV = new (Backbone.Router.extend({
                                   target:'#cvssHistogram',
                                   range: [0.0, 10.0],
                                   numBins: 10,
-                                  w: 200,
-                                  h: 200
+                                  w: 180,
+                                  h: 165
                                });
     
     // top notes
