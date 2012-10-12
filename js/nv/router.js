@@ -30,8 +30,12 @@ var NV = new (Backbone.Router.extend({
                                   target:'#cvssHistogram',
                                   range: [0.0, 10.0],
                                   numBins: 10,
+                                  barWidth: 15,
                                   w: 180,
-                                  h: 165
+                                  h: 165,
+                                  title: ['cvss distribution'],
+                                  labels: ['0', '1', '2', '3', '4'
+                                          ,'5', '6', '7', '8', '9']
                                });
     
     // top notes

@@ -13,19 +13,22 @@ var HistogramView = Backbone.View.extend({
 
   // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
   render: function(){
-    var vis       = d3.select(this.options.target).select('svg')
-      , app       = this.model.get('app')
-      , data      = this.model.get('data')
-      , range     = this.options.range
-      , numBins   = this.options.numBins
-      , attribute = this.model.get('attribute')
-      , view      = this
-      , w         = this.options.w
-      , h         = this.options.h
-      , barwidth  = 15
-      , barspace  = Math.floor( w/data.length - w/barwidth )
-      , rect      = vis.selectAll('.bar')
-      , labels    = vis.selectAll('.histogramLabel');
+    var vis         = d3.select(this.options.target).select('svg')
+      , app         = this.model.get('app')
+      , data        = this.model.get('data')
+      , range       = this.options.range
+      , numBins     = this.options.numBins
+      , attribute   = this.model.get('attribute')
+      , view        = this
+      , w           = this.options.w
+      , h           = this.options.h
+      , barwidth    = this.options.barWidth
+      , barspace    = Math.floor( w/data.length - barwidth )
+      , rect        = vis.selectAll('.bar')
+      , rectLabels  = vis.selectAll('.histogramLabel')
+      , labels      = this.options.labels
+      , titleLabel  = vis.selectAll('.histogramtitle')
+      , title       = this.options.title;
 
     // y scale for bars
     var y = d3.scale.linear()
@@ -52,30 +55,22 @@ var HistogramView = Backbone.View.extend({
     // rect.transition().duration(250)
 
     //x-axis labels for bars
-    labels.data(data)
-      .enter().append("text")
-      .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return ( ((w / data.length) * i) + (barspace+barwidth)/2 ); })
-      .attr("y", h - 35)
-      .attr("text-anchor", "middle")
-      .text( function(d, i) { return i; });
+    rectLabels.data(labels)
+      .enter().append('text')
+      .attr('class', 'histogramlabel')
+      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
+      .attr('y', h - 35)
+      .attr('text-anchor', 'middle')
+      .text( function(d) { return d; });
 
-    // //title
-    // histContainer.append("text")
-    //   .attr("class", "histogramtitle")
-    //   .attr("x", w / 2 )
-    //   .attr("y", h + 26)
-    //   .attr("text-anchor", "middle")
-    //   .text(label);
-
-    // //max value label
-    // histContainer.append("text")
-    //   .attr("class", "maxarea")
-    //   .attr("x", w / 2 )
-    //   .attr("y", h + 40)
-    //   .attr("text-anchor", "middle");
-
-
+    //title
+    titleLabel.data(title)
+      .enter().append('text')
+      .attr('class', 'histogramtitle')
+      .attr('x', w / 2 )
+      .attr('y', h - 20)
+      .attr('text-anchor', 'middle')
+      .text(title);
 
     // on bar click, trigger a filter
     var barClick = function barClick(d) {   
