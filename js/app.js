@@ -1,3 +1,65 @@
+var Histogram = Backbone.Model.extend({
+  initialize: function() {
+    // respond to app-level events
+    this.get('datasource').on('dataset updated', this.updateData, this);
+  },
+
+  updateData: function(){
+    var filterOptions   = this.get('filterOptions')
+      , attribute       = filterOptions.attribute
+      , bins            = this.get('bins') || ""
+      , datamap         = this.get('datamap') || "";
+
+    var rawData = this.get('datasource').getData(filterOptions);
+
+    // compute histogram based on attribute value
+    var histogram = d3.layout.histogram()
+        .value(function(d) { 
+          // if we have a datamap, use it
+          return datamap ? datamap(d[attribute]) : d[attribute]; 
+        });
+
+    // if bins specified, set them
+    if( bins )
+      histogram.bins(bins);
+
+    // compute the histogram
+    var data = histogram(rawData); 
+
+    // if a limit is specified, sort and cut the data
+    if( this.get('limit') ){
+      var limit = this.get('limit');
+
+      // sort the data by length (ascending) and reverse
+      data = _.sortBy(data, function(d){ return d.length; }).reverse();
+
+      // cut off after limit
+      data = _.first(data, limit);
+    }
+
+    // set data to the lengths of the data
+    this.set('data', data.map(function(d) { return d.length; }) );
+    
+    // set labels. if bins are specified, use numbers
+    //  otherwise use the category (data + attribute)
+    // TODO, can d3 histograms make better labels by telling us what the bins mean?
+    if( bins ) {
+      this.set('labels', data.map( function(d, i) { return i; }) );
+    } else {
+      this.set('labels', data.map( function(d) { 
+        // TODO if we have a datamap, get the inverse to get the labels right
+        // to do this, see if we can reverse the d3 ordinal scale
+        return d[0][attribute]; 
+      }) );
+    }
+
+    // TODO remove eventually... only for testing
+    console.log(this.get('data'));
+    console.log(this.get('labels'));
+  }
+});
+
+
 var Nessus = Backbone.Model.extend({
 
   initialize: function() {
@@ -111,39 +173,6 @@ var Nessus = Backbone.Model.extend({
 });
 
 
-var Histogram = Backbone.Model.extend({
-  initialize: function() {
-    // respond to app-level events
-    this.get('datasource').on('dataset updated', this.updateData, this);
-  },
-
-  updateData: function(){
-    var attribute        = this.get('attribute')
-      , filterOptions    = this.get('filters') || {
-          attribute: attribute
-        };
-
-    // histograms are used in two cases: the filter/overview histograms and 
-    //  accumulation histograms on cards. One requires ips and the other doesn't.
-    //  We handle those cases here:
-    var rawData = this.get('datasource').getData(filterOptions);
-
-    // compute histogram
-    var histogram = d3.layout.histogram()
-             .value(function(d) { return d[attribute]; })
-             (rawData); 
-
-    // Convert array of object arrays to array of their lengths
-    var histlengths = histogram.map(function(d) { return d.length; });
-
-    // set data (this triggers an update event)
-    this.set('data', histlengths);
-  }
-});
-
-
-
-
 var HistogramView = Backbone.View.extend({
 
   initialize: function() {
@@ -233,11 +262,12 @@ var HistogramView = Backbone.View.extend({
   }
 });
 
+
+
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
   routes: {
-    "": "index",
-    "test": "testRoute"
+    "": "index"
   },
 
   // instantiate/link views and models
@@ -251,35 +281,102 @@ var NV = new (Backbone.Router.extend({
                                            'vulntype']
                            });
 
-//  // the models + views
-//    // cvss (severity) histogram
+  // models and views
+
+    // cvss (severity) histogram
+    
     this.cvssHistogram        =   new Histogram({  
                                   app: this,
                                   datasource: this.nessus, 
-                                  attribute: 'cvss'
+                                  bins: 10, 
+                                  filterOptions: { attribute:'cvss' }
                                });
 
     this.cvssHistogramView    =   new HistogramView({
                                   app: this,
                                   model: this.cvssHistogram,
                                   target:'#cvssHistogram',
-                                  range: [0.0, 10.0],
-                                  numBins: 10,
+                                  range: [0.0, 10.0], // TODO remove, should be implicit in data
+                                  numBins: 10, // TODO remove, should be implicit in data
                                   w: 180,
                                   h: 165
                                });
     
-    // top notes
-    // top holes
-    // type
-    // treemap
-    // info
-  },
+    // vulnerability type histogram
 
-  // routing functions
-//  testRoute: function(){
-//    console.log('route successful');
-//  },
+      // NOTE: This is a hack to make categorical histograms.
+      // If d3 somehow supports non-numerical histograms, we can remove this
+      // and lighten the histogram model considerably.
+      var vulnTypeMap = d3.scale.ordinal()
+          .domain(['hole', 'port', 'note'])
+          .range([1,2,3]);
+
+      this.vulnTypeHistogram  =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  bins: 3, 
+                                  datamap: vulnTypeMap,
+                                  filterOptions: {
+                                    attribute: 'vulntype'
+                                  }
+                              });
+
+// TODO   this.vulnTypeHistogramView    =   new HistogramView({
+
+    // top notes histogram
+
+    this.topNoteHistogram    =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  limit: 5,
+                                  filterOptions: {
+                                    attribute: 'vulnid',
+                                    filters: [
+                                      { attribute:'vulntype', exact:'note' }
+                                    ]
+                                  }
+                               });
+
+    this.topNoteHistogramView    =   new HistogramView({
+                                  app: this,
+                                  model: this.topNoteHistogram,
+                                  target:'#topNoteHistogram',
+                                  range: [0.0, 10.0], // TODO remove, should be implicit in data
+                                  numBins: 10, // TODO remove, should be implicit in data
+                                  w: 180,
+                                  h: 165
+                               });
+ 
+    // top holes histogram
+
+    this.topHoleHistogram    =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  limit: 5,
+                                  filterOptions: {
+                                    attribute: 'vulnid',
+                                    filters: [
+                                      { attribute:'vulntype', exact:'hole' }
+                                    ]
+                                  }
+                              });
+
+    this.topHoleHistogramView    =   new HistogramView({
+                                     app: this,
+                                     model: this.topHoleHistogram,
+                                     target:'#topHoleHistogram',
+                                     range: [0.0, 10.0], // TODO remove, should be implicit in data
+                                     numBins: 10, // TODO remove, should be implicit in data
+                                     w: 180,
+                                     h: 165
+                                });
+
+
+    // treemap
+
+    // info view
+
+  },
 
   // called from outside the app
   start: function(){
@@ -463,9 +560,9 @@ function init() {
 
   // initialize histograms
 //  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
-  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
-  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
-  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
+//  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
+//  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
+//  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -524,9 +621,9 @@ function redraw() {
   drawTreemap();
 //  drawHistogram("#cvssHistogram", 10, "cvss", null);
   // TODO Lane check a possible bug with the labels here
-  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
-  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
+//  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
+//  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
+//  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
 }
 
 // called when window is resized

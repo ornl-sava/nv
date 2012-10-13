@@ -173,9 +173,9 @@ function init() {
 
   // initialize histograms
 //  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
-  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
-  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
-  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
+//  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
+//  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
+//  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
 
   // load treemap data (sets nbedata which calls drawTreemap() after it loads)
   // this should be commented out when we receive data from the parser
@@ -234,9 +234,9 @@ function redraw() {
   drawTreemap();
 //  drawHistogram("#cvssHistogram", 10, "cvss", null);
   // TODO Lane check a possible bug with the labels here
-  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
-  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
+//  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
+//  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
+//  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
 }
 
 // called when window is resized
