@@ -43,7 +43,11 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         browser: true,
-        laxcomma: true
+        laxcomma: true,
+        maxparams: 5,
+        maxdepth: 5,
+        maxstatements: 25,
+        maxcomplexity: 10
       },
       globals: {
         jQuery: true,
