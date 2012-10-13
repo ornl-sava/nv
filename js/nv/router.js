@@ -26,16 +26,16 @@ var NV = new (Backbone.Router.extend({
                                   filterOptions: { attribute:'cvss' }
                                });
 
-    this.cvssHistogramView    =   new HistogramView({
-                                  app: this,
-                                  model: this.cvssHistogram,
-                                  target:'#cvssHistogram',
-                                  range: [0.0, 10.0], // TODO remove, should be implicit in data
-                                  numBins: 10, // TODO remove, should be implicit in data
-                                  w: 180,
-                                  h: 165
-                               });
-    
+   this.cvssHistogramView    =   new HistogramView({
+                                 app: this,
+                                 model: this.cvssHistogram,
+                                 target:'#cvssHistogram',
+                                 barwidth: 15,
+                                 w: 180,
+                                 h: 165,
+                                 title: ['cvss']
+                              });
+
     // vulnerability type histogram
 
       // NOTE: This is a hack to make categorical histograms.
@@ -55,7 +55,15 @@ var NV = new (Backbone.Router.extend({
                                   }
                               });
 
-// TODO   this.vulnTypeHistogramView    =   new HistogramView({
+      this.vulnTypeHistogramView    =   new HistogramView({
+                                 app: this,
+                                 model: this.vulnTypeHistogram,
+                                 target:'#vulnTypeHistogram',
+                                 barwidth: 15,
+                                 w: 100,
+                                 h: 165,
+                                 title: ['vuln type']
+                              });
 
     // top notes histogram
 
@@ -75,10 +83,10 @@ var NV = new (Backbone.Router.extend({
                                   app: this,
                                   model: this.topNoteHistogram,
                                   target:'#topNoteHistogram',
-                                  range: [0.0, 10.0], // TODO remove, should be implicit in data
-                                  numBins: 10, // TODO remove, should be implicit in data
+                                  barwidth: 25,
                                   w: 180,
-                                  h: 165
+                                  h: 165,
+                                  title: ['top notes']
                                });
  
     // top holes histogram
@@ -97,12 +105,12 @@ var NV = new (Backbone.Router.extend({
 
     this.topHoleHistogramView    =   new HistogramView({
                                      app: this,
+                                     barwidth: 25,
                                      model: this.topHoleHistogram,
                                      target:'#topHoleHistogram',
-                                     range: [0.0, 10.0], // TODO remove, should be implicit in data
-                                     numBins: 10, // TODO remove, should be implicit in data
                                      w: 180,
-                                     h: 165
+                                     h: 165,
+                                     title: ['top notes']
                                 });
 
 
