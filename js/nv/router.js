@@ -1,8 +1,7 @@
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
   routes: {
-    "": "index",
-    "test": "testRoute"
+    "": "index"
   },
 
   // instantiate/link views and models
@@ -16,35 +15,102 @@ var NV = new (Backbone.Router.extend({
                                            'vulntype']
                            });
 
-//  // the models + views
-//    // cvss (severity) histogram
+  // models and views
+
+    // cvss (severity) histogram
+    
     this.cvssHistogram        =   new Histogram({  
                                   app: this,
                                   datasource: this.nessus, 
-                                  attribute: 'cvss'
+                                  bins: 10, 
+                                  filterOptions: { attribute:'cvss' }
                                });
 
     this.cvssHistogramView    =   new HistogramView({
                                   app: this,
                                   model: this.cvssHistogram,
                                   target:'#cvssHistogram',
-                                  range: [0.0, 10.0],
-                                  numBins: 10,
+                                  range: [0.0, 10.0], // TODO remove, should be implicit in data
+                                  numBins: 10, // TODO remove, should be implicit in data
                                   w: 180,
                                   h: 165
                                });
     
-    // top notes
-    // top holes
-    // type
-    // treemap
-    // info
-  },
+    // vulnerability type histogram
 
-  // routing functions
-//  testRoute: function(){
-//    console.log('route successful');
-//  },
+      // NOTE: This is a hack to make categorical histograms.
+      // If d3 somehow supports non-numerical histograms, we can remove this
+      // and lighten the histogram model considerably.
+      var vulnTypeMap = d3.scale.ordinal()
+          .domain(['hole', 'port', 'note'])
+          .range([1,2,3]);
+
+      this.vulnTypeHistogram  =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  bins: 3, 
+                                  datamap: vulnTypeMap,
+                                  filterOptions: {
+                                    attribute: 'vulntype'
+                                  }
+                              });
+
+// TODO   this.vulnTypeHistogramView    =   new HistogramView({
+
+    // top notes histogram
+
+    this.topNoteHistogram    =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  limit: 5,
+                                  filterOptions: {
+                                    attribute: 'vulnid',
+                                    filters: [
+                                      { attribute:'vulntype', exact:'note' }
+                                    ]
+                                  }
+                               });
+
+    this.topNoteHistogramView    =   new HistogramView({
+                                  app: this,
+                                  model: this.topNoteHistogram,
+                                  target:'#topNoteHistogram',
+                                  range: [0.0, 10.0], // TODO remove, should be implicit in data
+                                  numBins: 10, // TODO remove, should be implicit in data
+                                  w: 180,
+                                  h: 165
+                               });
+ 
+    // top holes histogram
+
+    this.topHoleHistogram    =   new Histogram({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  limit: 5,
+                                  filterOptions: {
+                                    attribute: 'vulnid',
+                                    filters: [
+                                      { attribute:'vulntype', exact:'hole' }
+                                    ]
+                                  }
+                              });
+
+    this.topHoleHistogramView    =   new HistogramView({
+                                     app: this,
+                                     model: this.topHoleHistogram,
+                                     target:'#topHoleHistogram',
+                                     range: [0.0, 10.0], // TODO remove, should be implicit in data
+                                     numBins: 10, // TODO remove, should be implicit in data
+                                     w: 180,
+                                     h: 165
+                                });
+
+
+    // treemap
+
+    // info view
+
+  },
 
   // called from outside the app
   start: function(){
