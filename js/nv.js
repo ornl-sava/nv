@@ -11,6 +11,9 @@
  */
 
 
+
+
+
 // some tests for grabbing data from other websites
 //$.get("http://codementum.org", function(data) {
 //  var resp = $(data); // Now you can do whatever you want with it
@@ -53,18 +56,18 @@ var nodeColor = d3.scale.linear()
 // #E5F5E0; #A1D99B; #31A354; 
 var nodeColorFixed = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#AAAAAA"), d3.hsl("#405E50")]); // white-green
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
 
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Reds&n=3
 // #FEE0D2; #FC9272; #DE2D26; 
 var nodeColorNew = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#AAAAAA"), d3.hsl("#AD009F")]); // white-red
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
 
 // actually is same
 var nodeColorOpen = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#AAAAAA"), d3.hsl("#FFCF40")]); // white-orange
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
 
 //associative array to store exactly what bars you click on and off
 var activeFilters = {};
