@@ -52,10 +52,6 @@ var Histogram = Backbone.Model.extend({
 
 
     // set data to the lengths of the data
-    this.set('data', data.map(function(d) { return d.length; }) );
-    
-    // TODO remove eventually... only for testing
-    console.log(this.get('data'));
-    console.log(this.get('labels'));
+    this.set('data', data.map(function(d) { return d.length; }) );  
   }
 });

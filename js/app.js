@@ -1,66 +1,3 @@
-var Histogram = Backbone.Model.extend({
-  initialize: function() {
-    // respond to app-level events
-    this.get('datasource').on('dataset updated', this.updateData, this);
-  },
-
-  updateData: function(){
-    var filterOptions   = this.get('filterOptions')
-      , attribute       = filterOptions.attribute
-      , bins            = this.get('bins') || ""
-      , datamap         = this.get('datamap') || "";
-
-    var rawData = this.get('datasource').getData(filterOptions);
-
-    // compute histogram based on attribute value
-    var histogram = d3.layout.histogram()
-        .value(function(d) { 
-          // if we have a datamap, use it
-          return datamap ? datamap(d[attribute]) : d[attribute]; 
-        });
-
-    // if bins specified, set them
-    if( bins )
-      histogram.bins(bins);
-
-    // compute the histogram
-    var data = histogram(rawData); 
-
-    // if a limit is specified, sort and cut the data
-    if( this.get('limit') ){
-      var limit = this.get('limit');
-
-      // sort the data by length (ascending) and reverse
-      data = _.sortBy(data, function(d){ return d.length; }).reverse();
-
-      // cut off after limit
-      data = _.first(data, limit);
-    }
-
-    // set labels. if bins are specified, use numbers
-    //  otherwise use the category (data + attribute)
-    // TODO, can d3 histograms make better labels by telling us what the bins mean?
-    if( bins ) {
-      this.set('labels', data.map( function(d, i) { return i; }) );
-    } else {
-      this.set('labels', data.map( function(d) { 
-        // TODO if we have a datamap, get the inverse to get the labels right
-        // to do this, see if we can reverse the d3 ordinal scale
-        return d[0][attribute]; 
-      }) );
-    }
-
-
-    // set data to the lengths of the data
-    this.set('data', data.map(function(d) { return d.length; }) );
-    
-    // TODO remove eventually... only for testing
-    console.log(this.get('data'));
-    console.log(this.get('labels'));
-  }
-});
-
-
 var Nessus = Backbone.Model.extend({
 
   initialize: function() {
@@ -174,6 +111,67 @@ var Nessus = Backbone.Model.extend({
 });
 
 
+var Histogram = Backbone.Model.extend({
+  initialize: function() {
+    // respond to app-level events
+    this.get('datasource').on('dataset updated', this.updateData, this);
+  },
+
+  updateData: function(){
+    var filterOptions   = this.get('filterOptions')
+      , attribute       = filterOptions.attribute
+      , bins            = this.get('bins') || ""
+      , datamap         = this.get('datamap') || "";
+
+    var rawData = this.get('datasource').getData(filterOptions);
+
+    // compute histogram based on attribute value
+    var histogram = d3.layout.histogram()
+        .value(function(d) { 
+          // if we have a datamap, use it
+          return datamap ? datamap(d[attribute]) : d[attribute]; 
+        });
+
+    // if bins specified, set them
+    if( bins )
+      histogram.bins(bins);
+
+    // compute the histogram
+    var data = histogram(rawData); 
+
+    // if a limit is specified, sort and cut the data
+    if( this.get('limit') ){
+      var limit = this.get('limit');
+
+      // sort the data by length (ascending) and reverse
+      data = _.sortBy(data, function(d){ return d.length; }).reverse();
+
+      // cut off after limit
+      data = _.first(data, limit);
+    }
+
+    // set labels. if bins are specified, use numbers
+    //  otherwise use the category (data + attribute)
+    // TODO, can d3 histograms make better labels by telling us what the bins mean?
+    if( bins ) {
+      this.set('labels', data.map( function(d, i) { return i; }) );
+    } else {
+      this.set('labels', data.map( function(d) { 
+        // TODO if we have a datamap, get the inverse to get the labels right
+        // to do this, see if we can reverse the d3 ordinal scale
+        return d[0][attribute]; 
+      }) );
+    }
+
+
+    // set data to the lengths of the data
+    this.set('data', data.map(function(d) { return d.length; }) );  
+  }
+});
+
+
+
+
 var HistogramView = Backbone.View.extend({
 
   initialize: function() {
@@ -210,11 +208,6 @@ var HistogramView = Backbone.View.extend({
     var y = d3.scale.linear()
               .domain([0, d3.max(data)])
               .range([5, h-40]);
-
-    console.log('=======');
-    console.log(this.model);
-    console.log(data);
-    console.log(labels);
 
     // enter
     rect.data(data)
@@ -258,8 +251,6 @@ var HistogramView = Backbone.View.extend({
     // };
   }
 });
-
-
 
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
@@ -403,6 +394,9 @@ var NV = new (Backbone.Router.extend({
  */
 
 
+
+
+
 // some tests for grabbing data from other websites
 //$.get("http://codementum.org", function(data) {
 //  var resp = $(data); // Now you can do whatever you want with it
@@ -445,18 +439,18 @@ var nodeColor = d3.scale.linear()
 // #E5F5E0; #A1D99B; #31A354; 
 var nodeColorFixed = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#AAAAAA"), d3.hsl("#405E50")]); // white-green
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
 
 // http://colorbrewer2.org/index.php?type=sequential&scheme=Reds&n=3
 // #FEE0D2; #FC9272; #DE2D26; 
 var nodeColorNew = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#AAAAAA"), d3.hsl("#AD009F")]); // white-red
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
 
 // actually is same
 var nodeColorOpen = d3.scale.linear()
     .domain([0.0, 10.0])
-    .range([d3.hsl("#AAAAAA"), d3.hsl("#FFCF40")]); // white-orange
+    .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
 
 //associative array to store exactly what bars you click on and off
 var activeFilters = {};

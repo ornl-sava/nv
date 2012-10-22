@@ -16,29 +16,24 @@ var HistogramView = Backbone.View.extend({
     var vis         = d3.select(this.options.target).select('svg')
       , app         = this.model.get('app')
       , data        = this.model.get('data')
-      , numBins     = data.length
       , range       = this.options.range
       , attribute   = this.model.get('attribute')
       , view        = this
       , w           = this.options.w
       , h           = this.options.h
       , barwidth    = this.options.barwidth
+      , labels      = this.model.get('labels')
+      , title       = this.options.title
+      , numBins     = data.length
       , barspace    = Math.floor( w/data.length - barwidth )
       , rect        = vis.selectAll('.bar')
       , rectLabels  = vis.selectAll('.histogramLabel')
-      , labels      = this.model.get('labels')
-      , titleLabel  = vis.selectAll('.histogramtitle')
-      , title       = this.options.title;
+      , titleLabel  = vis.selectAll('.histogramtitle');
 
     // y scale for bars
     var y = d3.scale.linear()
               .domain([0, d3.max(data)])
               .range([5, h-40]);
-
-    console.log('=======');
-    console.log(this.model);
-    console.log(data);
-    console.log(labels);
 
     // enter
     rect.data(data)
