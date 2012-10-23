@@ -115,6 +115,13 @@ var NV = new (Backbone.Router.extend({
 
 
     // treemap
+    this.treemap    =   new Treemap({  
+                                  app: this,
+                                  datasource: this.nessus, 
+                                  filterOptions: {
+                                    attribute: 'vulnid'
+                                  }
+                              });
 
     // info view
 

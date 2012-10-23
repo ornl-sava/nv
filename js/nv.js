@@ -1,85 +1,21 @@
-/*
- * nv.js
- *
- *
- * Here are the divs in nv.html:
- * - id="vis"
- * - id="options"
- * - id="edit"
- * - id="nessusinfo"
- * - id="histograms"
- */
-
-
-
-
-
-// some tests for grabbing data from other websites
-//$.get("http://codementum.org", function(data) {
-//  var resp = $(data); // Now you can do whatever you want with it
-//  $(".hero-unit", resp).appendTo("body");
-//});
-
-//$.get("http://www.nessus.org/plugins/index.php?view=single&id=42118/", function(data) {
-//  var resp = $(data); // Now you can do whatever you want with it
-//  $("#contentMain", resp).appendTo("#nessusinfo");
-//});
-
-//$.getJSON('http://www.panoramio.com/wapi/data/get_photos?v=1&key=dummykey&tag=test&offset=0&length=20&callback=?&minx=-30&miny=0&maxx=0&maxy=150', 
-//    function(json) {
-//      alert(json.photos[1].photoUrl);
-//});
-
-
-// Alternate, colorblind safe colors
-// http://colorbrewer2.org/index.php?type=qualitative&scheme=Paired&n=4
-// #1F78B4; #B2DF8A; #33A02C; 
-// darkblue, lightgreen, darkgreen
-// fixed, new, open
-// and another
-// http://colorbrewer2.org/index.php?type=qualitative&scheme=Set2&n=5
-// #66C2A5; #FC8D62; #8DA0CB; #E78AC3; #A6D854; 
-// greenblue, orange, blue, pink, green
-//
-// #E41A1C; #377EB8; #4DAF4A; #984EA3; #FF7F00; 
-// red, blue, green, purple, orange
-
-// colors
-// old -> http://colorbrewer2.org/index.php?type=sequential&scheme=Oranges&n=3
-// new -> http://colorbrewer2.org/index.php?type=sequential&scheme=PuBu&n=5
 var nodeColor = d3.scale.linear()
     .domain([0.0, 2.0, 10.0])
     .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
-//    .range([d3.hsl("#FEE6CE"), d3.hsl("#FDAE6B"), d3.hsl("#E6550D")]); // white-orange
 
-// http://colorbrewer2.org/index.php?type=sequential&scheme=Greens&n=3
-// #E5F5E0; #A1D99B; #31A354; 
 var nodeColorFixed = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
 
-// http://colorbrewer2.org/index.php?type=sequential&scheme=Reds&n=3
-// #FEE0D2; #FC9272; #DE2D26; 
 var nodeColorNew = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
 
-// actually is same
 var nodeColorOpen = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
 
 //associative array to store exactly what bars you click on and off
 var activeFilters = {};
-
-//TODO - Lane - fix this
-// LabelMaps are used to find a label given a number (in initHistogram)
-var vulntypeLabelMap = ["hole", "port", "note"];
-
-// NumberMaps are used to find a number given a label (in drawHistogram)
-var vulntypeNumberMap = d3.scale.ordinal()
-      .domain(vulntypeLabelMap)
-      .range([1,2,3]);
 
 // globals
 var margin = {top: 20, right: 0, bottom: 0, left: 0},
@@ -107,20 +43,18 @@ var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
 
-  // TODO Lane - put this function somewhere else
-  function testIfChildHasValue(dee, kee, val){
-    var fv = findValue(dee, kee, val);
-    return fv > 0;
-  
-    function findValue(d, key, value){
-     if(d.values){
-        return d.values.reduce(function(p, v) { return p + findValue(v, key, value); }, 0);
-     } 
-     else {
-       if(typeof d[key] !== undefined){
-         if ( !isNaN(d[key]) ){ //if value is a number
-          //console.log("d[key]: " + d[key]);
-          //console.log("value: " + value);
+// TODO Lane - put this function somewhere else
+function testIfChildHasValue(dee, kee, val){
+  var fv = findValue(dee, kee, val);
+  return fv > 0;
+
+  function findValue(d, key, value){
+    if(d.values){
+      return d.values.reduce(function(p, v) { return p + findValue(v, key, value); }, 0);
+    } 
+    else {
+      if(typeof d[key] !== undefined){
+        if ( !isNaN(d[key]) ){ //if value is a number
 
           //find the value of each bar in the histograms
           if ( Math.floor(d[key]) === Math.floor(value) ){
@@ -129,22 +63,23 @@ var nbeText2 = "";
           else {
             return 0;
           }
-         }
-         else {
+
+        }
+        else {
           if (d[key] === value){
             return 1;
           } 
           else {
             return 0;
           }
-         }
-       } 
-       else {
-         return 0;
-       }
-     }
+        }
+      } 
+      else {
+        return 0;
+      }
     }
   }
+}
 
 // crossfilter setup
 function crossfilterInit(){
@@ -173,21 +108,7 @@ function init() {
 
   // initialize treemap
   initTreemap();
-
-  // initialize histograms
-//  initHistogram("#cvssHistogram", "cvss", 10, "Severity", null, 18);
-//  initHistogram("#vulnTypeHistogram", "vulntype", 3, "Type", vulntypeLabelMap, 32);
-//  initHistogram("#topHoleHistogram", "vulnid", 8, "Top Holes", null, 36);
-//  initHistogram("#topNoteHistogram", "vulnid", 8, "Top Notes", null, 36);
-
-  // load treemap data (sets nbedata which calls drawTreemap() after it loads)
-  // this should be commented out when we receive data from the parser
-//  loadJSONData('../../data/testdata/testdata13.json');
-
-  // test changes of data using timeouts
-  //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata6.json'); }, 3000);  
-  //window.setTimeout(function() { loadJSONData('../../data/testdata/testdata7.json'); }, 10000);  
-  
+ 
   // initialize nessus info area
   initNessusInfo();
 }
@@ -208,44 +129,14 @@ function sizeByCount() {
    redraw(); 
 }
 
-// these buttons should toggle fixed/non-issue status
-// TODO must also change data in crossfilter before redraw (since data is set there)
-function fixed() {
-  // get selected node and change it
-  var d = d3.select('#changeable').datum();
-  d.state = 'fixed';
-  d3.select('#changeable').datum(d);
-  // toggle property
-  d3.select('#changeable').attr('id', '');
-  // redraw
-  //  redraw(); 
-}
-
-function nonissue() {
-  // get selected node and change it
-  var d = d3.select('#changeable').datum();
-  d.state = 'nonissue';
-  d3.select('#changeable').datum(d);
-  // toggle property
-  d3.select('#changeable').attr('id', '');
-  // redraw
-  //  redraw(); 
-}
-
 // called after data load
 function redraw() {
   drawTreemap();
-//  drawHistogram("#cvssHistogram", 10, "cvss", null);
-  // TODO Lane check a possible bug with the labels here
-//  drawHistogram("#vulnTypeHistogram", 3, "vulntype", vulntypeNumberMap);
-//  drawHistogram("#topNoteHistogram", 8, "vulnid", null, null, "note");
-//  drawHistogram("#topHoleHistogram", 8, "vulnid", null, null, "hole");
 }
 
 // called when window is resized
 function resize() {
   width = $('#vis').width();
-  //console.log( 'width: ' + width);
   x.domain([0, width]).range([0, width]);
   d3.select("#vis > svg").attr("width", width + margin.left + margin.right);
   d3.selectAll(".grandparent rect").attr("width", width);
@@ -257,7 +148,6 @@ function resize() {
 function initTreemap(){
 
   width = 940; //TODO - set this dynamically based on size of window
-//  console.log( 'width: ' + width);
   
   x = d3.scale.linear()
       .domain([0, width])
@@ -323,13 +213,21 @@ function drawTreemap() {
   // free the root from its original array
   root = root[0];
 
-  var nodes = [];
+//  var nodes = [];
 
   initialize(root);
   accumulate(root);
   layout(root);
   display(root);
 
+
+  // console.log("====");
+  // console.log("olde");
+  // console.log(nodes);
+  // console.log(root);
+  // console.log("====");
+
+  // vis func
   function initialize(root) {
     root.x = root.y = 0;
     root.dx = width;
@@ -341,7 +239,7 @@ function drawTreemap() {
   // Aggregate the values for internal nodes. This is normally done by the
   // treemap layout, but not here because of our custom implementation.
   function accumulate(d) {
-    nodes.push(d);
+//    nodes.push(d);
 
     d.cvss = accumulateCVSS(d);
     if(isChangeVis){
@@ -349,12 +247,7 @@ function drawTreemap() {
       d.fixedCount = accumulateFixedCounts(d);
       d.openCount = accumulateOpenCounts(d);
       d.newCount = accumulateNewCounts(d);
-
-//      console.log('fixed: '+d.fixedCount);
-//      console.log('open: '+d.openCount);
-//      console.log('new: '+d.newCount);
     }
-//      console.log(testIfChildHasValue(d, 'vulntype', 'note'));
 
     return d.values
       ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
@@ -597,182 +490,6 @@ function drawTreemap() {
   }
 }
 
-// function that initalizes one histogram
-//container -> id of div container
-//dataField -> field associated with this histogram
-//n         -> number of bins
-//label     -> label of histogram
-//labelmap  -> mapping numbers to labels
-//binWidth  -> width of each bar
-function initHistogram(container, dataField, n, label, labelmap, binWidth) {
-  
-  var binWidth = binWidth ? binWidth : 16;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
-
-  var histoW = binWidth*n,
-      histoH = 120,
-      labelsH = 40,
-      labels = labelmap ? labelmap : d3.range(n);
-
-  var histContainer = d3.select(container)
-                        .append("svg")
-                        .attr("width", histoW)
-                        .attr("height", histoH + labelsH);
-  
-  var hist = histContainer.selectAll("g")
-                          .data(labels)
-                          .enter()
-                          .append("g");
-
-  hist.append("rect")
-      .attr("id", function(d) { return dataField + "-" + d; })  //to be possibly edited at the end of drawHistogram()
-      .attr("data-clicked", "false")
-      .attr("x", function(d, i) { return ( ((histoW / n) * i) - 0.5 ); })
-      .attr("y", histoH - 4)
-      .attr("width", histoW / n)
-      .attr("height", 4); // default height with no data
-
-  
-  //x-axis labels for bars
-  hist.append("text")
-      .attr("class", "histogramlabel")
-      .attr("x", function(d, i) { return ( ((histoW / n) * i) + (binWidth/2) ); })
-      .attr("y", histoH + 2)
-      .attr("dy", "0.8em")
-      .attr("text-anchor", "middle")
-      .text( function(d) { return d !== -1 ? d : ''; });
-
-  //title
-  histContainer.append("text")
-      .attr("class", "histogramtitle")
-      .attr("x", histoW / 2 )
-      .attr("y", histoH + 26)
-      .attr("text-anchor", "middle")
-      .text(label);
-
-  //max value label
-  histContainer.append("text")
-      .attr("class", "maxarea")
-      .attr("x", histoW / 2 )
-      .attr("y", histoH + 40)
-      .attr("text-anchor", "middle");
-
-}
-
-// function that draws one histogram
-//name  -> name of histogram (id)
-//n     -> number of bins
-//par   -> parameter in data being used
-//binWidth  -> width of each bar
-function drawHistogram(name, n, par, scale, binWidth, typeFilter) {
-
-  var binWidth = binWidth ? binWidth : 16;  //ternary operator to check if binWidth was defined and set binWidth to a default number if it wasn't
-
-  var histoW = binWidth*n,
-      histoH = 120;
-
-  // if typeFilter defined, filter
-  if(typeFilter){
-    byVulnType.filter(typeFilter);
-  }
-  //create histogram
-  var hist = d3.layout.histogram()
-              .bins(n)
-              .value(function(d,i) { 
-                return scale ? scale(d[par]) : d[par];
-              })
-              (byAny.top(Infinity));
-
-  // if typeFilter defined, remove filter and sort/reverse array (descending order for top 20)
-  if(typeFilter){
-    byVulnType.filterAll();
-    hist = hist.sort().reverse();
-  }
-
-  //set domain for data
-  var max = d3.max(hist, function(d, i) { return d.length; });
-  var hScale = d3.scale.linear()
-                  .domain([0,  max])
-                  .range([0, histoH]);
-
-  //TODO - Evan - add histogram interation w/treemap
-  d3.select(name)
-    .selectAll("rect")
-    .data(hist)
-    .on("click", function(d, iter) {
-
-        //for filtering treemap children
-        var array = d3.select(this).attr("id").split("-");
-        var dataField = array[0];
-        var label = array[1];
-        
-        var clickedBar = d3.select(this);
-
-        //has this bar on this histogram been clicked before?
-        if ( clickedBar.attr("data-clicked") === "true" ) { //yes
-
-            //un-color bar in histogram
-            clickedBar
-              .attr("data-clicked", "false")
-              .style("fill", function() {
-                  return d3.hsl( d3.select(this).style("fill") ).brighter(2).toString();
-              });
-
-            //color treemap
-            d3.selectAll('.child')
-              .filter(function(d) { 
-                  var rValue = testIfChildHasValue(d, dataField, label);
-                  
-                  if ( rValue === true ) return null;
-                  else return this;
-              })
-              .style("fill", function(d) { return nodeColor(d.cvss); });
-        }
-        else {  //no
-
-            //color bar in histogram
-            clickedBar
-              .attr("data-clicked", "true")
-              .style("fill", function() {
-                  return d3.hsl( d3.select(this).style("fill") ).darker(2).toString();
-              });
-
-            //color treemap
-            d3.selectAll('.child')
-              .filter(function(d) { 
-                  var rValue = testIfChildHasValue(d, dataField, label);
-                  
-                  if ( rValue === true ) return null;
-                  else return this;
-              })
-              .style("fill", "#ddd");
-        }
-
-
-    })
-    .transition()
-      .duration(1000)
-      .attr("y", function(d) { return histoH - hScale(d.length); })
-      .attr("height", function(d) { return hScale(d.length); });
-
-  // if the data in the hist is a vulnid, change labels to corresponding vulnids
-  if(typeFilter){
-    d3.select(name).selectAll("text.histogramlabel")
-      .data(hist)
-      .text(function(d) { return d[0] ? d[0].vulnid : ''; });
-
-    //change ids as well
-    d3.select(name).selectAll("rect")
-      .data(hist)
-      .attr("id", function(d) { 
-          var temp = d3.select(this).attr("id").split("-");
-
-          return d[0] ? temp[0] + "-" + d[0].vulnid : ''; 
-      });
-  }
-
-  d3.select(name).select(".maxarea")
-    .text("max: "+max);
-}
 
 // initialize our nessus info area with labels
 function initNessusInfo(){
@@ -1137,14 +854,6 @@ function buildTable(groups){
   }
 }
 
-// used to move svg element to front
-// https://groups.google.com/forum/?fromgroups#!searchin/d3-js/scope/d3-js/eUEJWSSWDRY/XWKLd3QuaAoJ
-d3.selection.prototype.moveToFront = function() { 
-  return this.each(function() { 
-    this.parentNode.appendChild(this); 
-  }); 
-}; 
-
 //TODO has to be on a server for this to work?  Go figure.
 //rather loosely based on these examples http://www.html5rocks.com/en/tutorials/file/dndfiles/
 function handleFileSelect(evt) {
@@ -1247,4 +956,3 @@ $().ready(function () {
   // start the vis
   init();
 });
-
