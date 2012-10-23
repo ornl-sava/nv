@@ -15,7 +15,8 @@ module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     lint: {
-      files: ['js/nv/main.js',
+      files: ['js/nv/util.js',
+              'js/nv/main.js',
               'js/nv/models/*.js',
               'js/nv/views/*.js',
               'js/nv/router.js']
@@ -32,7 +33,8 @@ module.exports = function (grunt) {
         dest: 'js/lib.js'
       },
       app: {
-        src: ['js/nv/models/*.js',
+        src: ['js/nv/util.js',
+              'js/nv/models/*.js',
               'js/nv/views/*.js',
               'js/nv/router.js',
               'js/nv.js',
