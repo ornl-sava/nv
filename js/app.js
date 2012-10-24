@@ -124,6 +124,7 @@ var Treemap = Backbone.Model.extend({
     this.get('datasource').on('dataset updated', this.updateData, this);
   },
 
+  // TODO TODO TODO start here after backbone move
   updateData: function(){
     var filterOptions   = this.get('filterOptions')
       , attribute       = filterOptions.attribute;
@@ -154,22 +155,16 @@ var Treemap = Backbone.Model.extend({
 
     // free the root from its original array
     root = root[0];
-    this.nodes = [];
 
     this.accumulate(root);
 
-    // console.log("====");
-    // console.log("new");
-    // console.log(this.nodes);
-    // console.log(root);
-    // console.log("====");
-
     // set data to the lengths of the data
-    this.set('data', rawData);  
+    this.set('data', root);  
   }, 
 
     // Aggregate the values for internal nodes. This is normally done by the
     // treemap layout, but not here because of our custom implementation.
+    // TODO: can we generalize the accumulate functions for multiple attributes?
   accumulate: function(d) {
     var app = this;
 
@@ -202,8 +197,6 @@ var Treemap = Backbone.Model.extend({
         d.newCount = d.values.reduce(function(p, v) { return p + accumulateNewCounts(v); }, 0) :
         d.state === 'new' ? 1 : 0;
     }
-
-    this.nodes.push(d);
 
     d.cvss = accumulateCVSS(d);
     if(isChangeVis){
@@ -279,6 +272,18 @@ var Histogram = Backbone.Model.extend({
 
 
 
+var TreemapView = Backbone.View.extend({
+
+  initialize: function() {
+    // listen for model changes
+    this.model.on('change:data', this.render, this);
+  },
+
+  render: function(){
+    // TODO entire treemap here, layout and all
+  }
+
+ });
 
 var HistogramView = Backbone.View.extend({
 
@@ -484,6 +489,14 @@ var NV = new (Backbone.Router.extend({
                                     attribute: 'vulnid'
                                   }
                               });
+
+    this.treemapView    =   new TreemapView({
+                                     app: this,
+                                     model: this.treemap,
+                                     target:'#vis'
+                                });
+
+
 
     // info view
 

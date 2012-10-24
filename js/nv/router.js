@@ -123,6 +123,14 @@ var NV = new (Backbone.Router.extend({
                                   }
                               });
 
+    this.treemapView    =   new TreemapView({
+                                     app: this,
+                                     model: this.treemap,
+                                     target:'#vis'
+                                });
+
+
+
     // info view
 
   },
