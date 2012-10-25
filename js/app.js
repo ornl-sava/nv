@@ -122,9 +122,10 @@ var Treemap = Backbone.Model.extend({
   initialize: function() {
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
+
+    this.sizeOption = 'value';
   },
 
-  // TODO TODO TODO start here after backbone move
   updateData: function(){
     var filterOptions   = this.get('filterOptions')
       , attribute       = filterOptions.attribute;
@@ -162,9 +163,9 @@ var Treemap = Backbone.Model.extend({
     this.set('data', root);  
   }, 
 
-    // Aggregate the values for internal nodes. This is normally done by the
-    // treemap layout, but not here because of our custom implementation.
-    // TODO: can we generalize the accumulate functions for multiple attributes?
+  // Aggregate the values for internal nodes. This is normally done by the
+  // treemap layout, but not here because of our custom implementation.
+  // TODO: can we generalize the accumulate functions for multiple attributes?
   accumulate: function(d) {
     var app = this;
 
@@ -208,7 +209,7 @@ var Treemap = Backbone.Model.extend({
 
     return d.values ?
       d.value = d.values.reduce(function(p, v) { return p + app.accumulate(v); }, 0) :
-      d[sizeOption];
+      d[this.sizeOption];
   }
 });
 
@@ -277,13 +278,284 @@ var TreemapView = Backbone.View.extend({
   initialize: function() {
     // listen for model changes
     this.model.on('change:data', this.render, this);
+
+    // globals
+    this.margin = {top: 20, right: 20, bottom: 0, left: 0};
+    this.width = 960;
+    this.height = 500 - this.margin.top - this.margin.bottom;
+    this.formatNumber = d3.format(',d');
+    this.transitioning = false;
+
+    // init treemap
+    this.x = d3.scale.linear()
+        .domain([0, this.width])
+        .range([0, this.width]);
+    
+    this.y = d3.scale.linear()
+        .domain([0, this.height])
+        .range([0, this.height]);
+    
+    this.treemap = d3.layout.treemap()
+        .children(function(d, depth) { return depth ? null : d.values; })
+        .sort(function(a, b) { return a.value - b.value; })
+        .ratio(this.height / this.width * 0.5 * (1 + Math.sqrt(5)))
+        .round(false);
+    
+    this.svg = d3.select('#vis')
+      .append('svg')
+        .attr('width', this.width + this.margin.left + this.margin.right)
+        .attr('height', this.height + this.margin.bottom + this.margin.top)
+        .style('margin-left', -this.margin.left + 'px')
+        .style('margin.right', -this.margin.right + 'px')
+      .append('g')
+        .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
+        .style('shape-rendering', 'crispEdges');
+    
+    this.grandparent = this.svg.append('g')
+        .attr('class', 'grandparent');
+    
+    this.grandparent.append('rect')
+        .attr('y', -this.margin.top)
+        .attr('width', this.width)
+        .attr('height', this.margin.top);
+    
+    this.grandparent.append('text')
+        .attr('x', 6)
+        .attr('y', 6 - this.margin.top)
+        .attr('dy', '.75em');
   },
 
   render: function(){
     // TODO entire treemap here, layout and all
+    var root = this.model.get('data');
+    var app = this;
+  
+    initialize(root);
+    layout(root);
+    display(root);
+  
+    function initialize(root) {
+      root.x = root.y = 0;
+      root.dx = app.width;
+      root.dy = app.height;
+      root.depth = 0;
+    }
+  
+    function maxIndex(arr){
+      var max_index = -1;
+      var max_value = Number.MIN_VALUE;
+      for(var i = 0; i < arr.length; i++)
+      {
+        if(arr[i] > max_value)
+        {
+          max_value = arr[i];
+          max_index = i;
+        }
+      }
+      return max_index;
+    }
+  
+    // Compute the treemap layout recursively such that each group of siblings
+    // uses the same size (1×1) rather than the dimensions of the parent cell.
+    // This optimizes the layout for the current zoom state. Note that a wrapper
+    // object is created for the parent node for each group of siblings so that
+    // the parent’s dimensions are not discarded as we recurse. Since each group
+    // of sibling was laid out in 1×1, we must rescale to fit using absolute
+    // coordinates. This lets us use a viewport to zoom.
+    function layout(d) {
+      if (d.values) {
+        app.treemap.nodes({values: d.values});
+        d.values.forEach(function(c) {
+          c.x = d.x + c.x * d.dx;
+          c.y = d.y + c.y * d.dy;
+          c.dx *= d.dx;
+          c.dy *= d.dy;
+          c.parent = d;
+          layout(c);
+        });
+      }
+    }
+  
+  
+    // tells you if the selected element is at the bottom of the hierarchy
+    // which is an id, in our case...
+    function atTheBottom(d){
+      if(d.values && d.values.length === 1 && d.values[0].vulnid)
+        return true;
+      else
+        return false;
+    }
+  
+    function display(d) {
+      app.grandparent
+        .datum(d.parent)
+        .on('click', transition)
+        .select('text')
+        .text(name(d));
+  
+      var g1 = app.svg.insert('g', '.grandparent')
+        .datum(d)
+        .attr('class', 'depth');
+  
+      var g = g1.selectAll('g')
+        .data(d.values)
+        .enter().append('g');
+  
+      //TODO - Lane - move to front
+      g.filter(function(d) { return d.values; })
+        .classed('children', true)
+        .attr('id', function(d) { return 'IP' + (d.key).replace(/\./g, ''); })
+        .on('click', function(d) {
+          // if(atTheBottom(d)){
+          //     console.log(d);
+          //   console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
+          //   console.log( d );
+          //   var nodeInfo = {id: d.values[0].vulnid, 
+          //     type: d.values[0].vulntype, 
+          //     port: d.values[0].port, 
+          //     ip:   d.values[0].ip, 
+          //     group: d.values[0].group};
+          //   console.log( nodeInfo );
+          //   // TODO Mike Lane trigger nessus update here
+          //   setNessusIDData( vulnIdInfo[d.values[0].vulnid], nodeInfo );
+          //   // setNessusIDData(findNessusIDData(d.values[0].vulnid));
+          //     d3.select(this).select('text')
+          //       .style('font-weight', 'bold')
+          //       .attr('id', 'changeable');
+  
+          //     d3.select(this).select('.child')
+          //       .style('stroke', 'black')
+          //       .style('stroke-width', '5px');
+          // } else {
+            transition(d);
+  //        }
+        })
+        .on('mouseover', function(d) {
+            
+            d3.select(this).moveToFront();
+  
+            d3.select(this).select('.parent')
+              .style('stroke', 'black')
+              .style('stroke-width', '2px');
+  
+        })
+        .on('mouseout', function(d) {
+        
+            d3.select(this).select('.parent')
+              .style('stroke', '')
+              .style('stroke-width', '');
+  
+        });
+  
+      // NOTE: can move the .style here to rect() to color by cell
+      g.selectAll('.child')
+        .data(function(d) { return d.values || [d]; })
+        .enter().append('rect')
+        .attr('class', 'child')
+        .style('fill', function(d) { 
+            // if status, use appropriate color scale
+            if(d.state){
+              // reset d.state here according to max counts
+              // TODO Lane this is a hack, you can probably do this inline
+              var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
+  
+              d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
+  
+              // choose which scale to use
+              if(d.state === 'new')
+                return nodeColorNew(d.cvss);
+  
+              if(d.state === 'open')
+                return nodeColorOpen(d.cvss);
+  
+              if(d.state === 'fixed')
+                return nodeColorFixed(d.cvss);
+            }
+  
+            return nodeColor(d.cvss);
+        })
+      .call(rect);
+  
+      g.append('rect')
+        .attr('class', 'parent')
+        .call(rect)
+        .text(function(d) { return app.formatNumber(d.value); });
+  
+      g.append('text')
+        .attr('dy', '.75em')
+        .text(function(d) { return d.key; })
+        .classed('rectlabel', true)
+        .call(text);
+  
+      function transition(d) {
+        if (app.transitioning || !d){ 
+          return; 
+        }
+  
+        app.transitioning = true;
+  
+        var g2 = display(d),
+            t1 = g1.transition().duration(1250),
+            t2 = g2.transition().duration(1250);
+  
+        // Update the domain only after entering new elements.
+        app.x.domain([d.x, d.x + d.dx]);
+        app.y.domain([d.y, d.y + d.dy]);
+  
+        // Enable anti-aliasing during the transition.
+        app.svg.style('shape-rendering', null);
+  
+        // Draw child nodes on top of parent nodes.
+        app.svg.selectAll('.depth').sort(function(a, b) { return a.depth - b.depth; });
+  
+        // Fade-in entering text.
+        g2.selectAll('text').style('fill-opacity', 0);
+  
+        // Transition to the new view.
+        t1.selectAll('text').call(text).style('fill-opacity', 0);
+        t2.selectAll('text').call(text).style('fill-opacity', 1);
+        t1.selectAll('rect').call(rect);
+        t2.selectAll('rect').call(rect);
+  
+        // Remove the old node when the transition is finished.
+        t1.remove().each('end', function() {
+          app.svg.style('shape-rendering', 'crispEdges');
+          app.transitioning = false;
+        });
+      }
+  
+      return g;
+    }
+  
+    function text(t) {
+      t.attr('x', function(d) { return app.x(d.x) + 6; })
+       .attr('y', function(d) { return app.y(d.y) + 6; });
+    }
+  
+    function rect(r) {
+      r.attr('x', function(d) { return app.x(d.x); })
+       .attr('y', function(d) { return app.y(d.y); })
+       .attr('width', function(d) { return app.x(d.x + d.dx) - app.x(d.x); })
+       .attr('height', function(d) { return app.y(d.y + d.dy) - app.y(d.y); });
+    }
+  
+    function name(d) {
+      return d.parent ?
+        name(d.parent) + '_' + d.key :
+        d.key;
+    }
+  }, 
+  
+  resize: function(){
+    this.width = $('#vis').width();
+    this.x.domain([0, this.width]).range([0, this.width]);
+    d3.select("#vis > svg").attr("width", this.width + this.margin.left + this.margin.right);
+    d3.selectAll(".grandparent rect").attr("width", this.width);
+    this.treemap.ratio(this.height / this.width * 0.5 * (1 + Math.sqrt(5)));
+    this.render();
   }
 
- });
+});
 
 var HistogramView = Backbone.View.extend({
 
@@ -525,16 +797,6 @@ var nodeColorOpen = d3.scale.linear()
     .domain([0.0, 10.0])
     .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
 
-//associative array to store exactly what bars you click on and off
-var activeFilters = {};
-
-// globals
-var margin = {top: 20, right: 0, bottom: 0, left: 0},
-    width = 960,
-    height = 500 - margin.top - margin.bottom,
-    formatNumber = d3.format(",d"),
-    transitioning;
-
 var isChangeVis = true;
 
 // users can change this via buttons, which then redraws the treemap according to the new size metric
@@ -607,18 +869,8 @@ function crossfilterInit(){
   byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
 }
 
-// treemap globals
-var x,
-    y,
-    treemap,
-    svg,
-    grandparent;
-
 function init() {
   crossfilterInit(); // TODO Lane not sure why this needs to be called here, need to investigate how setNBEData is being used...
-
-  // initialize treemap
-  initTreemap();
  
   // initialize nessus info area
   initNessusInfo();
@@ -639,368 +891,6 @@ function sizeByCount() {
    sizeOption = 'value'; 
    redraw(); 
 }
-
-// called after data load
-function redraw() {
-  drawTreemap();
-}
-
-// called when window is resized
-function resize() {
-  width = $('#vis').width();
-  x.domain([0, width]).range([0, width]);
-  d3.select("#vis > svg").attr("width", width + margin.left + margin.right);
-  d3.selectAll(".grandparent rect").attr("width", width);
-  treemap.ratio(height / width * 0.5 * (1 + Math.sqrt(5)));
-  redraw();
-}
-
-// treemap functions
-function initTreemap(){
-
-  width = 940; //TODO - set this dynamically based on size of window
-  
-  x = d3.scale.linear()
-      .domain([0, width])
-      .range([0, width]);
-  
-  y = d3.scale.linear()
-      .domain([0, height])
-      .range([0, height]);
-  
-  treemap = d3.layout.treemap()
-      .children(function(d, depth) { return depth ? null : d.values; })
-      .sort(function(a, b) { return a.value - b.value; })
-      .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
-      .round(false);
-  
-  svg = d3.select("#vis").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.bottom + margin.top)
-      .style("margin-left", -margin.left + "px")
-      .style("margin.right", -margin.right + "px")
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .style("shape-rendering", "crispEdges");
-  
-  grandparent = svg.append("g")
-      .attr("class", "grandparent");
-  
-  grandparent.append("rect")
-      .attr("y", -margin.top)
-      .attr("width", width)
-      .attr("height", margin.top);
-  
-  grandparent.append("text")
-      .attr("x", 6)
-      .attr("y", 6 - margin.top)
-      .attr("dy", ".75em");
-}
-
-function drawTreemap() {
-
-  var root;
-  if(isChangeVis){
-    root=d3.nest()
-    .key(function(d) {return 'groups';})
-    .key(function(d) {return d.group;})
-    .key(function(d) {return d.ip;})
-    .key(function(d) {return d.state;})
-    .key(function(d) {return ":"+d.port;})
-    .key(function(d) {return "id:"+d.vulnid;})
-    .sortKeys(d3.ascending)
-    .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
-  } else {
-    root=d3.nest()
-    .key(function(d) {return 'groups';})
-    .key(function(d) {return d.group;})
-    .key(function(d) {return d.ip;})
-    .key(function(d) {return ":"+d.port;})
-    .key(function(d) {return "id:"+d.vulnid;})
-    .sortKeys(d3.ascending)
-    .entries(byCVSS.top(Infinity)); // TODO lane make work with crossfilter (feed it objects)
-  }
-
-  // free the root from its original array
-  root = root[0];
-
-//  var nodes = [];
-
-  initialize(root);
-  accumulate(root);
-  layout(root);
-  display(root);
-
-
-  // console.log("====");
-  // console.log("olde");
-  // console.log(nodes);
-  // console.log(root);
-  // console.log("====");
-
-  // vis func
-  function initialize(root) {
-    root.x = root.y = 0;
-    root.dx = width;
-    root.dy = height;
-    root.depth = 0;
-  }
-
-
-  // Aggregate the values for internal nodes. This is normally done by the
-  // treemap layout, but not here because of our custom implementation.
-  function accumulate(d) {
-//    nodes.push(d);
-
-    d.cvss = accumulateCVSS(d);
-    if(isChangeVis){
-      d.state = accumulateState(d);
-      d.fixedCount = accumulateFixedCounts(d);
-      d.openCount = accumulateOpenCounts(d);
-      d.newCount = accumulateNewCounts(d);
-    }
-
-    return d.values
-      ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
-      : d[sizeOption];
-  }
-
-  function accumulateCVSS(d){
-    return d.values
-      ? d.cvss = d.values.reduce(function(p, v) { return Math.max(p, accumulateCVSS(v)); }, 0)
-      : d.cvss;
-  }
-
-  function accumulateState(d){
-    return d.values
-      ? d.state = d.values.reduce(function(p, v) { return accumulateState(v); }, 0)
-      : d.state;
-  }
-
-  function accumulateFixedCounts(d){
-    return d.values
-      ? d.fixedCount = d.values.reduce(function(p, v) { return p + accumulateFixedCounts(v); }, 0)
-      : d.state === 'fixed' ? 1 : 0;
-  }
-  
-  function accumulateOpenCounts(d){
-    return d.values
-      ? d.openCount = d.values.reduce(function(p, v) { return p + accumulateOpenCounts(v); }, 0)
-      : d.state === 'open' ? 1 : 0;
-  }
-
-  function accumulateNewCounts(d){
-    return d.values
-      ? d.newCount = d.values.reduce(function(p, v) { return p + accumulateNewCounts(v); }, 0)
-      : d.state === 'new' ? 1 : 0;
-  }
-
-  function maxIndex(arr){
-    var max_index = -1;
-    var max_value = Number.MIN_VALUE;
-    for(var i = 0; i < arr.length; i++)
-    {
-      if(arr[i] > max_value)
-      {
-        max_value = arr[i];
-        max_index = i;
-      }
-    }
-    return max_index;
-  }
-
-
-  // Compute the treemap layout recursively such that each group of siblings
-  // uses the same size (1×1) rather than the dimensions of the parent cell.
-  // This optimizes the layout for the current zoom state. Note that a wrapper
-  // object is created for the parent node for each group of siblings so that
-  // the parent’s dimensions are not discarded as we recurse. Since each group
-  // of sibling was laid out in 1×1, we must rescale to fit using absolute
-  // coordinates. This lets us use a viewport to zoom.
-  function layout(d) {
-    if (d.values) {
-      treemap.nodes({values: d.values});
-      d.values.forEach(function(c) {
-        c.x = d.x + c.x * d.dx;
-        c.y = d.y + c.y * d.dy;
-        c.dx *= d.dx;
-        c.dy *= d.dy;
-        c.parent = d;
-        layout(c);
-      });
-    }
-  }
-
-
-  // tells you if the selected element is at the bottom of the hierarchy
-  // which is an id, in our case...
-  function atTheBottom(d){
-    if(d.values && d.values.length === 1 && d.values[0].vulnid)
-      return true;
-    else
-      return false;
-  }
-
-  function display(d) {
-    grandparent
-      .datum(d.parent)
-      .on("click", transition)
-      .select("text")
-      .text(name(d));
-
-    var g1 = svg.insert("g", ".grandparent")
-      .datum(d)
-      .attr("class", "depth");
-
-    var g = g1.selectAll("g")
-      .data(d.values)
-      .enter().append("g");
-
-    //TODO - Lane - move to front
-    g.filter(function(d) { return d.values; })
-      .classed("children", true)
-      .attr("id", function(d) { return "IP" + (d.key).replace(/\./g, ""); })
-      .on("click", function(d) {
-        if(atTheBottom(d)){
-            console.log(d);
-          console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
-          console.log( d );
-          var nodeInfo = {id: d.values[0].vulnid, 
-            type: d.values[0].vulntype, 
-            port: d.values[0].port, 
-            ip:   d.values[0].ip, 
-            group: d.values[0].group};
-          console.log( nodeInfo );
-          // TODO Mike Lane trigger nessus update here
-          setNessusIDData( vulnIdInfo[d.values[0].vulnid], nodeInfo );
-          // setNessusIDData(findNessusIDData(d.values[0].vulnid));
-            d3.select(this).select("text")
-              .style("font-weight", "bold")
-              .attr("id", "changeable");
-
-            d3.select(this).select(".child")
-              .style("stroke", "black")
-              .style("stroke-width", "5px");
-        } else {
-          transition(d);
-        }
-      })
-      .on("mouseover", function(d) {
-          
-          d3.select(this).moveToFront();
-
-          d3.select(this).select(".parent")
-            .style("stroke", "black")
-            .style("stroke-width", "2px");
-
-      })
-      .on("mouseout", function(d) {
-      
-          d3.select(this).select(".parent")
-            .style("stroke", "")
-            .style("stroke-width", "");
-
-      });
-
-    // NOTE: can move the .style here to rect() to color by cell
-    g.selectAll(".child")
-      .data(function(d) { return d.values || [d]; })
-      .enter().append("rect")
-      .attr("class", "child")
-      .style("fill", function(d) { 
-          // if status, use appropriate color scale
-          if(d.state){
-            // reset d.state here according to max counts
-            // TODO Lane this is a hack, but will work for the paper
-            var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
-            //console.log('maxindex: ' +maxStateIndex);
-            d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
-
-            // choose which scale to use
-            if(d.state === 'new')
-              return nodeColorNew(d.cvss);
-
-            if(d.state === 'open')
-              return nodeColorOpen(d.cvss);
-
-            if(d.state === 'fixed')
-              return nodeColorFixed(d.cvss);
-          }
-
-          return nodeColor(d.cvss);
-      })
-    .call(rect);
-
-    g.append("rect")
-      .attr("class", "parent")
-      .call(rect)
-      .text(function(d) { return formatNumber(d.value); });
-
-    g.append("text")
-      .attr("dy", ".75em")
-      .text(function(d) { return d.key; })
-      .classed("rectlabel", true)
-      .call(text);
-
-    function transition(d) {
-      if (transitioning || !d){ 
-        return; 
-      }
-
-      transitioning = true;
-
-      var g2 = display(d),
-          t1 = g1.transition().duration(1250),
-          t2 = g2.transition().duration(1250);
-
-      // Update the domain only after entering new elements.
-      x.domain([d.x, d.x + d.dx]);
-      y.domain([d.y, d.y + d.dy]);
-
-      // Enable anti-aliasing during the transition.
-      svg.style("shape-rendering", null);
-
-      // Draw child nodes on top of parent nodes.
-      svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
-
-      // Fade-in entering text.
-      g2.selectAll("text").style("fill-opacity", 0);
-
-      // Transition to the new view.
-      t1.selectAll("text").call(text).style("fill-opacity", 0);
-      t2.selectAll("text").call(text).style("fill-opacity", 1);
-      t1.selectAll("rect").call(rect);
-      t2.selectAll("rect").call(rect);
-
-      // Remove the old node when the transition is finished.
-      t1.remove().each("end", function() {
-        svg.style("shape-rendering", "crispEdges");
-        transitioning = false;
-      });
-    }
-
-    return g;
-  }
-
-  function text(text) {
-    text.attr("x", function(d) { return x(d.x) + 6; })
-      .attr("y", function(d) { return y(d.y) + 6; });
-  }
-
-  function rect(rect) {
-    rect.attr("x", function(d) { return x(d.x); })
-      .attr("y", function(d) { return y(d.y); })
-      .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
-      .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
-  }
-
-  function name(d) {
-    return d.parent
-      ? name(d.parent) + "_" + d.key
-      : d.key;
-  }
-}
-
 
 // initialize our nessus info area with labels
 function initNessusInfo(){
@@ -1044,16 +934,7 @@ function initNessusInfo(){
 
 // replaces the current dataset and calls redraw
 function setNBEData(dataset){
-  crossfilterInit();
-  nbedata.add(dataset);
-  NV.nessus.setData(dataset); // TODO backbone remove others
-  // test crossfilter here
-  //  console.log(nbedata.size());
-  //  byCVSS.filter([2.0, 7.0]);
-  //console.log(byAny.top(Infinity));
-  //  byCVSS.filterAll();
-
-  redraw();
+  NV.nessus.setData(dataset);
 }
 
 // updates the nessus data by id //TODO mike
@@ -1456,12 +1337,6 @@ $().ready(function () {
     }
     //var resp = $(data); // Now you can do whatever you want with it
     //$("#contentMain", resp).appendTo("#nessusinfo");
-  });
-
-
-  // handle window resizes
-  $(window).resize(function() {
-    resize();
   });
 
   // start the vis

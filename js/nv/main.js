@@ -10,6 +10,13 @@
    Private functions
 */
 
+// handle window resizes
+// TODO Lane make this an event that views can respond to
+$(window).resize(function() {
+  NV.treemapView.resize();
+});
+
+
 /*
    Document Ready
 */
@@ -22,6 +29,7 @@ $(function(){
   // $('#homeButton').click(reset);
 
 });
+
 
 /*
   Public functions
