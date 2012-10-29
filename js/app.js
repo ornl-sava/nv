@@ -853,6 +853,9 @@ var NV = new (Backbone.Router.extend({
 
 }))();
 
+// NOTE: in comments 'bb' === 'backbone'
+
+// TODO Lane where do these belong in bb?
 var nodeColor = d3.scale.linear()
     .domain([0.0, 2.0, 10.0])
     .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
@@ -871,19 +874,20 @@ var nodeColorOpen = d3.scale.linear()
 
 var isChangeVis = true;
 
+// TODO Lane make these work in bb
 // users can change this via buttons, which then redraws the treemap according to the new size metric
 // cvss, value, criticality
 var sizeOption = 'value';
 
 // All the data!
-var nbedata,
-    all,
-    byIP,
-    byAny,
-    byPort,
-    byCVSS,
-    byVulnID,
-    byVulnType
+//var nbedata,
+//    all,
+//    byIP,
+//    byAny,
+//    byPort,
+//    byCVSS,
+//    byVulnID,
+//    byVulnType
 var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
@@ -927,24 +931,23 @@ function testIfChildHasValue(dee, kee, val){
 }
 
 // crossfilter setup
-function crossfilterInit(){
-  // sets/resets our data
-  nbedata = crossfilter();
-
-  // dimensions/groups
-  all = nbedata.groupAll(),
-  byIP = nbedata.dimension(function(d) { return d.ip; }),
-  byAny = nbedata.dimension(function(d) { return d; }),
-  byPort = nbedata.dimension(function(d) { return d.port; }),
-  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
-  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
-  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
-}
-
-function init() {
-  crossfilterInit(); // TODO Lane not sure why this needs to be called here, need to investigate how setNBEData is being used...
- 
-}
+//function crossfilterInit(){
+//  // sets/resets our data
+//  nbedata = crossfilter();
+//
+//  // dimensions/groups
+//  all = nbedata.groupAll(),
+//  byIP = nbedata.dimension(function(d) { return d.ip; }),
+//  byAny = nbedata.dimension(function(d) { return d; }),
+//  byPort = nbedata.dimension(function(d) { return d.port; }),
+//  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
+//  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
+//  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
+//}
+//
+//function init() {
+//  crossfilterInit(); // TODO Lane not sure why this needs to be called here, need to investigate how setNBEData is being used...
+//}
 
 
 
@@ -967,80 +970,12 @@ function sizeByCount() {
 
 
 
-// replaces the current dataset and calls redraw
+// Sets the main Backbone data model
 function setNBEData(dataset){
   NV.nessus.setData(dataset);
 }
 
-// updates the nessus data by id
-//function setNessusIDData(idData, nodeInfo){
-//  var div = $('#nessusinfo');
-//  div.html('<hr><p>');
-//  if(nodeInfo){
-//    if(nodeInfo.type == 'hole')
-//      div.append("Security Hole"+ '<br><br>');
-//    else
-//      div.append("Security Note"+ '<br><br>');
-//    div.append("Group: " + nodeInfo.group + '<br>');
-//    div.append("Address: " + nodeInfo.ip + '<br>');
-//    div.append("Port: " + nodeInfo.group + '<br><br>');
-//    div.append("Nessus ID: " + nodeInfo.id + '<br>');
-//  }
-//  div.append("Title: " + idData.title + '<br>');
-//  if(idData.family && idData.family !== "")
-//    div.append("Family: " + idData.family + '<br>');
-//  div.append('<br>');
-//  if(idData.synopsis && idData.synopsis !== "")
-//    div.append("Synopsis: " + idData.synopsis + '<br><br>');
-//  if(idData.description && idData.description !== "")
-//    div.append("Description: " + idData.description + '<br><br>');
-//  if(idData.updateInfo && idData.updateInfo !== "")
-//    div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
-//  if(idData.solution && idData.solution !== "")
-//    div.append("Solution: " + idData.solution);
-//  /* //TODO deal with these later.
-//  div.append("bugtraqList: "   + idData.bugtraqList);
-//  div.append("cveList: "       + idData.cveList);
-//  div.append("otherInfoList: " + idData.otherInfoList);
-//  */
-//  div.append('</p>');
-//
-//  /*
-//  var enter = div.selectAll('.nessusinfosection')
-//    .data(iddata, function(d) { return d.key; })
-//    .enter();
-//
-//  $.each(enter[0], function(i, v) { 
-//    var key = v.__data__.key;
-//    var text = v.__data__.text;
-//    d3.select('#nessus_'+key).select('p').html(text);
-//  });
-//  */
-//}
-
-function loadJSONData(file){
-  // if file isn't .json file, load a default
-  if(file.indexOf('json') === -1){
-    console.log('invalid file named, reverting to a default');
-    file = 'data/testdata/testdata10.json';
-  }
-
-  // Load data and set to nbedata global
-  d3.json(file, function(data) {
-    setNBEData(data);
-  });
-}
-
 var groupList = [];
-
-/*
-function handleNBEAdd(){
-  //$("#dataTab2").show()
-  $("#dataTab2Link").show()
-  $("#dataTab1Link").html("Initial Data")
-  $("#dataTab2Link").html("Updated Data")
-}
-*/
 
 function handleGroupAdd(){
   //TODO make sure each IP is only in one group(?)
@@ -1140,6 +1075,7 @@ function updateCurrentGroupTable(){
   //add group name to item in crossfilter
   eventList = addGroupInfoToData(groups, eventList)
 
+  // sets the backbone data model
   setNBEData(eventList);
 }
 
@@ -1344,7 +1280,6 @@ $().ready(function () {
     $('#hideTextareas').hide()
   });
 
-
   // set up needed event listeners, etc.
   $('#addGroupBtn').bind('click', function(event) {
     handleGroupAdd();
@@ -1373,8 +1308,6 @@ $().ready(function () {
     //$("#contentMain", resp).appendTo("#nessusinfo");
   });
 
-  // start the vis
-  init();
 });
 
 //var sys = require("util")
