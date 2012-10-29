@@ -126,34 +126,35 @@ var TreemapView = Backbone.View.extend({
         .data(d.values)
         .enter().append('g');
   
-      //TODO - Lane - move to front
       g.filter(function(d) { return d.values; })
         .classed('children', true)
         .attr('id', function(d) { return 'IP' + (d.key).replace(/\./g, ''); })
         .on('click', function(d) {
-          // if(atTheBottom(d)){
-          //     console.log(d);
-          //   console.log('at da bottom: '+ d.values[0].vulnid + ' val is: ' + JSON.stringify(vulnIdInfo[d.values[0].vulnid])); //WORKS!
-          //   console.log( d );
-          //   var nodeInfo = {id: d.values[0].vulnid, 
-          //     type: d.values[0].vulntype, 
-          //     port: d.values[0].port, 
-          //     ip:   d.values[0].ip, 
-          //     group: d.values[0].group};
-          //   console.log( nodeInfo );
-          //   // TODO Mike Lane trigger nessus update here
-          //   setNessusIDData( vulnIdInfo[d.values[0].vulnid], nodeInfo );
-          //   // setNessusIDData(findNessusIDData(d.values[0].vulnid));
-          //     d3.select(this).select('text')
-          //       .style('font-weight', 'bold')
-          //       .attr('id', 'changeable');
-  
-          //     d3.select(this).select('.child')
-          //       .style('stroke', 'black')
-          //       .style('stroke-width', '5px');
-          // } else {
+          if(atTheBottom(d)){
+
+            // TODO the NessusInfo model should handle this
+            var nodeInfo = {
+              id: d.values[0].vulnid, 
+              type: d.values[0].vulntype, 
+              port: d.values[0].port, 
+              ip:   d.values[0].ip, 
+              group: d.values[0].group
+            };
+
+            // trigger app event
+            // TODO app.options.app is messy; consider changing app
+            app.options.app.trigger('nessusIDSelected', {
+              vulnInfo: vulnIdInfo[d.values[0].vulnid],
+              nodeInfo: nodeInfo
+            });
+
+            // make text bold to indicate selection
+            d3.select(this).select('text')
+            .style('font-weight', 'bold'); 
+
+          } else {
             transition(d);
-  //        }
+          }
         })
         .on('mouseover', function(d) {
             
@@ -169,6 +170,10 @@ var TreemapView = Backbone.View.extend({
             d3.select(this).select('.parent')
               .style('stroke', '')
               .style('stroke-width', '');
+
+            // fix any bolding
+            d3.select(this).select('text')
+              .style('font-weight', 'normal');
   
         });
   

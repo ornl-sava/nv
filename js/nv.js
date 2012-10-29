@@ -89,10 +89,11 @@ function crossfilterInit(){
 function init() {
   crossfilterInit(); // TODO Lane not sure why this needs to be called here, need to investigate how setNBEData is being used...
  
-  // initialize nessus info area
-  initNessusInfo();
 }
 
+
+
+// TODO Lane add these in the backbone rewrite
 // change treemap node size datafields
 function sizeBySeverity() {
    sizeOption = 'cvss'; 
@@ -109,97 +110,58 @@ function sizeByCount() {
    redraw(); 
 }
 
-// initialize our nessus info area with labels
-function initNessusInfo(){
-  /*
-  var nessusInfoLabels = ['title', 'overview', 'synopsis', 'description', 'seealso', 'solution', 'riskfactor'];
-  var div = d3.select('#nessusinfo');
 
-  var nessussections = div.selectAll('.nessusinfosection')
-    .data(nessusInfoLabels, function(d) { return d; })
-    .enter().append('div')
-    .classed('.nessusinfosection', true)
-    .attr('id', function(d) { return "nessus_"+d; });
-
-  nessussections.append('span')
-    .classed('nessusinfotitle', true)
-    .text(function(d) { return d; });
-
-  // this p later modified by the setNessusIDData function
-  nessussections.append('p');
-  
-  // quick test of function below
-  var testdata = [
-    {key:"title", text:"3Com HiPer Access Router Card (HiperARC) IAC Packet Flood DoS"},
-    {key:"overview", text:"This script is Copyright (C) 1999-2011 Tenable Network Security, Inc."
-        + "<br />" + "Family  Denial of Service"
-        + "<br />" + "Nessus Plugin ID  10108 (hyperbomb.nasl)"
-        + "<br />" + "Bugtraq ID"  
-        + "<br />" + "CVE ID  CVE-1999-1336"},
-    {key:"synopsis", text:"The remote host is vulnerable to a denial of service attack."},
-    {key:"description", text:"It was possible to reboot the remote host (likely a HyperARC router) by sending it a high volume of IACs."
-      + "An attacker may use this flaw to shut down your internet connection."},
-    {key:"seealso", text:"http://marc.info/?l=bugtraq&m=93492615408725&w=2"
-      + "<br />" + "http://marc.info/?l=bugtraq&m=93458364903256&w=2"},
-    {key:"solution", text:"Add a telnet access list to your Hyperarc router. If the remote system is not a Hyperarc router, then contact your vendor for a patch."},
-    {key:"riskfactor", text:"(CVSS2#AV:N/AC:L/Au:N/C:N/I:N/A:P)"}
-  ];
-  */
-  var testdata = {title: "", description: ""};
-  setNessusIDData(testdata);
-}
 
 // replaces the current dataset and calls redraw
 function setNBEData(dataset){
   NV.nessus.setData(dataset);
 }
 
-// updates the nessus data by id //TODO mike
-// TODO Lane throw this on stackoverflow to see if the $.each can be avoided
-function setNessusIDData(idData, nodeInfo){
-  var div = $('#nessusinfo');
-  div.html('<hr><p>');
-  if(nodeInfo){
-    if(nodeInfo.type == 'hole')
-      div.append("Security Hole"+ '<br><br>');
-    else
-      div.append("Security Note"+ '<br><br>');
-    div.append("Group: " + nodeInfo.group + '<br>');
-    div.append("Address: " + nodeInfo.ip + '<br>');
-    div.append("Port: " + nodeInfo.group + '<br><br>');
-    div.append("Nessus ID: " + nodeInfo.id + '<br>');
-  }
-  div.append("Title: " + idData.title + '<br>');
-  if(idData.family && idData.family !== "")
-    div.append("Family: " + idData.family + '<br>');
-  div.append('<br>');
-  if(idData.synopsis && idData.synopsis !== "")
-    div.append("Synopsis: " + idData.synopsis + '<br><br>');
-  if(idData.description && idData.description !== "")
-    div.append("Description: " + idData.description + '<br><br>');
-  if(idData.updateInfo && idData.updateInfo !== "")
-    div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
-  if(idData.solution && idData.solution !== "")
-    div.append("Solution: " + idData.solution);
-  /* //TODO deal with these later.
-  div.append("bugtraqList: "   + idData.bugtraqList);
-  div.append("cveList: "       + idData.cveList);
-  div.append("otherInfoList: " + idData.otherInfoList);
-  */
-  div.append('</p>');
-
-  /*
-  var enter = div.selectAll('.nessusinfosection')
-    .data(iddata, function(d) { return d.key; })
-    .enter();
-
-  $.each(enter[0], function(i, v) { 
-    var key = v.__data__.key;
-    var text = v.__data__.text;
-    d3.select('#nessus_'+key).select('p').html(text);
-  });
-  */
-}
+// updates the nessus data by id
+//function setNessusIDData(idData, nodeInfo){
+//  var div = $('#nessusinfo');
+//  div.html('<hr><p>');
+//  if(nodeInfo){
+//    if(nodeInfo.type == 'hole')
+//      div.append("Security Hole"+ '<br><br>');
+//    else
+//      div.append("Security Note"+ '<br><br>');
+//    div.append("Group: " + nodeInfo.group + '<br>');
+//    div.append("Address: " + nodeInfo.ip + '<br>');
+//    div.append("Port: " + nodeInfo.group + '<br><br>');
+//    div.append("Nessus ID: " + nodeInfo.id + '<br>');
+//  }
+//  div.append("Title: " + idData.title + '<br>');
+//  if(idData.family && idData.family !== "")
+//    div.append("Family: " + idData.family + '<br>');
+//  div.append('<br>');
+//  if(idData.synopsis && idData.synopsis !== "")
+//    div.append("Synopsis: " + idData.synopsis + '<br><br>');
+//  if(idData.description && idData.description !== "")
+//    div.append("Description: " + idData.description + '<br><br>');
+//  if(idData.updateInfo && idData.updateInfo !== "")
+//    div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
+//  if(idData.solution && idData.solution !== "")
+//    div.append("Solution: " + idData.solution);
+//  /* //TODO deal with these later.
+//  div.append("bugtraqList: "   + idData.bugtraqList);
+//  div.append("cveList: "       + idData.cveList);
+//  div.append("otherInfoList: " + idData.otherInfoList);
+//  */
+//  div.append('</p>');
+//
+//  /*
+//  var enter = div.selectAll('.nessusinfosection')
+//    .data(iddata, function(d) { return d.key; })
+//    .enter();
+//
+//  $.each(enter[0], function(i, v) { 
+//    var key = v.__data__.key;
+//    var text = v.__data__.text;
+//    d3.select('#nessus_'+key).select('p').html(text);
+//  });
+//  */
+//}
 
 function loadJSONData(file){
   // if file isn't .json file, load a default

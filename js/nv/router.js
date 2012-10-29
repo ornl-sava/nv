@@ -132,6 +132,16 @@ var NV = new (Backbone.Router.extend({
 
 
     // info view
+    this.nessusInfo    =   new NessusInfo({  
+                                  app: this,
+                                  datasource: this.nessus
+                              });
+
+    this.nessusInfoView    =   new NessusInfoView({
+                                     app: this,
+                                     model: this.nessusInfo,
+                                     target:'#nessusinfo'
+                                });
 
   },
 
