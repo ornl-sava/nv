@@ -8,44 +8,6 @@ var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
 
-// TODO Lane make sure we need this and if so, find a home for it
-function testIfChildHasValue(dee, kee, val){
-  var fv = findValue(dee, kee, val);
-  return fv > 0;
-
-  function findValue(d, key, value){
-    if(d.values){
-      return d.values.reduce(function(p, v) { return p + findValue(v, key, value); }, 0);
-    } 
-    else {
-      if(typeof d[key] !== undefined){
-        if ( !isNaN(d[key]) ){ //if value is a number
-
-          //find the value of each bar in the histograms
-          if ( Math.floor(d[key]) === Math.floor(value) ){
-            return 1;
-          } 
-          else {
-            return 0;
-          }
-
-        }
-        else {
-          if (d[key] === value){
-            return 1;
-          } 
-          else {
-            return 0;
-          }
-        }
-      } 
-      else {
-        return 0;
-      }
-    }
-  }
-}
-
 
 // TODO Lane Mike the sizeBy functions are currently connected directly to 
 // buttons in index.html. We should create a bb view for the div id="sizeoptions" 
