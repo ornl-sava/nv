@@ -13,28 +13,22 @@ NV Issues
 - Any mouseover should change some information in some part of the page (useful for scanning).
 
 ### neighbor network
-One of the VizSec paper reviewers suggested that a node link diagram could be appropriate for this data. 
 With a large number of machines, a node link diagram is a terrible idea.
 However, node link diagrams could show useful information about a machine's neighbors, provided this information is available.
-With this in mind, we should consider adding a node-link diagram to the right of the treemap display.
+With this in mind, we can consider adding a node-link diagram to the right of the treemap display.
 This node link diagram would show a focus machine in the center, with all of its neighbors surrounding it, and their relative vulnerabilities.
 Interaction in the node-link view supports the use case of focusing on a node, and examining the vulnerabilities in its immediate neighbors.
 Switching focus to a neighbor will change the treemap (focusing on a different node), as well as the node link diagram.
 
 ### hierarchy changes via gui
-While coding nv, we found that different hierarchy arrangements supported different use cases.
-To support this further, we should have a simple drag and drop hierarchy arrangement area in the gui, which changes how the treemap is computed.
+Different hierarchy arrangements support different use cases.
+To support this further, we could have a simple drag and drop hierarchy arrangement area in the gui, which changes how the treemap aggregates are computed.
 
 ### Non-critical bugs:
 
-assigning a criticality/weight to individual machines has no effect.
-
-IPs should be in order on 'groups' tab
-
-Features to revisit sometime after submission:
-
-some way to remove groups
-checking that groups don't overlap, how to handle if they do
-set weight to 0/'ignore' to remove machines from results?
-
-some way to hide the second data tab, and go back to only one nbe file
+- assigning a criticality/weight to individual machines has no effect.
+- IPs should be in order on 'groups' tab
+- some way to remove groups
+- checking that groups don't overlap, how to handle if they do
+- set weight to 0/'ignore' to remove machines from results?
+- some way to hide the second data tab, and go back to only one nbe file
