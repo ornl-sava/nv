@@ -141,6 +141,7 @@ var TreemapView = Backbone.View.extend({
         .select('text')
         .text(name(d));
   
+      // TODO our resize woes come from here
       var g1 = app.svg.insert('g', '.grandparent')
         .datum(d)
         .attr('class', 'depth');
@@ -305,6 +306,10 @@ var TreemapView = Backbone.View.extend({
     d3.select("#vis > svg").attr("width", this.width + this.margin.left + this.margin.right);
     d3.selectAll(".grandparent rect").attr("width", this.width);
     this.treemap.ratio(this.height / this.width * 0.5 * (1 + Math.sqrt(5)));
+
+    // if we don't do this here, we get duplicate .depth divs on each resize
+    d3.selectAll('.depth').remove();
+
     this.render();
   }
 

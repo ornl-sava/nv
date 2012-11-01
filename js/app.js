@@ -555,6 +555,7 @@ var TreemapView = Backbone.View.extend({
         .select('text')
         .text(name(d));
   
+      // TODO our resize woes come from here
       var g1 = app.svg.insert('g', '.grandparent')
         .datum(d)
         .attr('class', 'depth');
@@ -719,6 +720,7 @@ var TreemapView = Backbone.View.extend({
     d3.select("#vis > svg").attr("width", this.width + this.margin.left + this.margin.right);
     d3.selectAll(".grandparent rect").attr("width", this.width);
     this.treemap.ratio(this.height / this.width * 0.5 * (1 + Math.sqrt(5)));
+    d3.selectAll('.depth').remove();
     this.render();
   }
 
@@ -880,7 +882,7 @@ var NV = new (Backbone.Router.extend({
 
 // NOTE: in comments 'bb' === 'backbone'
 
-// TODO Lane figure out how this should be set
+// TODO Lane move this to the nessus bb model
 var isChangeVis = false;
 
 
