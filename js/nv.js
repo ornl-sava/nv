@@ -1,6 +1,6 @@
 // NOTE: in comments 'bb' === 'backbone'
 
-// TODO Lane figure out how this should be set
+// TODO Lane move this to the nessus bb model
 var isChangeVis = false;
 
 

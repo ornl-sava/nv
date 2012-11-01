@@ -1,6 +1,8 @@
 NV Issues
 ==============
 
+- if you're low in the hierarchy (e.g. IP level) and you click the treemap resize, artifacts (looks like an extra div?) appear to the right of the histogram. 
+
 1. Sometimes the label for the largest square will not render.
     * This bug is difficult to reproduce.
     * It seems to pop up when One square dominates the tree map such as when one
