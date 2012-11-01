@@ -3,7 +3,9 @@ var Treemap = Backbone.Model.extend({
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
 
-    this.sizeOption = 'value';
+    this.set('sizeOption', 'value');
+
+    this.on('change:sizeOption', this.updateData, this);
   },
 
   updateData: function(){
@@ -89,6 +91,6 @@ var Treemap = Backbone.Model.extend({
 
     return d.values ?
       d.value = d.values.reduce(function(p, v) { return p + app.accumulate(v); }, 0) :
-      d[this.sizeOption];
+      d[this.get('sizeOption')];
   }
 });

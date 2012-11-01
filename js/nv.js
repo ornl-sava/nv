@@ -1,11 +1,7 @@
 // NOTE: in comments 'bb' === 'backbone'
 
+// TODO Lane figure out how this should be set
 var isChangeVis = true;
-
-// TODO Lane make these work in bb
-// users can change this via buttons, which then redraws the treemap according to the new size metric
-// cvss, value, criticality
-var sizeOption = 'value';
 
 // TODO Mike do we need these? -Lane
 var eventList;
@@ -51,28 +47,25 @@ function testIfChildHasValue(dee, kee, val){
 }
 
 
-// TODO Lane make these work for bb treemap
-// change treemap node size datafields
+// TODO Lane Mike the sizeBy functions are currently connected directly to 
+// buttons in index.html. We should create a bb view for the div id="sizeoptions" 
+// so we can handle these via bb events.
 function sizeBySeverity() {
-   sizeOption = 'cvss'; 
-   redraw(); 
+   NV.treemap.set('sizeOption', 'cvss'); 
 }
 
 function sizeByCriticality() {
-   sizeOption = 'criticality'; 
-   redraw(); 
+   NV.treemap.set('sizeOption', 'criticality'); 
 }
 
 function sizeByCount() {
-   sizeOption = 'value'; 
-   redraw(); 
+   NV.treemap.set('sizeOption', 'value'); 
 }
 
 // Sets the main Backbone data model
 function setNBEData(dataset){
   NV.nessus.setData(dataset);
 }
-
 
 var groupList = [];
 

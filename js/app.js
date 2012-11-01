@@ -6,6 +6,64 @@ d3.selection.prototype.moveToFront = function() {
   }); 
 }; 
 
+var Histogram = Backbone.Model.extend({
+  initialize: function() {
+    // respond to app-level events
+    this.get('datasource').on('dataset updated', this.updateData, this);
+  },
+
+  updateData: function(){
+    var filterOptions   = this.get('filterOptions')
+      , attribute       = filterOptions.attribute
+      , bins            = this.get('bins') || ""
+      , datamap         = this.get('datamap') || "";
+
+    var rawData = this.get('datasource').getData(filterOptions);
+
+    // compute histogram based on attribute value
+    var histogram = d3.layout.histogram()
+        .value(function(d) { 
+          // if we have a datamap, use it
+          return datamap ? datamap(d[attribute]) : d[attribute]; 
+        });
+
+    // if bins specified, set them
+    if( bins )
+      histogram.bins(bins);
+
+    // compute the histogram
+    var data = histogram(rawData); 
+
+    // if a limit is specified, sort and cut the data
+    if( this.get('limit') ){
+      var limit = this.get('limit');
+
+      // sort the data by length (ascending) and reverse
+      data = _.sortBy(data, function(d){ return d.length; }).reverse();
+
+      // cut off after limit
+      data = _.first(data, limit);
+    }
+
+    // set labels. if bins are specified, use numbers
+    //  otherwise use the category (data + attribute)
+    // TODO, can d3 histograms make better labels by telling us what the bins mean?
+    if( bins ) {
+      this.set('labels', data.map( function(d, i) { return i; }) );
+    } else {
+      this.set('labels', data.map( function(d) { 
+        // TODO if we have a datamap, get the inverse to get the labels right
+        // to do this, see if we can reverse the d3 ordinal scale
+        return d[0][attribute]; 
+      }) );
+    }
+
+
+    // set data to the lengths of the data
+    this.set('data', data.map(function(d) { return d.length; }) );  
+  }
+});
+
 var Nessus = Backbone.Model.extend({
 
   initialize: function() {
@@ -118,12 +176,25 @@ var Nessus = Backbone.Model.extend({
 
 });
 
+var NessusInfo = Backbone.Model.extend({
+  initialize: function() {
+    this.get('app').on('nessusIDSelected', this.updateData, this);
+  },
+
+  updateData: function(d){
+    // TODO could do some cleanup here rather than in the view
+    this.set('data', d);
+  }
+});
+
 var Treemap = Backbone.Model.extend({
   initialize: function() {
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
 
-    this.sizeOption = 'value';
+    this.set('sizeOption', 'value');
+
+    this.on('change:sizeOption', this.updateData, this);
   },
 
   updateData: function(){
@@ -209,76 +280,135 @@ var Treemap = Backbone.Model.extend({
 
     return d.values ?
       d.value = d.values.reduce(function(p, v) { return p + app.accumulate(v); }, 0) :
-      d[this.sizeOption];
+      d[this.get('sizeOption')];
   }
 });
 
-var Histogram = Backbone.Model.extend({
+var HistogramView = Backbone.View.extend({
+
   initialize: function() {
-    // respond to app-level events
-    this.get('datasource').on('dataset updated', this.updateData, this);
+    // listen for model changes
+    this.model.on('change:data', this.render, this);
+
+    // init a d3 histogram
+    d3.select(this.options.target)
+      .append('svg')
+      .attr('width', this.options.w)
+      .attr('height', this.options.h);
   },
 
-  updateData: function(){
-    var filterOptions   = this.get('filterOptions')
-      , attribute       = filterOptions.attribute
-      , bins            = this.get('bins') || ""
-      , datamap         = this.get('datamap') || "";
+  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
+  render: function(){
+    var vis         = d3.select(this.options.target).select('svg')
+      , app         = this.model.get('app')
+      , data        = this.model.get('data')
+      , range       = this.options.range
+      , attribute   = this.model.get('attribute')
+      , view        = this
+      , w           = this.options.w
+      , h           = this.options.h
+      , barwidth    = this.options.barwidth
+      , labels      = this.model.get('labels')
+      , title       = this.options.title
+      , numBins     = data.length
+      , barspace    = Math.floor( w/data.length - barwidth )
+      , rect        = vis.selectAll('.bar')
+      , rectLabels  = vis.selectAll('.histogramLabel')
+      , titleLabel  = vis.selectAll('.histogramtitle');
 
-    var rawData = this.get('datasource').getData(filterOptions);
+    // y scale for bars
+    var y = d3.scale.linear()
+              .domain([0, d3.max(data)])
+              .range([5, h-40]);
 
-    // compute histogram based on attribute value
-    var histogram = d3.layout.histogram()
-        .value(function(d) { 
-          // if we have a datamap, use it
-          return datamap ? datamap(d[attribute]) : d[attribute]; 
-        });
+    // enter
+    rect.data(data)
+        .enter().append('rect')
+        .classed('bar', true)
+        .on('click', function() { barClick(this); })
+//        .attr('data-rangeMin', function(d, i) { return labelScale(i); }) 
+//        .attr('data-rangeMax', function(d, i) { return labelScale(i+1); })
+        .attr('width', barwidth)
+        .attr('height', function(d, i) { return y(d); })
+        .attr('x', function(d, i) { return i*(barwidth+barspace); })
+        .attr('y', function(d, i) { return h - 45 - y(d); });
 
-    // if bins specified, set them
-    if( bins )
-      histogram.bins(bins);
+    // update
+    // rect.transition().duration(250)
 
-    // compute the histogram
-    var data = histogram(rawData); 
+    //x-axis labels for bars
+    rectLabels.data(labels)
+      .enter().append('text')
+      .attr('class', 'histogramlabel')
+      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
+      .attr('y', h - 35)
+      .attr('text-anchor', 'middle')
+      .text( function(d) { return d; });
 
-    // if a limit is specified, sort and cut the data
-    if( this.get('limit') ){
-      var limit = this.get('limit');
+    //title
+    titleLabel.data(title)
+      .enter().append('text')
+      .attr('class', 'histogramtitle')
+      .attr('x', w / 2 )
+      .attr('y', h - 20)
+      .attr('text-anchor', 'middle')
+      .text(title);
 
-      // sort the data by length (ascending) and reverse
-      data = _.sortBy(data, function(d){ return d.length; }).reverse();
+    // on bar click, trigger a filter
+    // var barClick = function barClick(d) {   
+    //   var rmin = d3.select(d).attr('data-rangeMin')
+    //     , rmax = d3.select(d).attr('data-rangeMax');
 
-      // cut off after limit
-      data = _.first(data, limit);
-    }
-
-    // set labels. if bins are specified, use numbers
-    //  otherwise use the category (data + attribute)
-    // TODO, can d3 histograms make better labels by telling us what the bins mean?
-    if( bins ) {
-      this.set('labels', data.map( function(d, i) { return i; }) );
-    } else {
-      this.set('labels', data.map( function(d) { 
-        // TODO if we have a datamap, get the inverse to get the labels right
-        // to do this, see if we can reverse the d3 ordinal scale
-        return d[0][attribute]; 
-      }) );
-    }
-
-
-    // set data to the lengths of the data
-    this.set('data', data.map(function(d) { return d.length; }) );  
+    //   app.navigate('filter:'+attribute+','+rmin+','+rmax, true);
+    // };
   }
 });
 
-var NessusInfo = Backbone.Model.extend({
+var NessusInfoView = Backbone.View.extend({
+
   initialize: function() {
-    this.get('app').on('nessusIDSelected', this.updateData, this);
+    // render on model update
+    this.model.on('change:data', this.render, this);
   },
 
-  updateData: function(d){
-    // TODO could do some cleanup here rather than in the view
-    this.set('data', d);
+  render: function(){
+    var data = this.model.get('data');
+
+    var div = $(this.options.target)
+      , nodeInfo = data.nodeInfo
+      , idData = data.vulnInfo;
+
+    // TODO do this with d3 instead
+    div.html('<hr><p>');
+    if(nodeInfo){
+      if(nodeInfo.type == 'hole')
+        div.append("Security Hole"+ '<br><br>');
+      else
+        div.append("Security Note"+ '<br><br>');
+      div.append("Group: " + nodeInfo.group + '<br>');
+      div.append("Address: " + nodeInfo.ip + '<br>');
+      div.append("Port: " + nodeInfo.group + '<br><br>');
+      div.append("Nessus ID: " + nodeInfo.id + '<br>');
+    }
+    div.append("Title: " + idData.title + '<br>');
+    if(idData.family && idData.family !== "")
+      div.append("Family: " + idData.family + '<br>');
+    div.append('<br>');
+    if(idData.synopsis && idData.synopsis !== "")
+      div.append("Synopsis: " + idData.synopsis + '<br><br>');
+    if(idData.description && idData.description !== "")
+      div.append("Description: " + idData.description + '<br><br>');
+    if(idData.updateInfo && idData.updateInfo !== "")
+      div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
+    if(idData.solution && idData.solution !== "")
+      div.append("Solution: " + idData.solution);
+    /* //TODO deal with these later.
+    div.append("bugtraqList: "   + idData.bugtraqList);
+    div.append("cveList: "       + idData.cveList);
+    div.append("otherInfoList: " + idData.otherInfoList);
+    */
+    div.append('</p>');
+
   }
 });
 
@@ -335,9 +465,32 @@ var TreemapView = Backbone.View.extend({
   },
 
   render: function(){
-    // TODO entire treemap here, layout and all
     var root = this.model.get('data');
     var app = this;
+
+    // define the colors here
+    var nodeColor = d3.scale.linear()
+      .domain([0.0, 2.0, 10.0])
+      .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
+
+
+    var nodeColorFixed = d3.scale.linear()
+      .domain([0.0, 10.0])
+      .range([d3.hsl("#AAAAAA"), d3.hsl("#405E50")]); 
+      // old: .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
+    
+    var nodeColorNew = d3.scale.linear()
+      .domain([0.0, 10.0])
+      .range([d3.hsl("#AAAAAA"), d3.hsl("#AD009F")]); 
+      // old: .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
+
+    
+    var nodeColorOpen = d3.scale.linear()
+      .domain([0.0, 10.0])
+      .range([d3.hsl("#AAAAAA"), d3.hsl("#FFCF40")]); 
+      // old: .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
+
+
   
     initialize(root);
     layout(root);
@@ -571,134 +724,6 @@ var TreemapView = Backbone.View.extend({
 
 });
 
-var HistogramView = Backbone.View.extend({
-
-  initialize: function() {
-    // listen for model changes
-    this.model.on('change:data', this.render, this);
-
-    // init a d3 histogram
-    d3.select(this.options.target)
-      .append('svg')
-      .attr('width', this.options.w)
-      .attr('height', this.options.h);
-  },
-
-  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
-  render: function(){
-    var vis         = d3.select(this.options.target).select('svg')
-      , app         = this.model.get('app')
-      , data        = this.model.get('data')
-      , range       = this.options.range
-      , attribute   = this.model.get('attribute')
-      , view        = this
-      , w           = this.options.w
-      , h           = this.options.h
-      , barwidth    = this.options.barwidth
-      , labels      = this.model.get('labels')
-      , title       = this.options.title
-      , numBins     = data.length
-      , barspace    = Math.floor( w/data.length - barwidth )
-      , rect        = vis.selectAll('.bar')
-      , rectLabels  = vis.selectAll('.histogramLabel')
-      , titleLabel  = vis.selectAll('.histogramtitle');
-
-    // y scale for bars
-    var y = d3.scale.linear()
-              .domain([0, d3.max(data)])
-              .range([5, h-40]);
-
-    // enter
-    rect.data(data)
-        .enter().append('rect')
-        .classed('bar', true)
-        .on('click', function() { barClick(this); })
-//        .attr('data-rangeMin', function(d, i) { return labelScale(i); }) 
-//        .attr('data-rangeMax', function(d, i) { return labelScale(i+1); })
-        .attr('width', barwidth)
-        .attr('height', function(d, i) { return y(d); })
-        .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - 45 - y(d); });
-
-    // update
-    // rect.transition().duration(250)
-
-    //x-axis labels for bars
-    rectLabels.data(labels)
-      .enter().append('text')
-      .attr('class', 'histogramlabel')
-      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
-      .attr('y', h - 35)
-      .attr('text-anchor', 'middle')
-      .text( function(d) { return d; });
-
-    //title
-    titleLabel.data(title)
-      .enter().append('text')
-      .attr('class', 'histogramtitle')
-      .attr('x', w / 2 )
-      .attr('y', h - 20)
-      .attr('text-anchor', 'middle')
-      .text(title);
-
-    // on bar click, trigger a filter
-    // var barClick = function barClick(d) {   
-    //   var rmin = d3.select(d).attr('data-rangeMin')
-    //     , rmax = d3.select(d).attr('data-rangeMax');
-
-    //   app.navigate('filter:'+attribute+','+rmin+','+rmax, true);
-    // };
-  }
-});
-
-var NessusInfoView = Backbone.View.extend({
-
-  initialize: function() {
-    // render on model update
-    this.model.on('change:data', this.render, this);
-  },
-
-  render: function(){
-    var data = this.model.get('data');
-
-    var div = $(this.options.target)
-      , nodeInfo = data.nodeInfo
-      , idData = data.vulnInfo;
-
-    // TODO do this with d3 instead
-    div.html('<hr><p>');
-    if(nodeInfo){
-      if(nodeInfo.type == 'hole')
-        div.append("Security Hole"+ '<br><br>');
-      else
-        div.append("Security Note"+ '<br><br>');
-      div.append("Group: " + nodeInfo.group + '<br>');
-      div.append("Address: " + nodeInfo.ip + '<br>');
-      div.append("Port: " + nodeInfo.group + '<br><br>');
-      div.append("Nessus ID: " + nodeInfo.id + '<br>');
-    }
-    div.append("Title: " + idData.title + '<br>');
-    if(idData.family && idData.family !== "")
-      div.append("Family: " + idData.family + '<br>');
-    div.append('<br>');
-    if(idData.synopsis && idData.synopsis !== "")
-      div.append("Synopsis: " + idData.synopsis + '<br><br>');
-    if(idData.description && idData.description !== "")
-      div.append("Description: " + idData.description + '<br><br>');
-    if(idData.updateInfo && idData.updateInfo !== "")
-      div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
-    if(idData.solution && idData.solution !== "")
-      div.append("Solution: " + idData.solution);
-    /* //TODO deal with these later.
-    div.append("bugtraqList: "   + idData.bugtraqList);
-    div.append("cveList: "       + idData.cveList);
-    div.append("otherInfoList: " + idData.otherInfoList);
-    */
-    div.append('</p>');
-
-  }
-});
-
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
   routes: {
@@ -855,23 +880,6 @@ var NV = new (Backbone.Router.extend({
 
 // NOTE: in comments 'bb' === 'backbone'
 
-// TODO Lane where do these belong in bb?
-var nodeColor = d3.scale.linear()
-    .domain([0.0, 2.0, 10.0])
-    .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
-
-var nodeColorFixed = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
-
-var nodeColorNew = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
-
-var nodeColorOpen = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
-
 var isChangeVis = true;
 
 // TODO Lane make these work in bb
@@ -879,20 +887,12 @@ var isChangeVis = true;
 // cvss, value, criticality
 var sizeOption = 'value';
 
-// All the data!
-//var nbedata,
-//    all,
-//    byIP,
-//    byAny,
-//    byPort,
-//    byCVSS,
-//    byVulnID,
-//    byVulnType
+// TODO Mike do we need these? -Lane
 var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
 
-// TODO Lane - put this function somewhere else
+// TODO Lane make sure we need this and if so, find a home for it
 function testIfChildHasValue(dee, kee, val){
   var fv = findValue(dee, kee, val);
   return fv > 0;
@@ -930,45 +930,22 @@ function testIfChildHasValue(dee, kee, val){
   }
 }
 
-// crossfilter setup
-//function crossfilterInit(){
-//  // sets/resets our data
-//  nbedata = crossfilter();
-//
-//  // dimensions/groups
-//  all = nbedata.groupAll(),
-//  byIP = nbedata.dimension(function(d) { return d.ip; }),
-//  byAny = nbedata.dimension(function(d) { return d; }),
-//  byPort = nbedata.dimension(function(d) { return d.port; }),
-//  byCVSS = nbedata.dimension(function(d) { return d.cvss; }),
-//  byVulnID = nbedata.dimension(function(d) { return d.vulnid; }),
-//  byVulnType = nbedata.dimension(function(d) { return d.vulntype; });
-//}
-//
-//function init() {
-//  crossfilterInit(); // TODO Lane not sure why this needs to be called here, need to investigate how setNBEData is being used...
-//}
 
+// TODO Lane make these work for bb treemap
+// TODO Lane Mike the sizeBy functions are currently connected directly to buttons in index.html. We should create a bb view for the div id="sizeoptions" so we can handle these via bb events.
 
-
-// TODO Lane add these in the backbone rewrite
 // change treemap node size datafields
 function sizeBySeverity() {
-   sizeOption = 'cvss'; 
-   redraw(); 
+   NV.treemap.set('sizeOption', 'cvss'); 
 }
 
 function sizeByCriticality() {
-   sizeOption = 'criticality'; 
-   redraw(); 
+   NV.treemap.set('sizeOption', 'criticality'); 
 }
 
 function sizeByCount() {
-   sizeOption = 'value'; 
-   redraw(); 
+   NV.treemap.set('sizeOption', 'value'); 
 }
-
-
 
 // Sets the main Backbone data model
 function setNBEData(dataset){
