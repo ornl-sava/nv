@@ -1,7 +1,8 @@
 // NOTE: in comments 'bb' === 'backbone'
 
 // TODO Lane figure out how this should be set
-var isChangeVis = true;
+var isChangeVis = false;
+
 
 // TODO Mike do we need these? -Lane
 var eventList;
@@ -24,10 +25,12 @@ function sizeByCount() {
    NV.treemap.set('sizeOption', 'value'); 
 }
 
+
 // Sets the main Backbone data model
 function setNBEData(dataset){
   NV.nessus.setData(dataset);
 }
+
 
 var groupList = [];
 
@@ -76,6 +79,7 @@ function updateEventList(){
     nbeItems1 = parseNBEFile( nbeText1 );
     eventList = nbeItems1;
     if(nbeText2.trim() !== ""){
+      isChangeVis = true;
       nbeItems2 = parseNBEFile( nbeText2 );
       eventList = mergeNBEs(nbeItems1, nbeItems2);
     }
@@ -349,6 +353,7 @@ $().ready(function () {
   });
 
   //TODO kind of a dumb reason to need a server running...
+  // -- true, maybe we could just put the vulnids in a js file and include in the html?
   $.get("data/vulnIDs.json", function(data) {
     console.log("Got the vulnIDs JSON file!");
     //console.log(data)

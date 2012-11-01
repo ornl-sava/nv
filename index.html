@@ -1097,17 +1097,18 @@ timestamps|||scan_end|Wed Jul 11 13:43:00 2012|
                       <div id="options">
                         <label for="sizeoptions">Size nodes by:</label>
                         <div id="sizeoptions" class="btn-group" data-toggle="buttons-radio">
-                          <button class="btn" onclick="sizeBySeverity()">Severity</button>
+                          <button class="btn active" onclick="sizeBySeverity()">Severity</button>
                           <button class="btn" onclick="sizeByCriticality()">Criticality</button>
-                          <button class="btn active" onclick="sizeByCount()">Count</button>
+                          <button class="btn" onclick="sizeByCount()">Count</button>
                         </div>
+                        <!--
                         <div id="changeoptions" class="btn-group">
                       <div id="changes">
                         <label for="changes">Modify node:</label>
                           <button class="btn" onclick="fixed()" data-toggle="buttons">Fixed</button>
                           <button class="btn" onclick="nonissue()" data-toggle="buttons">Non-Issue</button>
                         </div>
-                        </div>
+                        </div> -->
                       </div>
                       <div id="edit"></div>
                       <div id="nessusinfo"></div>

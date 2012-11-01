@@ -192,7 +192,7 @@ var Treemap = Backbone.Model.extend({
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
 
-    this.set('sizeOption', 'value');
+    this.set('sizeOption', 'cvss');
 
     this.on('change:sizeOption', this.updateData, this);
   },
@@ -880,61 +880,19 @@ var NV = new (Backbone.Router.extend({
 
 // NOTE: in comments 'bb' === 'backbone'
 
-var isChangeVis = true;
+// TODO Lane figure out how this should be set
+var isChangeVis = false;
 
-// TODO Lane make these work in bb
-// users can change this via buttons, which then redraws the treemap according to the new size metric
-// cvss, value, criticality
-var sizeOption = 'value';
 
 // TODO Mike do we need these? -Lane
 var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
 
-// TODO Lane make sure we need this and if so, find a home for it
-function testIfChildHasValue(dee, kee, val){
-  var fv = findValue(dee, kee, val);
-  return fv > 0;
 
-  function findValue(d, key, value){
-    if(d.values){
-      return d.values.reduce(function(p, v) { return p + findValue(v, key, value); }, 0);
-    } 
-    else {
-      if(typeof d[key] !== undefined){
-        if ( !isNaN(d[key]) ){ //if value is a number
-
-          //find the value of each bar in the histograms
-          if ( Math.floor(d[key]) === Math.floor(value) ){
-            return 1;
-          } 
-          else {
-            return 0;
-          }
-
-        }
-        else {
-          if (d[key] === value){
-            return 1;
-          } 
-          else {
-            return 0;
-          }
-        }
-      } 
-      else {
-        return 0;
-      }
-    }
-  }
-}
-
-
-// TODO Lane make these work for bb treemap
-// TODO Lane Mike the sizeBy functions are currently connected directly to buttons in index.html. We should create a bb view for the div id="sizeoptions" so we can handle these via bb events.
-
-// change treemap node size datafields
+// TODO Lane Mike the sizeBy functions are currently connected directly to 
+// buttons in index.html. We should create a bb view for the div id="sizeoptions" 
+// so we can handle these via bb events.
 function sizeBySeverity() {
    NV.treemap.set('sizeOption', 'cvss'); 
 }
@@ -947,10 +905,12 @@ function sizeByCount() {
    NV.treemap.set('sizeOption', 'value'); 
 }
 
+
 // Sets the main Backbone data model
 function setNBEData(dataset){
   NV.nessus.setData(dataset);
 }
+
 
 var groupList = [];
 
@@ -999,6 +959,7 @@ function updateEventList(){
     nbeItems1 = parseNBEFile( nbeText1 );
     eventList = nbeItems1;
     if(nbeText2.trim() !== ""){
+      isChangeVis = true;
       nbeItems2 = parseNBEFile( nbeText2 );
       eventList = mergeNBEs(nbeItems1, nbeItems2);
     }
@@ -1272,6 +1233,7 @@ $().ready(function () {
   });
 
   //TODO kind of a dumb reason to need a server running...
+  // -- true, maybe we could just put the vulnids in a js file and include in the html?
   $.get("data/vulnIDs.json", function(data) {
     console.log("Got the vulnIDs JSON file!");
     //console.log(data)

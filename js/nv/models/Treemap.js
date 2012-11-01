@@ -3,7 +3,7 @@ var Treemap = Backbone.Model.extend({
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
 
-    this.set('sizeOption', 'value');
+    this.set('sizeOption', 'cvss');
 
     this.on('change:sizeOption', this.updateData, this);
   },
