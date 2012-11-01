@@ -1,22 +1,5 @@
 // NOTE: in comments 'bb' === 'backbone'
 
-// TODO Lane where do these belong in bb?
-var nodeColor = d3.scale.linear()
-    .domain([0.0, 2.0, 10.0])
-    .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
-
-var nodeColorFixed = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#4DAF4A")]); // white-green
-
-var nodeColorNew = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#984EA3")]); // white-red
-
-var nodeColorOpen = d3.scale.linear()
-    .domain([0.0, 10.0])
-    .range([d3.hsl("#FEE6CE"), d3.hsl("#FF7F00")]); // white-orange
-
 var isChangeVis = true;
 
 // TODO Lane make these work in bb
