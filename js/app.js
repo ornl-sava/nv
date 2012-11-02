@@ -43,24 +43,29 @@ var Histogram = Backbone.Model.extend({
 
       // cut off after limit
       data = _.first(data, limit);
-    }
+    } 
 
     // set labels. if bins are specified, use numbers
     //  otherwise use the category (data + attribute)
-    // TODO, can d3 histograms make better labels by telling us what the bins mean?
+    var labels;
     if( bins ) {
-      this.set('labels', data.map( function(d, i) { return i; }) );
+      labels = data.map( function(d, i) { return i; });
     } else {
-      this.set('labels', data.map( function(d) { 
+      labels = data.map( function(d) { 
         // TODO if we have a datamap, get the inverse to get the labels right
         // to do this, see if we can reverse the d3 ordinal scale
         return d[0][attribute]; 
-      }) );
+      });
     }
 
+    // TODO combine label and length in data attribute
+    this.set('data', data.map(function(d, i) { 
+      return {
+        length: d.length,
+        label: labels[i]
+      };
+    }) );  
 
-    // set data to the lengths of the data
-    this.set('data', data.map(function(d) { return d.length; }) );  
   }
 });
 
@@ -308,8 +313,8 @@ var HistogramView = Backbone.View.extend({
       , w           = this.options.w
       , h           = this.options.h
       , barwidth    = this.options.barwidth
-      , labels      = this.model.get('labels')
       , title       = this.options.title
+      , that        = this
       , numBins     = data.length
       , barspace    = Math.floor( w/data.length - barwidth )
       , rect        = vis.selectAll('.bar')
@@ -318,32 +323,29 @@ var HistogramView = Backbone.View.extend({
 
     // y scale for bars
     var y = d3.scale.linear()
-              .domain([0, d3.max(data)])
+              .domain([0, d3.max(data, function(d) { return d.length; })])
               .range([5, h-40]);
 
     // enter
-    rect.data(data)
+    rect.data(data, function(d) { return d.length; })
         .enter().append('rect')
         .classed('bar', true)
         .on('click', function() { barClick(this); })
-//        .attr('data-rangeMin', function(d, i) { return labelScale(i); }) 
-//        .attr('data-rangeMax', function(d, i) { return labelScale(i+1); })
         .attr('width', barwidth)
-        .attr('height', function(d, i) { return y(d); })
+        .attr('height', function(d, i) { return y(d.length); })
         .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - 45 - y(d); });
+        .attr('y', function(d, i) { return h - 45 - y(d.length); });
 
     // update
-    // rect.transition().duration(250)
 
     //x-axis labels for bars
-    rectLabels.data(labels)
+    rectLabels.data(data, function(d) { return d.label; })
       .enter().append('text')
       .attr('class', 'histogramlabel')
       .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
       .attr('y', h - 35)
       .attr('text-anchor', 'middle')
-      .text( function(d) { return d; });
+      .text( function(d) { return d.label; });
 
     //title
     titleLabel.data(title)
@@ -355,12 +357,14 @@ var HistogramView = Backbone.View.extend({
       .text(title);
 
     // on bar click, trigger a filter
-    // var barClick = function barClick(d) {   
-    //   var rmin = d3.select(d).attr('data-rangeMin')
-    //     , rmax = d3.select(d).attr('data-rangeMax');
-
-    //   app.navigate('filter:'+attribute+','+rmin+','+rmax, true);
-    // };
+    var barClick = function barClick(d) {   
+      if(that.model.get('filterOptions').filters){
+        console.log(JSON.stringify(that.model.get('filterOptions').filters));
+      } else {
+        console.log(that.model.get('filterOptions').attribute);
+      }
+      console.log(d3.select(d).data()[0].label);
+    };
   }
 });
 
@@ -720,7 +724,10 @@ var TreemapView = Backbone.View.extend({
     d3.select("#vis > svg").attr("width", this.width + this.margin.left + this.margin.right);
     d3.selectAll(".grandparent rect").attr("width", this.width);
     this.treemap.ratio(this.height / this.width * 0.5 * (1 + Math.sqrt(5)));
+
+    // if we don't do this here, we get duplicate .depth divs on each resize
     d3.selectAll('.depth').remove();
+
     this.render();
   }
 
@@ -811,7 +818,7 @@ var NV = new (Backbone.Router.extend({
                                   app: this,
                                   model: this.topNoteHistogram,
                                   target:'#topNoteHistogram',
-                                  barwidth: 25,
+                                  barwidth: 30,
                                   w: 180,
                                   h: 165,
                                   title: ['top notes']
@@ -833,7 +840,7 @@ var NV = new (Backbone.Router.extend({
 
     this.topHoleHistogramView    =   new HistogramView({
                                      app: this,
-                                     barwidth: 25,
+                                     barwidth: 30,
                                      model: this.topHoleHistogram,
                                      target:'#topHoleHistogram',
                                      w: 180,

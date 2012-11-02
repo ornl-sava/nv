@@ -22,8 +22,8 @@ var HistogramView = Backbone.View.extend({
       , w           = this.options.w
       , h           = this.options.h
       , barwidth    = this.options.barwidth
-      , labels      = this.model.get('labels')
       , title       = this.options.title
+      , that        = this
       , numBins     = data.length
       , barspace    = Math.floor( w/data.length - barwidth )
       , rect        = vis.selectAll('.bar')
@@ -32,32 +32,29 @@ var HistogramView = Backbone.View.extend({
 
     // y scale for bars
     var y = d3.scale.linear()
-              .domain([0, d3.max(data)])
+              .domain([0, d3.max(data, function(d) { return d.length; })])
               .range([5, h-40]);
 
     // enter
-    rect.data(data)
+    rect.data(data, function(d) { return d.length; })
         .enter().append('rect')
         .classed('bar', true)
         .on('click', function() { barClick(this); })
-//        .attr('data-rangeMin', function(d, i) { return labelScale(i); }) 
-//        .attr('data-rangeMax', function(d, i) { return labelScale(i+1); })
         .attr('width', barwidth)
-        .attr('height', function(d, i) { return y(d); })
+        .attr('height', function(d, i) { return y(d.length); })
         .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - 45 - y(d); });
+        .attr('y', function(d, i) { return h - 45 - y(d.length); });
 
     // update
-    // rect.transition().duration(250)
 
     //x-axis labels for bars
-    rectLabels.data(labels)
+    rectLabels.data(data, function(d) { return d.label; })
       .enter().append('text')
       .attr('class', 'histogramlabel')
       .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
       .attr('y', h - 35)
       .attr('text-anchor', 'middle')
-      .text( function(d) { return d; });
+      .text( function(d) { return d.label; });
 
     //title
     titleLabel.data(title)
@@ -69,11 +66,14 @@ var HistogramView = Backbone.View.extend({
       .text(title);
 
     // on bar click, trigger a filter
-    // var barClick = function barClick(d) {   
-    //   var rmin = d3.select(d).attr('data-rangeMin')
-    //     , rmax = d3.select(d).attr('data-rangeMax');
-
-    //   app.navigate('filter:'+attribute+','+rmin+','+rmax, true);
-    // };
+    var barClick = function barClick(d) {   
+      // TODO this should trigger an event on the router
+      if(that.model.get('filterOptions').filters){
+        console.log(that.model.get('filterOptions').filters);
+      } else {
+        console.log(that.model.get('filterOptions').attribute);
+      }
+      console.log(d3.select(d).data()[0].label);
+    };
   }
 });

@@ -35,23 +35,28 @@ var Histogram = Backbone.Model.extend({
 
       // cut off after limit
       data = _.first(data, limit);
-    }
+    } 
 
     // set labels. if bins are specified, use numbers
     //  otherwise use the category (data + attribute)
-    // TODO, can d3 histograms make better labels by telling us what the bins mean?
+    var labels;
     if( bins ) {
-      this.set('labels', data.map( function(d, i) { return i; }) );
+      labels = data.map( function(d, i) { return i; });
     } else {
-      this.set('labels', data.map( function(d) { 
+      labels = data.map( function(d) { 
         // TODO if we have a datamap, get the inverse to get the labels right
         // to do this, see if we can reverse the d3 ordinal scale
         return d[0][attribute]; 
-      }) );
+      });
     }
 
+    // TODO combine label and length in data attribute
+    this.set('data', data.map(function(d, i) { 
+      return {
+        length: d.length,
+        label: labels[i]
+      };
+    }) );  
 
-    // set data to the lengths of the data
-    this.set('data', data.map(function(d) { return d.length; }) );  
   }
 });

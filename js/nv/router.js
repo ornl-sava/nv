@@ -83,7 +83,7 @@ var NV = new (Backbone.Router.extend({
                                   app: this,
                                   model: this.topNoteHistogram,
                                   target:'#topNoteHistogram',
-                                  barwidth: 25,
+                                  barwidth: 30,
                                   w: 180,
                                   h: 165,
                                   title: ['top notes']
@@ -105,7 +105,7 @@ var NV = new (Backbone.Router.extend({
 
     this.topHoleHistogramView    =   new HistogramView({
                                      app: this,
-                                     barwidth: 25,
+                                     barwidth: 30,
                                      model: this.topHoleHistogram,
                                      target:'#topHoleHistogram',
                                      w: 180,
