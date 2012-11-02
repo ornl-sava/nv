@@ -40,6 +40,7 @@ var HistogramView = Backbone.View.extend({
         .enter().append('rect')
         .classed('bar', true)
         .on('click', function() { barClick(this); })
+        .on('mouseover', function() { barMouseOver(this); })
         .attr('width', barwidth)
         .attr('height', function(d, i) { return y(d.length); })
         .attr('x', function(d, i) { return i*(barwidth+barspace); })
@@ -57,13 +58,23 @@ var HistogramView = Backbone.View.extend({
       .text( function(d) { return d.label; });
 
     //title
-    titleLabel.data(title)
+    titleLabel.data([title])
       .enter().append('text')
       .attr('class', 'histogramtitle')
       .attr('x', w / 2 )
       .attr('y', h - 20)
       .attr('text-anchor', 'middle')
       .text(title);
+
+
+    var barMouseOver = function barMouseOver(d) {   
+      var msg = {
+        chart: title,
+        label: d3.select(d).data()[0].label
+      };
+      that.options.app.trigger('histogram mouseover', msg);
+      // TODO make info area listen for that
+    };
 
     // on bar click, trigger a filter
     var barClick = function barClick(d) {   

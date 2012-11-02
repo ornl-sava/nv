@@ -33,7 +33,7 @@ var NV = new (Backbone.Router.extend({
                                  barwidth: 15,
                                  w: 180,
                                  h: 165,
-                                 title: ['cvss']
+                                 title: 'cvss'
                               });
 
     // vulnerability type histogram
@@ -62,7 +62,7 @@ var NV = new (Backbone.Router.extend({
                                  barwidth: 15,
                                  w: 100,
                                  h: 165,
-                                 title: ['vuln type']
+                                 title: 'vuln type'
                               });
 
     // top notes histogram
@@ -86,7 +86,7 @@ var NV = new (Backbone.Router.extend({
                                   barwidth: 30,
                                   w: 180,
                                   h: 165,
-                                  title: ['top notes']
+                                  title: 'top notes'
                                });
  
     // top holes histogram
@@ -110,7 +110,7 @@ var NV = new (Backbone.Router.extend({
                                      target:'#topHoleHistogram',
                                      w: 180,
                                      h: 165,
-                                     title: ['top holes']
+                                     title: 'top holes'
                                 });
 
 

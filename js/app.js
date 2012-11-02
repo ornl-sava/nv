@@ -6,69 +6,6 @@ d3.selection.prototype.moveToFront = function() {
   }); 
 }; 
 
-var Histogram = Backbone.Model.extend({
-  initialize: function() {
-    // respond to app-level events
-    this.get('datasource').on('dataset updated', this.updateData, this);
-  },
-
-  updateData: function(){
-    var filterOptions   = this.get('filterOptions')
-      , attribute       = filterOptions.attribute
-      , bins            = this.get('bins') || ""
-      , datamap         = this.get('datamap') || "";
-
-    var rawData = this.get('datasource').getData(filterOptions);
-
-    // compute histogram based on attribute value
-    var histogram = d3.layout.histogram()
-        .value(function(d) { 
-          // if we have a datamap, use it
-          return datamap ? datamap(d[attribute]) : d[attribute]; 
-        });
-
-    // if bins specified, set them
-    if( bins )
-      histogram.bins(bins);
-
-    // compute the histogram
-    var data = histogram(rawData); 
-
-    // if a limit is specified, sort and cut the data
-    if( this.get('limit') ){
-      var limit = this.get('limit');
-
-      // sort the data by length (ascending) and reverse
-      data = _.sortBy(data, function(d){ return d.length; }).reverse();
-
-      // cut off after limit
-      data = _.first(data, limit);
-    } 
-
-    // set labels. if bins are specified, use numbers
-    //  otherwise use the category (data + attribute)
-    var labels;
-    if( bins ) {
-      labels = data.map( function(d, i) { return i; });
-    } else {
-      labels = data.map( function(d) { 
-        // TODO if we have a datamap, get the inverse to get the labels right
-        // to do this, see if we can reverse the d3 ordinal scale
-        return d[0][attribute]; 
-      });
-    }
-
-    // TODO combine label and length in data attribute
-    this.set('data', data.map(function(d, i) { 
-      return {
-        length: d.length,
-        label: labels[i]
-      };
-    }) );  
-
-  }
-});
-
 var Nessus = Backbone.Model.extend({
 
   initialize: function() {
@@ -181,17 +118,6 @@ var Nessus = Backbone.Model.extend({
 
 });
 
-var NessusInfo = Backbone.Model.extend({
-  initialize: function() {
-    this.get('app').on('nessusIDSelected', this.updateData, this);
-  },
-
-  updateData: function(d){
-    // TODO could do some cleanup here rather than in the view
-    this.set('data', d);
-  }
-});
-
 var Treemap = Backbone.Model.extend({
   initialize: function() {
     // respond to app-level events
@@ -289,131 +215,77 @@ var Treemap = Backbone.Model.extend({
   }
 });
 
-var HistogramView = Backbone.View.extend({
-
+var Histogram = Backbone.Model.extend({
   initialize: function() {
-    // listen for model changes
-    this.model.on('change:data', this.render, this);
-
-    // init a d3 histogram
-    d3.select(this.options.target)
-      .append('svg')
-      .attr('width', this.options.w)
-      .attr('height', this.options.h);
+    // respond to app-level events
+    this.get('datasource').on('dataset updated', this.updateData, this);
   },
 
-  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
-  render: function(){
-    var vis         = d3.select(this.options.target).select('svg')
-      , app         = this.model.get('app')
-      , data        = this.model.get('data')
-      , range       = this.options.range
-      , attribute   = this.model.get('attribute')
-      , view        = this
-      , w           = this.options.w
-      , h           = this.options.h
-      , barwidth    = this.options.barwidth
-      , title       = this.options.title
-      , that        = this
-      , numBins     = data.length
-      , barspace    = Math.floor( w/data.length - barwidth )
-      , rect        = vis.selectAll('.bar')
-      , rectLabels  = vis.selectAll('.histogramLabel')
-      , titleLabel  = vis.selectAll('.histogramtitle');
+  updateData: function(){
+    var filterOptions   = this.get('filterOptions')
+      , attribute       = filterOptions.attribute
+      , bins            = this.get('bins') || ""
+      , datamap         = this.get('datamap') || "";
 
-    // y scale for bars
-    var y = d3.scale.linear()
-              .domain([0, d3.max(data, function(d) { return d.length; })])
-              .range([5, h-40]);
+    var rawData = this.get('datasource').getData(filterOptions);
 
-    // enter
-    rect.data(data, function(d) { return d.length; })
-        .enter().append('rect')
-        .classed('bar', true)
-        .on('click', function() { barClick(this); })
-        .attr('width', barwidth)
-        .attr('height', function(d, i) { return y(d.length); })
-        .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - 45 - y(d.length); });
+    // compute histogram based on attribute value
+    var histogram = d3.layout.histogram()
+        .value(function(d) { 
+          // if we have a datamap, use it
+          return datamap ? datamap(d[attribute]) : d[attribute]; 
+        });
 
-    // update
+    // if bins specified, set them
+    if( bins )
+      histogram.bins(bins);
 
-    //x-axis labels for bars
-    rectLabels.data(data, function(d) { return d.label; })
-      .enter().append('text')
-      .attr('class', 'histogramlabel')
-      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
-      .attr('y', h - 35)
-      .attr('text-anchor', 'middle')
-      .text( function(d) { return d.label; });
+    // compute the histogram
+    var data = histogram(rawData); 
 
-    //title
-    titleLabel.data(title)
-      .enter().append('text')
-      .attr('class', 'histogramtitle')
-      .attr('x', w / 2 )
-      .attr('y', h - 20)
-      .attr('text-anchor', 'middle')
-      .text(title);
+    // if a limit is specified, sort and cut the data
+    if( this.get('limit') ){
+      var limit = this.get('limit');
 
-    // on bar click, trigger a filter
-    var barClick = function barClick(d) {   
-      // TODO this should trigger an event on the router
-      if(that.model.get('filterOptions').filters){
-        console.log(that.model.get('filterOptions').filters);
-      } else {
-        console.log(that.model.get('filterOptions').attribute);
-      }
-      console.log(d3.select(d).data()[0].label);
-    };
+      // sort the data by length (ascending) and reverse
+      data = _.sortBy(data, function(d){ return d.length; }).reverse();
+
+      // cut off after limit
+      data = _.first(data, limit);
+    } 
+
+    // set labels. if bins are specified, use numbers
+    //  otherwise use the category (data + attribute)
+    var labels;
+    if( bins ) {
+      labels = data.map( function(d, i) { return i; });
+    } else {
+      labels = data.map( function(d) { 
+        // TODO if we have a datamap, get the inverse to get the labels right
+        // to do this, see if we can reverse the d3 ordinal scale
+        return d[0][attribute]; 
+      });
+    }
+
+    // TODO combine label and length in data attribute
+    this.set('data', data.map(function(d, i) { 
+      return {
+        length: d.length,
+        label: labels[i]
+      };
+    }) );  
+
   }
 });
 
-var NessusInfoView = Backbone.View.extend({
-
+var NessusInfo = Backbone.Model.extend({
   initialize: function() {
-    // render on model update
-    this.model.on('change:data', this.render, this);
+    this.get('app').on('nessusIDSelected', this.updateData, this);
   },
 
-  render: function(){
-    var data = this.model.get('data');
-
-    var div = $(this.options.target)
-      , nodeInfo = data.nodeInfo
-      , idData = data.vulnInfo;
-
-    // TODO do this with d3 instead
-    div.html('<hr><p>');
-    if(nodeInfo){
-      if(nodeInfo.type == 'hole')
-        div.append("Security Hole"+ '<br><br>');
-      else
-        div.append("Security Note"+ '<br><br>');
-      div.append("Group: " + nodeInfo.group + '<br>');
-      div.append("Address: " + nodeInfo.ip + '<br>');
-      div.append("Port: " + nodeInfo.group + '<br><br>');
-      div.append("Nessus ID: " + nodeInfo.id + '<br>');
-    }
-    div.append("Title: " + idData.title + '<br>');
-    if(idData.family && idData.family !== "")
-      div.append("Family: " + idData.family + '<br>');
-    div.append('<br>');
-    if(idData.synopsis && idData.synopsis !== "")
-      div.append("Synopsis: " + idData.synopsis + '<br><br>');
-    if(idData.description && idData.description !== "")
-      div.append("Description: " + idData.description + '<br><br>');
-    if(idData.updateInfo && idData.updateInfo !== "")
-      div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
-    if(idData.solution && idData.solution !== "")
-      div.append("Solution: " + idData.solution);
-    /* //TODO deal with these later.
-    div.append("bugtraqList: "   + idData.bugtraqList);
-    div.append("cveList: "       + idData.cveList);
-    div.append("otherInfoList: " + idData.otherInfoList);
-    */
-    div.append('</p>');
-
+  updateData: function(d){
+    // TODO could do some cleanup here rather than in the view
+    this.set('data', d);
   }
 });
 
@@ -577,7 +449,6 @@ var TreemapView = Backbone.View.extend({
             transition(d);
         })
         .on('mouseover', function(d) {
-
           // TODO would be better as "if at id level"
           // TODO also this should trigger an event that the info area listens to
           if(atTheBottom(d)){
@@ -604,6 +475,8 @@ var TreemapView = Backbone.View.extend({
 
           }
             
+            // TODO Lane see if this is necessary, it may just bring text to 
+            //  front, which can be annoying
             d3.select(this).moveToFront();
   
             d3.select(this).select('.parent')
@@ -737,6 +610,145 @@ var TreemapView = Backbone.View.extend({
 
 });
 
+var HistogramView = Backbone.View.extend({
+
+  initialize: function() {
+    // listen for model changes
+    this.model.on('change:data', this.render, this);
+
+    // init a d3 histogram
+    d3.select(this.options.target)
+      .append('svg')
+      .attr('width', this.options.w)
+      .attr('height', this.options.h);
+  },
+
+  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
+  render: function(){
+    var vis         = d3.select(this.options.target).select('svg')
+      , app         = this.model.get('app')
+      , data        = this.model.get('data')
+      , range       = this.options.range
+      , attribute   = this.model.get('attribute')
+      , view        = this
+      , w           = this.options.w
+      , h           = this.options.h
+      , barwidth    = this.options.barwidth
+      , title       = this.options.title
+      , that        = this
+      , numBins     = data.length
+      , barspace    = Math.floor( w/data.length - barwidth )
+      , rect        = vis.selectAll('.bar')
+      , rectLabels  = vis.selectAll('.histogramLabel')
+      , titleLabel  = vis.selectAll('.histogramtitle');
+
+    // y scale for bars
+    var y = d3.scale.linear()
+              .domain([0, d3.max(data, function(d) { return d.length; })])
+              .range([5, h-40]);
+
+    // enter
+    rect.data(data, function(d) { return d.length; })
+        .enter().append('rect')
+        .classed('bar', true)
+        .on('click', function() { barClick(this); })
+        .on('mouseover', function() { barMouseOver(this); })
+        .attr('width', barwidth)
+        .attr('height', function(d, i) { return y(d.length); })
+        .attr('x', function(d, i) { return i*(barwidth+barspace); })
+        .attr('y', function(d, i) { return h - 45 - y(d.length); });
+
+    // update
+
+    //x-axis labels for bars
+    rectLabels.data(data, function(d) { return d.label; })
+      .enter().append('text')
+      .attr('class', 'histogramlabel')
+      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
+      .attr('y', h - 35)
+      .attr('text-anchor', 'middle')
+      .text( function(d) { return d.label; });
+
+    //title
+    titleLabel.data([title])
+      .enter().append('text')
+      .attr('class', 'histogramtitle')
+      .attr('x', w / 2 )
+      .attr('y', h - 20)
+      .attr('text-anchor', 'middle')
+      .text(title);
+
+
+    var barMouseOver = function barMouseOver(d) {   
+      var msg = {
+        chart: title,
+        label: d3.select(d).data()[0].label
+      };
+      that.options.app.trigger('bar mouseover', msg);
+      console.log(msg);
+    };
+
+    // on bar click, trigger a filter
+    var barClick = function barClick(d) {   
+      // TODO this should trigger an event on the router
+      if(that.model.get('filterOptions').filters){
+        console.log(that.model.get('filterOptions').filters);
+      } else {
+        console.log(that.model.get('filterOptions').attribute);
+      }
+      console.log(d3.select(d).data()[0].label);
+    };
+  }
+});
+
+var NessusInfoView = Backbone.View.extend({
+
+  initialize: function() {
+    // render on model update
+    this.model.on('change:data', this.render, this);
+  },
+
+  render: function(){
+    var data = this.model.get('data');
+
+    var div = $(this.options.target)
+      , nodeInfo = data.nodeInfo
+      , idData = data.vulnInfo;
+
+    // TODO do this with d3 instead
+    div.html('<hr><p>');
+    if(nodeInfo){
+      if(nodeInfo.type == 'hole')
+        div.append("Security Hole"+ '<br><br>');
+      else
+        div.append("Security Note"+ '<br><br>');
+      div.append("Group: " + nodeInfo.group + '<br>');
+      div.append("Address: " + nodeInfo.ip + '<br>');
+      div.append("Port: " + nodeInfo.group + '<br><br>');
+      div.append("Nessus ID: " + nodeInfo.id + '<br>');
+    }
+    div.append("Title: " + idData.title + '<br>');
+    if(idData.family && idData.family !== "")
+      div.append("Family: " + idData.family + '<br>');
+    div.append('<br>');
+    if(idData.synopsis && idData.synopsis !== "")
+      div.append("Synopsis: " + idData.synopsis + '<br><br>');
+    if(idData.description && idData.description !== "")
+      div.append("Description: " + idData.description + '<br><br>');
+    if(idData.updateInfo && idData.updateInfo !== "")
+      div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
+    if(idData.solution && idData.solution !== "")
+      div.append("Solution: " + idData.solution);
+    /* //TODO deal with these later.
+    div.append("bugtraqList: "   + idData.bugtraqList);
+    div.append("cveList: "       + idData.cveList);
+    div.append("otherInfoList: " + idData.otherInfoList);
+    */
+    div.append('</p>');
+
+  }
+});
+
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
   routes: {
@@ -772,7 +784,7 @@ var NV = new (Backbone.Router.extend({
                                  barwidth: 15,
                                  w: 180,
                                  h: 165,
-                                 title: ['cvss']
+                                 title: 'cvss'
                               });
 
     // vulnerability type histogram
@@ -801,7 +813,7 @@ var NV = new (Backbone.Router.extend({
                                  barwidth: 15,
                                  w: 100,
                                  h: 165,
-                                 title: ['vuln type']
+                                 title: 'vuln type'
                               });
 
     // top notes histogram
@@ -825,7 +837,7 @@ var NV = new (Backbone.Router.extend({
                                   barwidth: 30,
                                   w: 180,
                                   h: 165,
-                                  title: ['top notes']
+                                  title: 'top notes'
                                });
  
     // top holes histogram
@@ -849,7 +861,7 @@ var NV = new (Backbone.Router.extend({
                                      target:'#topHoleHistogram',
                                      w: 180,
                                      h: 165,
-                                     title: ['top holes']
+                                     title: 'top holes'
                                 });
 
 
