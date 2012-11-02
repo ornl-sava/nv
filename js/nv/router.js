@@ -110,7 +110,7 @@ var NV = new (Backbone.Router.extend({
                                      target:'#topHoleHistogram',
                                      w: 180,
                                      h: 165,
-                                     title: ['top notes']
+                                     title: ['top holes']
                                 });
 
 
