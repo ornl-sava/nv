@@ -358,8 +358,9 @@ var HistogramView = Backbone.View.extend({
 
     // on bar click, trigger a filter
     var barClick = function barClick(d) {   
+      // TODO this should trigger an event on the router
       if(that.model.get('filterOptions').filters){
-        console.log(JSON.stringify(that.model.get('filterOptions').filters));
+        console.log(that.model.get('filterOptions').filters);
       } else {
         console.log(that.model.get('filterOptions').attribute);
       }
@@ -572,6 +573,13 @@ var TreemapView = Backbone.View.extend({
         .classed('children', true)
         .attr('id', function(d) { return 'IP' + (d.key).replace(/\./g, ''); })
         .on('click', function(d) {
+          if(!atTheBottom(d))
+            transition(d);
+        })
+        .on('mouseover', function(d) {
+
+          // TODO would be better as "if at id level"
+          // TODO also this should trigger an event that the info area listens to
           if(atTheBottom(d)){
 
             // TODO the NessusInfo model should handle this
@@ -594,11 +602,7 @@ var TreemapView = Backbone.View.extend({
             d3.select(this).select('text')
             .style('font-weight', 'bold'); 
 
-          } else {
-            transition(d);
           }
-        })
-        .on('mouseover', function(d) {
             
             d3.select(this).moveToFront();
   
@@ -845,7 +849,7 @@ var NV = new (Backbone.Router.extend({
                                      target:'#topHoleHistogram',
                                      w: 180,
                                      h: 165,
-                                     title: ['top notes']
+                                     title: ['top holes']
                                 });
 
 

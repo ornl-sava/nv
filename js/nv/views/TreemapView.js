@@ -154,6 +154,12 @@ var TreemapView = Backbone.View.extend({
         .classed('children', true)
         .attr('id', function(d) { return 'IP' + (d.key).replace(/\./g, ''); })
         .on('click', function(d) {
+          if(!atTheBottom(d))
+            transition(d);
+        })
+        .on('mouseover', function(d) {
+          // TODO would be better as "if at id level"
+          // TODO also this should trigger an event that the info area listens to
           if(atTheBottom(d)){
 
             // TODO the NessusInfo model should handle this
@@ -176,12 +182,10 @@ var TreemapView = Backbone.View.extend({
             d3.select(this).select('text')
             .style('font-weight', 'bold'); 
 
-          } else {
-            transition(d);
           }
-        })
-        .on('mouseover', function(d) {
             
+            // TODO Lane see if this is necessary, it may just bring text to 
+            //  front, which can be annoying
             d3.select(this).moveToFront();
   
             d3.select(this).select('.parent')
