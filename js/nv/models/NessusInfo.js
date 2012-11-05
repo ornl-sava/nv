@@ -1,10 +1,34 @@
 var NessusInfo = Backbone.Model.extend({
   initialize: function() {
-    this.get('app').on('nessusIDSelected', this.updateData, this);
+    this.get('app').on('nessusIDSelected', function(msg){
+      this.updateData(msg);
+    }, this);
+
+    // respond to a mouseover on histogram
+    this.get('app').on('bar mouseover', function(msg){
+
+      // if note, say so, same for hole; ignore otherwise
+      if( msg.chart.indexOf('note') != -1){
+        this.updateData({vulntype: 'note', vulnid: msg.label});
+      } else if( msg.chart.indexOf('hole') != -1){
+        this.updateData({vulntype: 'hole', vulnid: msg.label});
+      }
+
+    }, this);
+
   },
 
-  updateData: function(d){
-    // TODO could do some cleanup here rather than in the view
-    this.set('data', d);
+  updateData: function(info){
+    var nodeInfo = {
+      id:     info.vulnid, 
+      type:   info.vulntype, 
+      port:   info.port, 
+      ip:     info.ip, 
+      group:  info.group
+    };
+
+    var vulnInfo = vulnIdInfo[info.vulnid];
+
+    this.set('data', {nodeInfo: nodeInfo, vulnInfo: vulnInfo});
   }
 });

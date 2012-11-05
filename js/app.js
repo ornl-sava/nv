@@ -280,12 +280,39 @@ var Histogram = Backbone.Model.extend({
 
 var NessusInfo = Backbone.Model.extend({
   initialize: function() {
-    this.get('app').on('nessusIDSelected', this.updateData, this);
+    this.get('app').on('nessusIDSelected', function(msg){
+      this.updateData(msg);
+    }, this);
+
+    // respond to a mouseover on histogram
+    this.get('app').on('bar mouseover', function(msg){
+      var chart = msg.chart;
+      if( chart.indexOf('note') != -1){
+        this.updateData({vulntype: 'note', vulnid: msg.label});
+      } else if( chart.indexOf('hole') != -1){
+        this.updateData({vulntype: 'hole', vulnid: msg.label});
+      }
+    }, this);
+
   },
 
-  updateData: function(d){
-    // TODO could do some cleanup here rather than in the view
-    this.set('data', d);
+  updateData: function(info){
+
+    console.log(info);
+
+    // info is currently vulnid -- wtf
+
+    var nodeInfo = {
+      id:     info.vulnid, 
+      type:   info.vulntype, 
+      port:   info.port, 
+      ip:     info.ip, 
+      group:  info.group
+    };
+
+    var vulnInfo = vulnIdInfo[info.vulnid];
+
+    this.set('data', {nodeInfo: nodeInfo, vulnInfo: vulnInfo});
   }
 });
 
@@ -450,38 +477,26 @@ var TreemapView = Backbone.View.extend({
         })
         .on('mouseover', function(d) {
           // TODO would be better as "if at id level"
-          // TODO also this should trigger an event that the info area listens to
+          // note: d is the treemap node, d.values contains the actual events
           if(atTheBottom(d)){
-
-            // TODO the NessusInfo model should handle this
-            var nodeInfo = {
-              id: d.values[0].vulnid, 
-              type: d.values[0].vulntype, 
-              port: d.values[0].port, 
-              ip:   d.values[0].ip, 
-              group: d.values[0].group
-            };
+            var info = d.values[0];
 
             // trigger app event
             // TODO app.options.app is messy; consider changing app
-            app.options.app.trigger('nessusIDSelected', {
-              vulnInfo: vulnIdInfo[d.values[0].vulnid],
-              nodeInfo: nodeInfo
-            });
+            app.options.app.trigger('nessusIDSelected', info);
 
             // make text bold to indicate selection
             d3.select(this).select('text')
             .style('font-weight', 'bold'); 
-
           }
             
-            // TODO Lane see if this is necessary, it may just bring text to 
-            //  front, which can be annoying
-            d3.select(this).moveToFront();
+          // TODO Lane see if this is necessary, it may just bring text to 
+          //  front, which can be annoying
+          d3.select(this).moveToFront();
   
-            d3.select(this).select('.parent')
-              .style('stroke', 'black')
-              .style('stroke-width', '2px');
+          d3.select(this).select('.parent')
+            .style('stroke', 'black')
+            .style('stroke-width', '2px');
   
         })
         .on('mouseout', function(d) {
@@ -684,8 +699,8 @@ var HistogramView = Backbone.View.extend({
         chart: title,
         label: d3.select(d).data()[0].label
       };
-      that.options.app.trigger('bar mouseover', msg);
-      console.log(msg);
+      that.options.app.trigger('histogram mouseover', msg);
+      // todo make info area listen for that
     };
 
     // on bar click, trigger a filter

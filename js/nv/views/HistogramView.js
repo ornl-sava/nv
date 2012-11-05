@@ -73,7 +73,7 @@ var HistogramView = Backbone.View.extend({
         label: d3.select(d).data()[0].label
       };
       that.options.app.trigger('histogram mouseover', msg);
-      // TODO make info area listen for that
+      // todo make info area listen for that
     };
 
     // on bar click, trigger a filter
