@@ -67,7 +67,6 @@ var Nessus = Backbone.Model.extend({
 
 // data modification functions
 
-  // TODO Mike's functions should call this
   setData: function(dataset){
     this.logs.add(dataset);
     this.trigger('dataset updated');
@@ -126,6 +125,15 @@ var Treemap = Backbone.Model.extend({
     this.set('sizeOption', 'cvss');
 
     this.on('change:sizeOption', this.updateData, this);
+
+    // TODO change in filterOptions should update data
+    this.on('change:filterOptions', this.updateData, this);
+
+    // respond to app filter change
+    this.get('app').on('histogramClick', function(msg){
+      console.log('hi from treemap land');
+      console.log(msg);
+    });
   },
 
   updateData: function(){
@@ -167,6 +175,7 @@ var Treemap = Backbone.Model.extend({
 
   // Aggregate the values for internal nodes. This is normally done by the
   // treemap layout, but not here because of our custom implementation.
+  // 
   // TODO: can we generalize the accumulate functions for multiple attributes?
   accumulate: function(d) {
     var app = this;
@@ -285,23 +294,20 @@ var NessusInfo = Backbone.Model.extend({
     }, this);
 
     // respond to a mouseover on histogram
-    this.get('app').on('bar mouseover', function(msg){
-      var chart = msg.chart;
-      if( chart.indexOf('note') != -1){
+    this.get('app').on('histogramMouseover', function(msg){
+
+      // if note, say so, same for hole; ignore otherwise
+      if( msg.chart.indexOf('note') != -1){
         this.updateData({vulntype: 'note', vulnid: msg.label});
-      } else if( chart.indexOf('hole') != -1){
+      } else if( msg.chart.indexOf('hole') != -1){
         this.updateData({vulntype: 'hole', vulnid: msg.label});
       }
+
     }, this);
 
   },
 
   updateData: function(info){
-
-    console.log(info);
-
-    // info is currently vulnid -- wtf
-
     var nodeInfo = {
       id:     info.vulnid, 
       type:   info.vulntype, 
@@ -699,19 +705,30 @@ var HistogramView = Backbone.View.extend({
         chart: title,
         label: d3.select(d).data()[0].label
       };
-      that.options.app.trigger('histogram mouseover', msg);
+      that.options.app.trigger('histogramMouseover', msg);
       // todo make info area listen for that
     };
 
     // on bar click, trigger a filter
     var barClick = function barClick(d) {   
+
+      var data = d3.select(d).data()[0];
+
+      var msg = {
+        label: data.label,
+        length: data.length,
+        chart: that.options.title
+      };
+
+      that.options.app.trigger('histogramClick', msg);
+
       // TODO this should trigger an event on the router
-      if(that.model.get('filterOptions').filters){
-        console.log(that.model.get('filterOptions').filters);
-      } else {
-        console.log(that.model.get('filterOptions').attribute);
-      }
-      console.log(d3.select(d).data()[0].label);
+//      if(that.model.get('filterOptions').filters){
+//        console.log(that.model.get('filterOptions').filters);
+//      } else {
+//        console.log(that.model.get('filterOptions').attribute);
+//      }
+//      console.log(d3.select(d).data()[0].label);
     };
   }
 });

@@ -59,7 +59,6 @@ var Nessus = Backbone.Model.extend({
 
 // data modification functions
 
-  // TODO Mike's functions should call this
   setData: function(dataset){
     this.logs.add(dataset);
     this.trigger('dataset updated');

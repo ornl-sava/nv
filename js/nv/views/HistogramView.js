@@ -72,19 +72,30 @@ var HistogramView = Backbone.View.extend({
         chart: title,
         label: d3.select(d).data()[0].label
       };
-      that.options.app.trigger('histogram mouseover', msg);
+      that.options.app.trigger('histogramMouseover', msg);
       // todo make info area listen for that
     };
 
     // on bar click, trigger a filter
     var barClick = function barClick(d) {   
+
+      var data = d3.select(d).data()[0];
+
+      var msg = {
+        label: data.label,
+        length: data.length,
+        chart: that.options.title
+      };
+
+      that.options.app.trigger('histogramClick', msg);
+
       // TODO this should trigger an event on the router
-      if(that.model.get('filterOptions').filters){
-        console.log(that.model.get('filterOptions').filters);
-      } else {
-        console.log(that.model.get('filterOptions').attribute);
-      }
-      console.log(d3.select(d).data()[0].label);
+//      if(that.model.get('filterOptions').filters){
+//        console.log(that.model.get('filterOptions').filters);
+//      } else {
+//        console.log(that.model.get('filterOptions').attribute);
+//      }
+//      console.log(d3.select(d).data()[0].label);
     };
   }
 });

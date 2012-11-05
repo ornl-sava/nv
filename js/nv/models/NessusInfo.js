@@ -5,7 +5,7 @@ var NessusInfo = Backbone.Model.extend({
     }, this);
 
     // respond to a mouseover on histogram
-    this.get('app').on('bar mouseover', function(msg){
+    this.get('app').on('histogramMouseover', function(msg){
 
       // if note, say so, same for hole; ignore otherwise
       if( msg.chart.indexOf('note') != -1){

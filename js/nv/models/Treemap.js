@@ -6,6 +6,17 @@ var Treemap = Backbone.Model.extend({
     this.set('sizeOption', 'cvss');
 
     this.on('change:sizeOption', this.updateData, this);
+
+    // TODO change in filterOptions should update data
+    this.on('change:filterOptions', this.updateData, this);
+
+    // respond to app filter change
+    this.get('app').on('histogramClick', function(msg){
+      console.log('hi from treemap land');
+      console.log(msg);
+
+      // TODO use this info to construct a filter
+    });
   },
 
   updateData: function(){
@@ -47,6 +58,7 @@ var Treemap = Backbone.Model.extend({
 
   // Aggregate the values for internal nodes. This is normally done by the
   // treemap layout, but not here because of our custom implementation.
+  // 
   // TODO: can we generalize the accumulate functions for multiple attributes?
   accumulate: function(d) {
     var app = this;
