@@ -308,13 +308,18 @@ var Histogram = Backbone.Model.extend({
     //  otherwise use the category (data + attribute)
     var labels;
     if( bins ) {
-      labels = data.map( function(d, i) { return i; });
+
+      labels = data.map( function(d, i) { 
+        // if we have a datamap, access the domain to get the labels correct
+        return datamap ? datamap.domain()[i] : i; 
+      });
+
     } else {
+
       labels = data.map( function(d) { 
-        // TODO if we have a datamap, get the inverse to get the labels right
-        // to do this, see if we can reverse the d3 ordinal scale
         return d[0][attribute]; 
       });
+
     }
 
     // TODO combine label and length in data attribute
@@ -887,7 +892,7 @@ var NV = new (Backbone.Router.extend({
                                  app: this,
                                  model: this.vulnTypeHistogram,
                                  target:'#vulnTypeHistogram',
-                                 barwidth: 15,
+                                 barwidth: 20,
                                  w: 100,
                                  h: 165,
                                  title: 'vuln type'

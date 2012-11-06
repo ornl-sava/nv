@@ -59,7 +59,7 @@ var NV = new (Backbone.Router.extend({
                                  app: this,
                                  model: this.vulnTypeHistogram,
                                  target:'#vulnTypeHistogram',
-                                 barwidth: 15,
+                                 barwidth: 20,
                                  w: 100,
                                  h: 165,
                                  title: 'vuln type'
