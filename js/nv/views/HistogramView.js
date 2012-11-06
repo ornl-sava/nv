@@ -67,35 +67,39 @@ var HistogramView = Backbone.View.extend({
       .text(title);
 
 
+    // on bar mouseover, emit the chart title and label of the selected
     var barMouseOver = function barMouseOver(d) {   
       var msg = {
         chart: title,
         label: d3.select(d).data()[0].label
       };
       that.options.app.trigger('histogramMouseover', msg);
-      // todo make info area listen for that
     };
 
-    // on bar click, trigger a filter
+    // on bar click, emit the chart title, label, and bar size of the selected
     var barClick = function barClick(d) {   
 
+      // get the data for the clicked element
       var data = d3.select(d).data()[0];
 
+      // prepare the message to send to the app
       var msg = {
         label: data.label,
         length: data.length,
         chart: that.options.title
       };
 
+      // trigger an event and attach the message
       that.options.app.trigger('histogramClick', msg);
 
-      // TODO this should trigger an event on the router
-//      if(that.model.get('filterOptions').filters){
-//        console.log(that.model.get('filterOptions').filters);
-//      } else {
-//        console.log(that.model.get('filterOptions').attribute);
-//      }
-//      console.log(d3.select(d).data()[0].label);
+      // style all bars to remove any previous clicks
+      d3.selectAll('.bar').style('fill', 'steelblue');
+
+      // style the clicked bar to be brighter
+      d3.select(d).style('fill', function() {
+        return d3.hsl( d3.select(this).style('fill') ).brighter().toString();
+      });
+
     };
   }
 });

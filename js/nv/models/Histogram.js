@@ -26,6 +26,10 @@ var Histogram = Backbone.Model.extend({
     // compute the histogram
     var data = histogram(rawData); 
 
+    if(filterOptions.attribute === 'cvss'){
+      console.log(data);
+    }
+
     // if a limit is specified, sort and cut the data
     if( this.get('limit') ){
       var limit = this.get('limit');

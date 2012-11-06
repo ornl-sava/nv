@@ -131,9 +131,41 @@ var Treemap = Backbone.Model.extend({
 
     // respond to app filter change
     this.get('app').on('histogramClick', function(msg){
-      console.log('hi from treemap land');
-      console.log(msg);
+
+      // TODO use this info to construct a filter
+      if(msg.chart === "cvss"){
+        console.log('adding cvss filter');
+        updateFilter('cvss', msg.label+0.01, msg.label+1.01);
+      } else if(msg.chart === "vuln type"){
+        console.log('adding vuln type filter');
+        updateFilter('vulntype', msg.label);
+      } else if(msg.chart === "top holes"){
+        console.log('adding top holes filter');
+        updateFilter('vulnid', msg.label);
+      } else if(msg.chart === "top notes"){
+        console.log('adding top notes filter');
+        updateFilter('vulnid', msg.label);
+      }
+
     });
+
+    var that = this;
+    var updateFilter = function updateFilter(attr, value, valueEnd){
+      var filterOptions   = that.get('filterOptions');
+
+      if(valueEnd){
+        filterOptions.filters = [
+          { attribute:attr, rangeMin:value, rangeMax: valueEnd }
+        ];
+      } else {
+        filterOptions.filters = [
+          { attribute:attr, exact:value }
+        ];
+      }
+
+      that.set('filterOptions', filterOptions);
+      that.updateData();
+    };
   },
 
   updateData: function(){
@@ -141,6 +173,11 @@ var Treemap = Backbone.Model.extend({
       , attribute       = filterOptions.attribute;
 
     var rawData = this.get('datasource').getData(filterOptions);
+
+    if(rawData.length < 1){
+      console.log('current filter yields no data, try another');
+      return;
+    }
 
     var root;
     if(isChangeVis){
@@ -251,6 +288,10 @@ var Histogram = Backbone.Model.extend({
 
     // compute the histogram
     var data = histogram(rawData); 
+
+    if(filterOptions.attribute === 'cvss'){
+      console.log(data);
+    }
 
     // if a limit is specified, sort and cut the data
     if( this.get('limit') ){
@@ -700,35 +741,39 @@ var HistogramView = Backbone.View.extend({
       .text(title);
 
 
+    // on bar mouseover, emit the chart title and label of the selected
     var barMouseOver = function barMouseOver(d) {   
       var msg = {
         chart: title,
         label: d3.select(d).data()[0].label
       };
       that.options.app.trigger('histogramMouseover', msg);
-      // todo make info area listen for that
     };
 
-    // on bar click, trigger a filter
+    // on bar click, emit the chart title, label, and bar size of the selected
     var barClick = function barClick(d) {   
 
+      // get the data for the clicked element
       var data = d3.select(d).data()[0];
 
+      // prepare the message to send to the app
       var msg = {
         label: data.label,
         length: data.length,
         chart: that.options.title
       };
 
+      // trigger an event and attach the message
       that.options.app.trigger('histogramClick', msg);
 
-      // TODO this should trigger an event on the router
-//      if(that.model.get('filterOptions').filters){
-//        console.log(that.model.get('filterOptions').filters);
-//      } else {
-//        console.log(that.model.get('filterOptions').attribute);
-//      }
-//      console.log(d3.select(d).data()[0].label);
+      // style all bars to remove any previous clicks
+      d3.selectAll('.bar').style('fill', 'steelblue');
+
+      // style the clicked bar to be brighter
+      d3.select(d).style('fill', function() {
+        return d3.hsl( d3.select(this).style('fill') ).brighter().toString();
+      });
+
     };
   }
 });

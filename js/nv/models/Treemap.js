@@ -12,11 +12,41 @@ var Treemap = Backbone.Model.extend({
 
     // respond to app filter change
     this.get('app').on('histogramClick', function(msg){
-      console.log('hi from treemap land');
-      console.log(msg);
 
       // TODO use this info to construct a filter
+      if(msg.chart === "cvss"){
+        console.log('adding cvss filter');
+        updateFilter('cvss', msg.label+0.01, msg.label+1.01);
+      } else if(msg.chart === "vuln type"){
+        console.log('adding vuln type filter');
+        updateFilter('vulntype', msg.label);
+      } else if(msg.chart === "top holes"){
+        console.log('adding top holes filter');
+        updateFilter('vulnid', msg.label);
+      } else if(msg.chart === "top notes"){
+        console.log('adding top notes filter');
+        updateFilter('vulnid', msg.label);
+      }
+
     });
+
+    var that = this;
+    var updateFilter = function updateFilter(attr, value, valueEnd){
+      var filterOptions   = that.get('filterOptions');
+
+      if(valueEnd){
+        filterOptions.filters = [
+          { attribute:attr, rangeMin:value, rangeMax: valueEnd }
+        ];
+      } else {
+        filterOptions.filters = [
+          { attribute:attr, exact:value }
+        ];
+      }
+
+      that.set('filterOptions', filterOptions);
+      that.updateData();
+    };
   },
 
   updateData: function(){
@@ -24,6 +54,11 @@ var Treemap = Backbone.Model.extend({
       , attribute       = filterOptions.attribute;
 
     var rawData = this.get('datasource').getData(filterOptions);
+
+    if(rawData.length < 1){
+      console.log('current filter yields no data, try another');
+      return;
+    }
 
     var root;
     if(isChangeVis){
