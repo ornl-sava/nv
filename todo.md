@@ -1,6 +1,17 @@
 NV Issues
 ==============
 
+- Hide text in Treemap nodes when they are too small for the full IP
+- Put the dynamic info area in a scroll box
+- Clicking an active filter removes it (set no filter)
+- On mouseover, use fill instead of stroke 
+- Add a color legend that changes based on if we're looking single or comparing nbe files
+- If a user switches from the group go vis view multiple times, the histograms can end up overlapping. 
+- If the user does not define groups, do not add groups to the hierarchy 
+- Create breadcrumbs view for the hierarchy-levels in the treemap
+- Allow users to drag and drop the hierarchy
+- Create a github page for nv 
+
 - if you're low in the hierarchy (e.g. IP level) and you click the treemap resize, artifacts (looks like an extra div?) appear to the right of the histogram. 
 
 1. Sometimes the label for the largest square will not render.
