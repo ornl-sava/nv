@@ -87,6 +87,10 @@ var Nessus = Backbone.Model.extend({
 // data modification functions
 
   setData: function(dataset){
+    // empty dataset if needed
+    if(this.logs.size() > 1)
+      this.logs = crossfilter();
+
     this.logs.add(dataset);
     this.trigger('dataset updated');
   },

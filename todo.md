@@ -1,7 +1,6 @@
 NV Issues
 ==============
 
-- On mouseover, use fill instead of stroke 
 - Add a color legend that changes based on if we're looking single or comparing nbe files
 - If a user switches from the group go vis view multiple times, the histograms can end up overlapping. 
 - If the user does not define groups, do not add groups to the hierarchy 
@@ -42,3 +41,4 @@ To support this further, we could have a simple drag and drop hierarchy arrangem
 - checking that groups don't overlap, how to handle if they do
 - set weight to 0/'ignore' to remove machines from results?
 - some way to hide the second data tab, and go back to only one nbe file
+- On mouseover, use fill instead of stroke 
