@@ -1,9 +1,6 @@
 NV Issues
 ==============
 
-- Hide text in Treemap nodes when they are too small for the full IP
-- Put the dynamic info area in a scroll box
-- Clicking an active filter removes it (set no filter)
 - On mouseover, use fill instead of stroke 
 - Add a color legend that changes based on if we're looking single or comparing nbe files
 - If a user switches from the group go vis view multiple times, the histograms can end up overlapping. 
