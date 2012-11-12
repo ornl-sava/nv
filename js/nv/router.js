@@ -23,6 +23,7 @@ var NV = new (Backbone.Router.extend({
                                   app: this,
                                   datasource: this.nessus, 
                                   bins: 10, 
+                                  range: [0, 10], 
                                   filterOptions: { attribute:'cvss' }
                                });
 

@@ -16,7 +16,7 @@ var Treemap = Backbone.Model.extend({
       // TODO use this info to construct a filter
       if(msg.chart === "cvss"){
         console.log('adding cvss filter');
-        updateFilter('cvss', msg.label+0.01, msg.label+1.01);
+        updateFilter('cvss', msg.label+0.0, msg.label+1.01);
       } else if(msg.chart === "vuln type"){
         console.log('adding vuln type filter');
         updateFilter('vulntype', msg.label);

@@ -8,6 +8,7 @@ var Histogram = Backbone.Model.extend({
     var filterOptions   = this.get('filterOptions')
       , attribute       = filterOptions.attribute
       , bins            = this.get('bins') || ""
+      , range            = this.get('range') || ""
       , datamap         = this.get('datamap') || "";
 
     var rawData = this.get('datasource').getData(filterOptions);
@@ -22,6 +23,10 @@ var Histogram = Backbone.Model.extend({
     // if bins specified, set them
     if( bins )
       histogram.bins(bins);
+  
+    // if bins specified, set them
+    if( range )
+      histogram.range(range);
 
     // compute the histogram
     var data = histogram(rawData); 

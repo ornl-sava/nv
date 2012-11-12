@@ -135,7 +135,7 @@ var Treemap = Backbone.Model.extend({
       // TODO use this info to construct a filter
       if(msg.chart === "cvss"){
         console.log('adding cvss filter');
-        updateFilter('cvss', msg.label+0.01, msg.label+1.01);
+        updateFilter('cvss', msg.label+0.0, msg.label+1.01);
       } else if(msg.chart === "vuln type"){
         console.log('adding vuln type filter');
         updateFilter('vulntype', msg.label);
@@ -271,6 +271,7 @@ var Histogram = Backbone.Model.extend({
     var filterOptions   = this.get('filterOptions')
       , attribute       = filterOptions.attribute
       , bins            = this.get('bins') || ""
+      , range            = this.get('range') || ""
       , datamap         = this.get('datamap') || "";
 
     var rawData = this.get('datasource').getData(filterOptions);
@@ -285,6 +286,10 @@ var Histogram = Backbone.Model.extend({
     // if bins specified, set them
     if( bins )
       histogram.bins(bins);
+  
+    // if bins specified, set them
+    if( range )
+      histogram.range(range);
 
     // compute the histogram
     var data = histogram(rawData); 
@@ -401,7 +406,7 @@ var TreemapView = Backbone.View.extend({
         .attr('width', this.width + this.margin.left + this.margin.right)
         .attr('height', this.height + this.margin.bottom + this.margin.top)
         .style('margin-left', -this.margin.left + 'px')
-        .style('margin.right', -this.margin.right + 'px')
+        .style('margin-right', -this.margin.right + 'px')
       .append('g')
         .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
         .style('shape-rendering', 'crispEdges');
@@ -712,7 +717,7 @@ var HistogramView = Backbone.View.extend({
     // y scale for bars
     var y = d3.scale.linear()
               .domain([0, d3.max(data, function(d) { return d.length; })])
-              .range([5, h-40]);
+              .range([1, h-40]);
 
     // enter
     rect.data(data, function(d) { return d.length; })
@@ -856,6 +861,7 @@ var NV = new (Backbone.Router.extend({
                                   app: this,
                                   datasource: this.nessus, 
                                   bins: 10, 
+                                  range: [0, 10], 
                                   filterOptions: { attribute:'cvss' }
                                });
 

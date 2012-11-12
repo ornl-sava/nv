@@ -33,7 +33,7 @@ var HistogramView = Backbone.View.extend({
     // y scale for bars
     var y = d3.scale.linear()
               .domain([0, d3.max(data, function(d) { return d.length; })])
-              .range([5, h-40]);
+              .range([1, h-40]);
 
     // enter
     rect.data(data, function(d) { return d.length; })
