@@ -31,7 +31,7 @@ var TreemapView = Backbone.View.extend({
         .attr('width', this.width + this.margin.left + this.margin.right)
         .attr('height', this.height + this.margin.bottom + this.margin.top)
         .style('margin-left', -this.margin.left + 'px')
-        .style('margin.right', -this.margin.right + 'px')
+        .style('margin-right', -this.margin.right + 'px')
       .append('g')
         .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
         .style('shape-rendering', 'crispEdges');
