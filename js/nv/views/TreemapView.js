@@ -139,7 +139,7 @@ var TreemapView = Backbone.View.extend({
         .datum(d.parent)
         .on('click', transition)
         .select('text')
-        .text(name(d));
+        .text( name(d));
   
       // TODO our resize woes come from here
       var g1 = app.svg.insert('g', '.grandparent')
@@ -225,11 +225,16 @@ var TreemapView = Backbone.View.extend({
       g.append('rect')
         .attr('class', 'parent')
         .call(rect)
-        .text(function(d) { return app.formatNumber(d.value); });
+        .text(function(d) { return app.formatNumber(d.value); })
+        .append('title').text(function(d) { return d.key; });
   
+      // append label for this node, if it's too small, don't show it
       g.append('text')
         .attr('dy', '.75em')
-        .text(function(d) { return d.key; })
+        .attr('text-anchor', 'left')
+        .text(function(d) { 
+          return d.key;
+        })
         .classed('rectlabel', true)
         .call(text);
   
@@ -267,6 +272,19 @@ var TreemapView = Backbone.View.extend({
         t1.remove().each('end', function() {
           app.svg.style('shape-rendering', 'crispEdges');
           app.transitioning = false;
+
+          // select all labels in the treemap and make sure they fit
+          // TODO better transition sequence here using fill-opacity
+          d3.selectAll('.rectlabel')
+            .transition()
+            .text(function(d) { 
+              // note: stringWidth is a custom d3 function defined in util.js
+              var nodeWidth   = d3.stringWidth(d3.select(this.parentNode), d.key, null, 'rectlabel')
+                , parentWidth = d3.select(this.parentNode).select('.parent').attr('width');
+
+              return nodeWidth < parentWidth ? d.key : "..."; 
+            });
+
         });
       }
   
