@@ -152,7 +152,10 @@ var Treemap = Backbone.Model.extend({
     this.get('app').on('histogramClick', function(msg){
 
       // TODO use this info to construct a filter
-      if(msg.chart === "cvss"){
+      if(msg.state === "off"){
+        console.log('removing filters');
+        updateFilter('remove');
+      } else if(msg.chart === "cvss"){
         console.log('adding cvss filter');
         updateFilter('cvss', msg.label+0.0, msg.label+1.01);
       } else if(msg.chart === "vuln type"){
@@ -172,7 +175,9 @@ var Treemap = Backbone.Model.extend({
     var updateFilter = function updateFilter(attr, value, valueEnd){
       var filterOptions   = that.get('filterOptions');
 
-      if(valueEnd){
+      if(attr === 'remove'){
+        filterOptions.filters = null;
+      } else if(valueEnd){
         filterOptions.filters = [
           { attribute:attr, rangeMin:value, rangeMax: valueEnd }
         ];
@@ -759,7 +764,7 @@ var HistogramView = Backbone.View.extend({
     // enter
     rect.data(data, function(d) { return d.length; })
         .enter().append('rect')
-        .classed('bar', true)
+        .classed('bar inactive', true)
         .on('click', function() { barClick(this); })
         .on('mouseover', function() { barMouseOver(this); })
         .attr('width', barwidth)
@@ -797,8 +802,11 @@ var HistogramView = Backbone.View.extend({
       that.options.app.trigger('histogramMouseover', msg);
     };
 
-    // on bar click, emit the chart title, label, and bar size of the selected
-    var barClick = function barClick(d) {   
+    // On bar click, emit the chart title, label, and bar size of the selected.
+    //   If the bar is already selected, remove all filters
+    var barClick = function barClick(d) {
+      var sel = d3.select(d)
+        , active = sel.classed('active');
 
       // get the data for the clicked element
       var data = d3.select(d).data()[0];
@@ -810,17 +818,21 @@ var HistogramView = Backbone.View.extend({
         chart: that.options.title
       };
 
+      // make all bars inactive
+      d3.selectAll('.bar').classed('active', false);
+      d3.selectAll('.bar').classed('inactive', true);
+
+      // activate this one if it's not active, else just send off message
+      if( !active ){
+        sel.classed('active', true);
+        sel.classed('inactive', false);
+        msg.state = 'on';
+      } else {
+        msg.state = 'off';
+      }
+
       // trigger an event and attach the message
       that.options.app.trigger('histogramClick', msg);
-
-      // style all bars to remove any previous clicks
-      d3.selectAll('.bar').style('fill', 'steelblue');
-
-      // style the clicked bar to be brighter
-      d3.select(d).style('fill', function() {
-        return d3.hsl( d3.select(this).style('fill') ).brighter().toString();
-      });
-
     };
   }
 });

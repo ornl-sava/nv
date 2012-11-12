@@ -14,7 +14,10 @@ var Treemap = Backbone.Model.extend({
     this.get('app').on('histogramClick', function(msg){
 
       // TODO use this info to construct a filter
-      if(msg.chart === "cvss"){
+      if(msg.state === "off"){
+        console.log('removing filters');
+        updateFilter('remove');
+      } else if(msg.chart === "cvss"){
         console.log('adding cvss filter');
         updateFilter('cvss', msg.label+0.0, msg.label+1.01);
       } else if(msg.chart === "vuln type"){
@@ -34,7 +37,9 @@ var Treemap = Backbone.Model.extend({
     var updateFilter = function updateFilter(attr, value, valueEnd){
       var filterOptions   = that.get('filterOptions');
 
-      if(valueEnd){
+      if(attr === 'remove'){
+        filterOptions.filters = null;
+      } else if(valueEnd){
         filterOptions.filters = [
           { attribute:attr, rangeMin:value, rangeMax: valueEnd }
         ];

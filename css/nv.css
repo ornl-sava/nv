@@ -129,9 +129,18 @@ rect.parent {
   text-align: center;
 }
 
-#filters rect {
-  stroke: white;
+
+#filters .active {
+  fill: lightsteelblue;
+}
+
+
+#filters .inactive {
   fill: steelblue;
+}
+
+#filters .bar {
+  stroke: white;
   shape-rendering: crispEdges;
 }
 
@@ -152,3 +161,4 @@ rect.parent {
   fill: #777;
   text-rendering: optimizeLegibility
 }
+
