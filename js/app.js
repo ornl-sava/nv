@@ -1355,7 +1355,7 @@ var handleFileSelect = function (element) {
       console.log('Loaded file: ' + f.name);
       $('#file-status').css('display', 'block');
       $('#file-status').addClass('alert-success');
-      $('#file-status').html('File ' + f.name + ' loaded.');
+      $('#file-status').html('<i class="icon-file"></i> <strong>' + f.name + '</strong> loaded in browser.');
     };
 
     reader.onerror = function() {
