@@ -9,7 +9,8 @@ body{
 }
 
 .app-instructions {
-  font-size: 90%;
+  font-size: 85%;
+  line-height: 110%;
   color: #555;
   margin-top: 4px;
 }
@@ -36,11 +37,18 @@ footer{
 
 
 /* data tab */
-.dataTextarea{
-  width:100%;
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+#file-status {
+  display: none;
+}
+#file-drop {
+  border: 10px dotted #ccc; 
+  border-radius: 10px;
+  width: 150px; 
+  height: 150px; 
+  margin: 20px auto;
+}
+#file-drop.hover {
+  border-color: #333; 
 }
 
 /* groups tab */

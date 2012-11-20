@@ -69,28 +69,15 @@ function handleVisTab(){
 }
 
 function updateEventList(){
-  var nbeItems1 = ""
-  var nbeItems2 = ""
+  var nbeItems1 = "",
+      nbeItems2 = "";
 
-  var useFiles = ( $('#nbeTextAreas:visible').length <= 0 )
-  //console.log('usefiles flag is ' + useFiles)
-
-  if(useFiles){
-    nbeItems1 = parseNBEFile( nbeText1 );
-    eventList = nbeItems1;
-    if(nbeText2.trim() !== ""){
-      isChangeVis = true;
-      nbeItems2 = parseNBEFile( nbeText2 );
-      eventList = mergeNBEs(nbeItems1, nbeItems2);
-    }
-  }else{ //else using text areas
-    nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
-    eventList = nbeItems1;
-    if( $("#nbeFile2").val().trim() !== "" ){
-      console.log("using second nbe text also ...")
-      nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
-      eventList = mergeNBEs(nbeItems1, nbeItems2)
-    }
+  nbeItems1 = parseNBEFile( nbeText1 );
+  eventList = nbeItems1;
+  if(nbeText2.trim() !== ""){
+    isChangeVis = true;
+    nbeItems2 = parseNBEFile( nbeText2 );
+    eventList = mergeNBEs(nbeItems1, nbeItems2);
   }
 }
 
@@ -117,7 +104,7 @@ function updateCurrentGroupTable(){
         weight = groupList[j].weight;
       }
     }
-    var entry = {"ip": ips[i], "weight": weight}
+    var entry = {"ip": ips[i], "weight": weight};
     console.log("found that ip " + ips[i] + " is in group " + groupName);
     if( !groups[groupName] ){
       groups[groupName] = [];
@@ -131,7 +118,7 @@ function updateCurrentGroupTable(){
   buildTable(groups);
 
   //add group name to item in crossfilter
-  eventList = addGroupInfoToData(groups, eventList)
+  eventList = addGroupInfoToData(groups, eventList);
 
   // sets the backbone data model
   setNBEData(eventList);
@@ -144,9 +131,10 @@ function mergeNBEs(nbeItems1, nbeItems2){
   var result = [];
   function compareEntries(a, b){ //true if equal, false if not
     if(a.ip === b.ip && a.vulnid === b.vulnid && a.vulntype === b.vulntype && a.cvss === b.cvss && a.port === b.port){
-      return true
-    }else{
-      return false
+      return true;
+    }
+    else {
+      return false;
     }
   }
 
@@ -198,7 +186,7 @@ function findIPsInList(eventList){
 }
 
 function findGroupName(ip){
-  var testAddr = ip.split('.')
+  var testAddr = ip.split('.');
   if( testAddr.length !== 4){
     throw "address of " + groupList[i].end + " is invalid";
   }
@@ -276,32 +264,65 @@ function buildTable(groups){
 
 //TODO has to be on a server for this to work?  Go figure.
 //rather loosely based on these examples http://www.html5rocks.com/en/tutorials/file/dndfiles/
-function handleFileSelect(evt) {
-  var files = evt.target.files; // FileList object
-
-  // files is a FileList of File objects.
-  //there should only be one item here, the input only allows to select one.
-  var f = evt.target.files[0];
-  var reader = new FileReader();
-
-  reader.onload = (function(theFile) {
-    //console.log("!!"+JSON.stringify(theFile));
-    return function(e) {
-      //console.log("!!"+e.target.result);
-      if(evt.target.id === "file1")
-        nbeText1 = e.target.result;
-      if(evt.target.id === "file2")
-        nbeText2 = e.target.result;
-    };
-  })(f);
-
-  try{  // try to read file as text.
-    reader.readAsText(f); //utf-8 encoding is default
-  } catch(e){
-    //can't check the mime types, since not known for .nbe, so just catch errors instead
-    //TODO: most (all?) bin files will still not throw this exception, just make junk text.  other ideas?
-    console.error("could not parse file " + f.name + " as text" + e);
+var handleFileSelect = function (element) {
+  
+  var holder = document.getElementById(element);
+  
+  if (typeof window.FileReader === 'undefined') {
+    $('#file-status').css('display', 'block');
+    $('#file-status').addClass('alert-error');
+    console.log('FileReader not supported');
+  } 
+  else {
+    console.log('FileReader supported');
   }
+ 
+  holder.ondragover = function () { 
+    this.className = 'hover'; 
+    return false; 
+  };
+  
+  holder.ondragend = function () { 
+    this.className = ''; 
+    return false; 
+  };
+  
+  holder.ondrop = function (e) {
+    this.className = '';
+    e.preventDefault();
+
+    var files = e.dataTransfer.files,
+        f = files[0],
+        reader = new FileReader();
+                      
+    reader.readAsText(f); //utf-8 encoding is default
+
+    reader.onload = function (event) {
+      // if this is the first file, load to nbeText1
+      // if not, then any additional files are saved to nbeText2
+      if ( nbeText1.trim() === '' ) {
+        nbeText1 = event.target.result;
+      }
+      else {
+        nbeText2 = event.target.result;
+      }
+      console.log('Loaded file: ' + f.name);
+      $('#file-status').css('display', 'block');
+      $('#file-status').addClass('alert-success');
+      $('#file-status').html('File ' + f.name + ' loaded.');
+    };
+
+    reader.onerror = function() {
+      $('#file-status').css('display', 'block');
+      $('#file-status').addClass('alert-error');
+      $('#file-status').html('could not parse file ' + f.name + ' as text');
+    }
+
+    return false;
+  };
+  
+  
+  
 }
 
 var vulnIdInfo = {};
@@ -309,34 +330,7 @@ var vulnIdInfo = {};
 // initialization
 $().ready(function () {
 
-  //stuff for file upload and related
-  // Check for the various File API support.
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // Great success! All the File APIs are supported.
-    document.getElementById('file1').addEventListener('change', handleFileSelect, false);
-  } else {
-    console.error('The File APIs are not fully supported in this browser.')
-  }
-
-  //stuff for c&p of NBE file
-  $("#nbeTextAreas").hide()
-  $('#hideTextareas').hide()
-
-  $('#showTextareas').bind('click', function(event) {
-    $("#nbeTextAreas").show()
-    $('#showTextareas').hide()
-    $('#hideTextareas').show()
-
-    //TODO confirm this is desired behavior
-    $('#filesForm')[0].reset() 
-    nbeText1 = ""
-    nbeText2 = ""
-  });
-  $('#hideTextareas').bind('click', function(event) {
-    $("#nbeTextAreas").hide()
-    $('#showTextareas').show()
-    $('#hideTextareas').hide()
-  });
+  handleFileSelect('file-drop');
 
   // set up needed event listeners, etc.
   $('#addGroupBtn').bind('click', function(event) {
