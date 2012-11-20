@@ -24,12 +24,9 @@ module.exports = function (grunt) {
     concat: {
       libs: {
         src: ['js/lib/d3.v2.js',
-              'js/lib/jquery-1.8.2.js',
               'js/lib/underscore.js',
               'js/lib/backbone.js',
-              'js/lib/d3.v2.js',
-              'js/lib/crossfilter.js',
-              'js/lib/bootstrap-custom.min.js'],
+              'js/lib/crossfilter.js'],
         dest: 'js/lib.js'
       },
       app: {
@@ -55,7 +52,7 @@ module.exports = function (grunt) {
         jQuery: true,
         console: false
       }
-    },
+    }
   });
 
   // Default task will be invoked when grunt is called without any argument

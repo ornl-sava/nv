@@ -25,6 +25,83 @@ d3.stringWidth = function(svg, string, font, aclass) {
     return width;
 };
 
+var Histogram = Backbone.Model.extend({
+  initialize: function() {
+    // respond to app-level events
+    this.get('datasource').on('dataset updated', this.updateData, this);
+  },
+
+  updateData: function(){
+    var filterOptions   = this.get('filterOptions')
+      , attribute       = filterOptions.attribute
+      , bins            = this.get('bins') || ""
+      , range            = this.get('range') || ""
+      , datamap         = this.get('datamap') || "";
+
+    var rawData = this.get('datasource').getData(filterOptions);
+
+    // compute histogram based on attribute value
+    var histogram = d3.layout.histogram()
+        .value(function(d) { 
+          // if we have a datamap, use it
+          return datamap ? datamap(d[attribute]) : d[attribute]; 
+        });
+
+    // if bins specified, set them
+    if( bins )
+      histogram.bins(bins);
+  
+    // if bins specified, set them
+    if( range )
+      histogram.range(range);
+
+    // compute the histogram
+    var data = histogram(rawData); 
+
+    if(filterOptions.attribute === 'cvss'){
+      console.log(data);
+    }
+
+    // if a limit is specified, sort and cut the data
+    if( this.get('limit') ){
+      var limit = this.get('limit');
+
+      // sort the data by length (ascending) and reverse
+      data = _.sortBy(data, function(d){ return d.length; }).reverse();
+
+      // cut off after limit
+      data = _.first(data, limit);
+    } 
+
+    // set labels. if bins are specified, use numbers
+    //  otherwise use the category (data + attribute)
+    var labels;
+    if( bins ) {
+
+      labels = data.map( function(d, i) { 
+        // if we have a datamap, access the domain to get the labels correct
+        return datamap ? datamap.domain()[i] : i; 
+      });
+
+    } else {
+
+      labels = data.map( function(d) { 
+        return d[0][attribute]; 
+      });
+
+    }
+
+    // TODO combine label and length in data attribute
+    this.set('data', data.map(function(d, i) { 
+      return {
+        length: d.length,
+        label: labels[i]
+      };
+    }) );  
+
+  }
+});
+
 var Nessus = Backbone.Model.extend({
 
   initialize: function() {
@@ -138,6 +215,41 @@ var Nessus = Backbone.Model.extend({
     });
   }
 
+});
+
+var NessusInfo = Backbone.Model.extend({
+  initialize: function() {
+    this.get('app').on('nessusIDSelected', function(msg){
+      this.updateData(msg);
+    }, this);
+
+    // respond to a mouseover on histogram
+    this.get('app').on('histogramMouseover', function(msg){
+
+      // if note, say so, same for hole; ignore otherwise
+      if( msg.chart.indexOf('note') != -1){
+        this.updateData({vulntype: 'note', vulnid: msg.label});
+      } else if( msg.chart.indexOf('hole') != -1){
+        this.updateData({vulntype: 'hole', vulnid: msg.label});
+      }
+
+    }, this);
+
+  },
+
+  updateData: function(info){
+    var nodeInfo = {
+      id:     info.vulnid, 
+      type:   info.vulntype, 
+      port:   info.port, 
+      ip:     info.ip, 
+      group:  info.group
+    };
+
+    var vulnInfo = vulnIdInfo[info.vulnid];
+
+    this.set('data', {nodeInfo: nodeInfo, vulnInfo: vulnInfo});
+  }
 });
 
 var Treemap = Backbone.Model.extend({
@@ -289,115 +401,164 @@ var Treemap = Backbone.Model.extend({
   }
 });
 
-var Histogram = Backbone.Model.extend({
+var HistogramView = Backbone.View.extend({
+
   initialize: function() {
-    // respond to app-level events
-    this.get('datasource').on('dataset updated', this.updateData, this);
+    // listen for model changes
+    this.model.on('change:data', this.render, this);
+
+    // init a d3 histogram
+    d3.select(this.options.target)
+      .append('svg')
+      .attr('width', this.options.w)
+      .attr('height', this.options.h);
   },
 
-  updateData: function(){
-    var filterOptions   = this.get('filterOptions')
-      , attribute       = filterOptions.attribute
-      , bins            = this.get('bins') || ""
-      , range            = this.get('range') || ""
-      , datamap         = this.get('datamap') || "";
+  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
+  render: function(){
+    var vis         = d3.select(this.options.target).select('svg')
+      , app         = this.model.get('app')
+      , data        = this.model.get('data')
+      , range       = this.options.range
+      , attribute   = this.model.get('attribute')
+      , view        = this
+      , w           = this.options.w
+      , h           = this.options.h
+      , barwidth    = this.options.barwidth
+      , title       = this.options.title
+      , that        = this
+      , numBins     = data.length
+      , barspace    = Math.floor( w/data.length - barwidth )
+      , rect        = vis.selectAll('.bar')
+      , rectLabels  = vis.selectAll('.histogramLabel')
+      , titleLabel  = vis.selectAll('.histogramtitle');
 
-    var rawData = this.get('datasource').getData(filterOptions);
+    // y scale for bars
+    var y = d3.scale.linear()
+              .domain([0, d3.max(data, function(d) { return d.length; })])
+              .range([1, h-40]);
 
-    // compute histogram based on attribute value
-    var histogram = d3.layout.histogram()
-        .value(function(d) { 
-          // if we have a datamap, use it
-          return datamap ? datamap(d[attribute]) : d[attribute]; 
-        });
+    // enter
+    rect.data(data, function(d) { return d.length; })
+        .enter().append('rect')
+        .classed('bar inactive', true)
+        .on('click', function() { barClick(this); })
+        .on('mouseover', function() { barMouseOver(this); })
+        .attr('width', barwidth)
+        .attr('height', function(d, i) { return y(d.length); })
+        .attr('x', function(d, i) { return i*(barwidth+barspace); })
+        .attr('y', function(d, i) { return h - 45 - y(d.length); });
 
-    // if bins specified, set them
-    if( bins )
-      histogram.bins(bins);
-  
-    // if bins specified, set them
-    if( range )
-      histogram.range(range);
+    // update
 
-    // compute the histogram
-    var data = histogram(rawData); 
+    //x-axis labels for bars
+    rectLabels.data(data, function(d) { return d.label; })
+      .enter().append('text')
+      .attr('class', 'histogramlabel')
+      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
+      .attr('y', h - 35)
+      .attr('text-anchor', 'middle')
+      .text( function(d) { return d.label; });
 
-    if(filterOptions.attribute === 'cvss'){
-      console.log(data);
-    }
+    //title
+    titleLabel.data([title])
+      .enter().append('text')
+      .attr('class', 'histogramtitle')
+      .attr('x', w / 2 )
+      .attr('y', h - 20)
+      .attr('text-anchor', 'middle')
+      .text(title);
 
-    // if a limit is specified, sort and cut the data
-    if( this.get('limit') ){
-      var limit = this.get('limit');
 
-      // sort the data by length (ascending) and reverse
-      data = _.sortBy(data, function(d){ return d.length; }).reverse();
-
-      // cut off after limit
-      data = _.first(data, limit);
-    } 
-
-    // set labels. if bins are specified, use numbers
-    //  otherwise use the category (data + attribute)
-    var labels;
-    if( bins ) {
-
-      labels = data.map( function(d, i) { 
-        // if we have a datamap, access the domain to get the labels correct
-        return datamap ? datamap.domain()[i] : i; 
-      });
-
-    } else {
-
-      labels = data.map( function(d) { 
-        return d[0][attribute]; 
-      });
-
-    }
-
-    // TODO combine label and length in data attribute
-    this.set('data', data.map(function(d, i) { 
-      return {
-        length: d.length,
-        label: labels[i]
+    // on bar mouseover, emit the chart title and label of the selected
+    var barMouseOver = function barMouseOver(d) {   
+      var msg = {
+        chart: title,
+        label: d3.select(d).data()[0].label
       };
-    }) );  
+      that.options.app.trigger('histogramMouseover', msg);
+    };
 
+    // On bar click, emit the chart title, label, and bar size of the selected.
+    //   If the bar is already selected, remove all filters
+    var barClick = function barClick(d) {
+      var sel = d3.select(d)
+        , active = sel.classed('active');
+
+      // get the data for the clicked element
+      var data = d3.select(d).data()[0];
+
+      // prepare the message to send to the app
+      var msg = {
+        label: data.label,
+        length: data.length,
+        chart: that.options.title
+      };
+
+      // make all bars inactive
+      d3.selectAll('.bar').classed('active', false);
+      d3.selectAll('.bar').classed('inactive', true);
+
+      // activate this one if it's not active, else just send off message
+      if( !active ){
+        sel.classed('active', true);
+        sel.classed('inactive', false);
+        msg.state = 'on';
+      } else {
+        msg.state = 'off';
+      }
+
+      // trigger an event and attach the message
+      that.options.app.trigger('histogramClick', msg);
+    };
   }
 });
 
-var NessusInfo = Backbone.Model.extend({
+var NessusInfoView = Backbone.View.extend({
+
   initialize: function() {
-    this.get('app').on('nessusIDSelected', function(msg){
-      this.updateData(msg);
-    }, this);
-
-    // respond to a mouseover on histogram
-    this.get('app').on('histogramMouseover', function(msg){
-
-      // if note, say so, same for hole; ignore otherwise
-      if( msg.chart.indexOf('note') != -1){
-        this.updateData({vulntype: 'note', vulnid: msg.label});
-      } else if( msg.chart.indexOf('hole') != -1){
-        this.updateData({vulntype: 'hole', vulnid: msg.label});
-      }
-
-    }, this);
-
+    // render on model update
+    this.model.on('change:data', this.render, this);
   },
 
-  updateData: function(info){
-    var nodeInfo = {
-      id:     info.vulnid, 
-      type:   info.vulntype, 
-      port:   info.port, 
-      ip:     info.ip, 
-      group:  info.group
-    };
+  render: function(){
+    var data = this.model.get('data');
 
-    var vulnInfo = vulnIdInfo[info.vulnid];
+    var div = $(this.options.target)
+      , nodeInfo = data.nodeInfo
+      , idData = data.vulnInfo;
 
-    this.set('data', {nodeInfo: nodeInfo, vulnInfo: vulnInfo});
+    // TODO do this with d3 instead
+    div.html('<hr><p>');
+    if(nodeInfo){
+      if(nodeInfo.type == 'hole')
+        div.append("Security Hole"+ '<br><br>');
+      else
+        div.append("Security Note"+ '<br><br>');
+      div.append("Group: " + nodeInfo.group + '<br>');
+      div.append("Address: " + nodeInfo.ip + '<br>');
+      div.append("Port: " + nodeInfo.group + '<br><br>');
+      div.append("Nessus ID: " + nodeInfo.id + '<br>');
+    }
+    div.append("Title: " + idData.title + '<br>');
+    if(idData.family && idData.family !== "")
+      div.append("Family: " + idData.family + '<br>');
+    div.append('<br>');
+    if(idData.synopsis && idData.synopsis !== "")
+      div.append("Synopsis: " + idData.synopsis + '<br><br>');
+    if(idData.description && idData.description !== "")
+      div.append("Description: " + idData.description + '<br><br>');
+    if(idData.updateInfo && idData.updateInfo !== "")
+      div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
+    if(idData.solution && idData.solution !== "")
+      div.append("Solution: " + idData.solution);
+    /* //TODO deal with these later.
+    div.append("bugtraqList: "   + idData.bugtraqList);
+    div.append("cveList: "       + idData.cveList);
+    div.append("otherInfoList: " + idData.otherInfoList);
+    */
+    div.append('</p>');
+
   }
 });
 
@@ -728,167 +889,6 @@ var TreemapView = Backbone.View.extend({
 
 });
 
-var HistogramView = Backbone.View.extend({
-
-  initialize: function() {
-    // listen for model changes
-    this.model.on('change:data', this.render, this);
-
-    // init a d3 histogram
-    d3.select(this.options.target)
-      .append('svg')
-      .attr('width', this.options.w)
-      .attr('height', this.options.h);
-  },
-
-  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
-  render: function(){
-    var vis         = d3.select(this.options.target).select('svg')
-      , app         = this.model.get('app')
-      , data        = this.model.get('data')
-      , range       = this.options.range
-      , attribute   = this.model.get('attribute')
-      , view        = this
-      , w           = this.options.w
-      , h           = this.options.h
-      , barwidth    = this.options.barwidth
-      , title       = this.options.title
-      , that        = this
-      , numBins     = data.length
-      , barspace    = Math.floor( w/data.length - barwidth )
-      , rect        = vis.selectAll('.bar')
-      , rectLabels  = vis.selectAll('.histogramLabel')
-      , titleLabel  = vis.selectAll('.histogramtitle');
-
-    // y scale for bars
-    var y = d3.scale.linear()
-              .domain([0, d3.max(data, function(d) { return d.length; })])
-              .range([1, h-40]);
-
-    // enter
-    rect.data(data, function(d) { return d.length; })
-        .enter().append('rect')
-        .classed('bar inactive', true)
-        .on('click', function() { barClick(this); })
-        .on('mouseover', function() { barMouseOver(this); })
-        .attr('width', barwidth)
-        .attr('height', function(d, i) { return y(d.length); })
-        .attr('x', function(d, i) { return i*(barwidth+barspace); })
-        .attr('y', function(d, i) { return h - 45 - y(d.length); });
-
-    // update
-
-    //x-axis labels for bars
-    rectLabels.data(data, function(d) { return d.label; })
-      .enter().append('text')
-      .attr('class', 'histogramlabel')
-      .attr('x', function(d, i) { return i*(barwidth+barspace) + barwidth/2; })
-      .attr('y', h - 35)
-      .attr('text-anchor', 'middle')
-      .text( function(d) { return d.label; });
-
-    //title
-    titleLabel.data([title])
-      .enter().append('text')
-      .attr('class', 'histogramtitle')
-      .attr('x', w / 2 )
-      .attr('y', h - 20)
-      .attr('text-anchor', 'middle')
-      .text(title);
-
-
-    // on bar mouseover, emit the chart title and label of the selected
-    var barMouseOver = function barMouseOver(d) {   
-      var msg = {
-        chart: title,
-        label: d3.select(d).data()[0].label
-      };
-      that.options.app.trigger('histogramMouseover', msg);
-    };
-
-    // On bar click, emit the chart title, label, and bar size of the selected.
-    //   If the bar is already selected, remove all filters
-    var barClick = function barClick(d) {
-      var sel = d3.select(d)
-        , active = sel.classed('active');
-
-      // get the data for the clicked element
-      var data = d3.select(d).data()[0];
-
-      // prepare the message to send to the app
-      var msg = {
-        label: data.label,
-        length: data.length,
-        chart: that.options.title
-      };
-
-      // make all bars inactive
-      d3.selectAll('.bar').classed('active', false);
-      d3.selectAll('.bar').classed('inactive', true);
-
-      // activate this one if it's not active, else just send off message
-      if( !active ){
-        sel.classed('active', true);
-        sel.classed('inactive', false);
-        msg.state = 'on';
-      } else {
-        msg.state = 'off';
-      }
-
-      // trigger an event and attach the message
-      that.options.app.trigger('histogramClick', msg);
-    };
-  }
-});
-
-var NessusInfoView = Backbone.View.extend({
-
-  initialize: function() {
-    // render on model update
-    this.model.on('change:data', this.render, this);
-  },
-
-  render: function(){
-    var data = this.model.get('data');
-
-    var div = $(this.options.target)
-      , nodeInfo = data.nodeInfo
-      , idData = data.vulnInfo;
-
-    // TODO do this with d3 instead
-    div.html('<hr><p>');
-    if(nodeInfo){
-      if(nodeInfo.type == 'hole')
-        div.append("Security Hole"+ '<br><br>');
-      else
-        div.append("Security Note"+ '<br><br>');
-      div.append("Group: " + nodeInfo.group + '<br>');
-      div.append("Address: " + nodeInfo.ip + '<br>');
-      div.append("Port: " + nodeInfo.group + '<br><br>');
-      div.append("Nessus ID: " + nodeInfo.id + '<br>');
-    }
-    div.append("Title: " + idData.title + '<br>');
-    if(idData.family && idData.family !== "")
-      div.append("Family: " + idData.family + '<br>');
-    div.append('<br>');
-    if(idData.synopsis && idData.synopsis !== "")
-      div.append("Synopsis: " + idData.synopsis + '<br><br>');
-    if(idData.description && idData.description !== "")
-      div.append("Description: " + idData.description + '<br><br>');
-    if(idData.updateInfo && idData.updateInfo !== "")
-      div.append("UpdateInfo: " + idData.updateInfo + '<br><br>');
-    if(idData.solution && idData.solution !== "")
-      div.append("Solution: " + idData.solution);
-    /* //TODO deal with these later.
-    div.append("bugtraqList: "   + idData.bugtraqList);
-    div.append("cveList: "       + idData.cveList);
-    div.append("otherInfoList: " + idData.otherInfoList);
-    */
-    div.append('</p>');
-
-  }
-});
-
 // The router is our entire app
 var NV = new (Backbone.Router.extend({
   routes: {
@@ -1115,28 +1115,15 @@ function handleVisTab(){
 }
 
 function updateEventList(){
-  var nbeItems1 = ""
-  var nbeItems2 = ""
+  var nbeItems1 = "",
+      nbeItems2 = "";
 
-  var useFiles = ( $('#nbeTextAreas:visible').length <= 0 )
-  //console.log('usefiles flag is ' + useFiles)
-
-  if(useFiles){
-    nbeItems1 = parseNBEFile( nbeText1 );
-    eventList = nbeItems1;
-    if(nbeText2.trim() !== ""){
-      isChangeVis = true;
-      nbeItems2 = parseNBEFile( nbeText2 );
-      eventList = mergeNBEs(nbeItems1, nbeItems2);
-    }
-  }else{ //else using text areas
-    nbeItems1 = parseNBEFile( $("#nbeFile1").val() );
-    eventList = nbeItems1;
-    if( $("#nbeFile2").val().trim() !== "" ){
-      console.log("using second nbe text also ...")
-      nbeItems2 = parseNBEFile( $("#nbeFile2").val() );
-      eventList = mergeNBEs(nbeItems1, nbeItems2)
-    }
+  nbeItems1 = parseNBEFile( nbeText1 );
+  eventList = nbeItems1;
+  if(nbeText2.trim() !== ""){
+    isChangeVis = true;
+    nbeItems2 = parseNBEFile( nbeText2 );
+    eventList = mergeNBEs(nbeItems1, nbeItems2);
   }
 }
 
@@ -1163,7 +1150,7 @@ function updateCurrentGroupTable(){
         weight = groupList[j].weight;
       }
     }
-    var entry = {"ip": ips[i], "weight": weight}
+    var entry = {"ip": ips[i], "weight": weight};
     console.log("found that ip " + ips[i] + " is in group " + groupName);
     if( !groups[groupName] ){
       groups[groupName] = [];
@@ -1177,7 +1164,7 @@ function updateCurrentGroupTable(){
   buildTable(groups);
 
   //add group name to item in crossfilter
-  eventList = addGroupInfoToData(groups, eventList)
+  eventList = addGroupInfoToData(groups, eventList);
 
   // sets the backbone data model
   setNBEData(eventList);
@@ -1190,9 +1177,10 @@ function mergeNBEs(nbeItems1, nbeItems2){
   var result = [];
   function compareEntries(a, b){ //true if equal, false if not
     if(a.ip === b.ip && a.vulnid === b.vulnid && a.vulntype === b.vulntype && a.cvss === b.cvss && a.port === b.port){
-      return true
-    }else{
-      return false
+      return true;
+    }
+    else {
+      return false;
     }
   }
 
@@ -1244,7 +1232,7 @@ function findIPsInList(eventList){
 }
 
 function findGroupName(ip){
-  var testAddr = ip.split('.')
+  var testAddr = ip.split('.');
   if( testAddr.length !== 4){
     throw "address of " + groupList[i].end + " is invalid";
   }
@@ -1322,32 +1310,65 @@ function buildTable(groups){
 
 //TODO has to be on a server for this to work?  Go figure.
 //rather loosely based on these examples http://www.html5rocks.com/en/tutorials/file/dndfiles/
-function handleFileSelect(evt) {
-  var files = evt.target.files; // FileList object
-
-  // files is a FileList of File objects.
-  //there should only be one item here, the input only allows to select one.
-  var f = evt.target.files[0];
-  var reader = new FileReader();
-
-  reader.onload = (function(theFile) {
-    //console.log("!!"+JSON.stringify(theFile));
-    return function(e) {
-      //console.log("!!"+e.target.result);
-      if(evt.target.id === "file1")
-        nbeText1 = e.target.result;
-      if(evt.target.id === "file2")
-        nbeText2 = e.target.result;
-    };
-  })(f);
-
-  try{  // try to read file as text.
-    reader.readAsText(f); //utf-8 encoding is default
-  } catch(e){
-    //can't check the mime types, since not known for .nbe, so just catch errors instead
-    //TODO: most (all?) bin files will still not throw this exception, just make junk text.  other ideas?
-    console.error("could not parse file " + f.name + " as text" + e);
+var handleFileSelect = function (element) {
+  
+  var holder = document.getElementById(element);
+  
+  if (typeof window.FileReader === 'undefined') {
+    $('#file-status').css('display', 'block');
+    $('#file-status').addClass('alert-error');
+    console.log('FileReader not supported');
+  } 
+  else {
+    console.log('FileReader supported');
   }
+ 
+  holder.ondragover = function () { 
+    this.className = 'hover'; 
+    return false; 
+  };
+  
+  holder.ondragend = function () { 
+    this.className = ''; 
+    return false; 
+  };
+  
+  holder.ondrop = function (e) {
+    this.className = '';
+    e.preventDefault();
+
+    var files = e.dataTransfer.files,
+        f = files[0],
+        reader = new FileReader();
+                      
+    reader.readAsText(f); //utf-8 encoding is default
+
+    reader.onload = function (event) {
+      // if this is the first file, load to nbeText1
+      // if not, then any additional files are saved to nbeText2
+      if ( nbeText1.trim() === '' ) {
+        nbeText1 = event.target.result;
+      }
+      else {
+        nbeText2 = event.target.result;
+      }
+      console.log('Loaded file: ' + f.name);
+      $('#file-status').css('display', 'block');
+      $('#file-status').addClass('alert-success');
+      $('#file-status').html('<i class="icon-file"></i> <strong>' + f.name + '</strong> loaded in browser.');
+    };
+
+    reader.onerror = function() {
+      $('#file-status').css('display', 'block');
+      $('#file-status').addClass('alert-error');
+      $('#file-status').html('could not parse file ' + f.name + ' as text');
+    }
+
+    return false;
+  };
+  
+  
+  
 }
 
 var vulnIdInfo = {};
@@ -1355,34 +1376,7 @@ var vulnIdInfo = {};
 // initialization
 $().ready(function () {
 
-  //stuff for file upload and related
-  // Check for the various File API support.
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // Great success! All the File APIs are supported.
-    document.getElementById('file1').addEventListener('change', handleFileSelect, false);
-  } else {
-    console.error('The File APIs are not fully supported in this browser.')
-  }
-
-  //stuff for c&p of NBE file
-  $("#nbeTextAreas").hide()
-  $('#hideTextareas').hide()
-
-  $('#showTextareas').bind('click', function(event) {
-    $("#nbeTextAreas").show()
-    $('#showTextareas').hide()
-    $('#hideTextareas').show()
-
-    //TODO confirm this is desired behavior
-    $('#filesForm')[0].reset() 
-    nbeText1 = ""
-    nbeText2 = ""
-  });
-  $('#hideTextareas').bind('click', function(event) {
-    $("#nbeTextAreas").hide()
-    $('#showTextareas').show()
-    $('#hideTextareas').hide()
-  });
+  handleFileSelect('file-drop');
 
   // set up needed event listeners, etc.
   $('#addGroupBtn').bind('click', function(event) {
