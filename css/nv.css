@@ -5,14 +5,7 @@ body{
 
 /* head */
 .hero-unit {
-  padding: 5px 20px 15px;
-}
-
-.app-instructions {
-  font-size: 85%;
-  line-height: 110%;
-  color: #555;
-  margin-top: 4px;
+  padding: 5px 15px;
 }
 
 .tab-instructions {
