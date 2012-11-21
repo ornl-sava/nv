@@ -91,7 +91,7 @@ module.exports = function (grunt) {
         laxcomma: true,
         maxparams: 5,
         maxdepth: 5,
-        maxstatements: 25,
+        maxstatements: 30,
         maxcomplexity: 10
       },
       globals: {
