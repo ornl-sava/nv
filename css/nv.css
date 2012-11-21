@@ -85,8 +85,8 @@ footer{
 
 /* Treemap (from the original nv.css) */
 
-#vis {
-
+#vis svg {
+  shape-rendering: crispEdges;
 }
 
 #options,
