@@ -1,6 +1,6 @@
 body{
+  margin: 4px 0;
   background: white;
-  margin: 4px 0px;
 }
 
 /* head */
@@ -9,9 +9,9 @@ body{
 }
 
 .tab-instructions {
+  margin-bottom: 8px;
   font-size: 105%;
   color: #888;
-  margin-bottom: 8px;
 }
 
 
@@ -23,9 +23,9 @@ body{
 /* footer */
 footer{
   margin-top: 20px;
-  text-align: center;
   font-size: 10px;
   color: #777;
+  text-align: center;
 }
 
 
@@ -34,19 +34,19 @@ footer{
   display: none;
 }
 #file-drop {
-  border: 10px dotted #ccc; 
-  border-radius: 10px;
   width: 200px;
   height: 200px; 
   margin: 20px auto;
-  line-height: 200px;
-  text-align: center;
-  color: #ccc;
   font-size: 160px;
+  line-height: 200px;
+  color: #ccc;
+  text-align: center;
+  border: 10px dotted #ccc; 
+  border-radius: 10px;
 }
 #file-drop.hover {
-  border-color: #333; 
   color: #333;
+  border-color: #333; 
 }
 
 .file-button-pane {
@@ -60,19 +60,19 @@ footer{
 }
 
 #groupsTab table{
-  background-color: white;
   display: table-cell;
+  background-color: white;
   table-layout: auto;
 }
 
 #groupsTab tr{
-  cursor: default;
-  margin: 10px 0px;
+  padding: 2px 6px;
+  margin: 10px 0;
   overflow-x: hidden;
   overflow-y: hidden;
-  padding: 2px 6px;
-  vertical-align: bottom;
   white-space: normal;
+  vertical-align: bottom;
+  cursor: default;
 }
 
 #groupsTab td{
@@ -93,6 +93,7 @@ footer{
 #edit,
 #nessusinfo {
   margin-bottom: 20px;
+  font-size: 11px;
 }
 
 #nessusinfo {
@@ -107,6 +108,7 @@ footer{
 }
 
 text {
+  text-rendering: optimizeLegibility;
   pointer-events: none;
 }
 
@@ -165,21 +167,25 @@ rect.parent {
   shape-rendering: crispEdges;
 }
 
+#filters .bar:hover {
+  fill: orange;
+}
+
 #filters .histogramlabel {
   font-size: 10px;
+  text-rendering: optimizeLegibility;
   fill: #777;
-  text-rendering: optimizeLegibility
 }
 
 #filters .histogramtitle {
   font-size: 13px;
+  text-rendering: optimizeLegibility;
   fill: #aaa;
-  text-rendering: optimizeLegibility
 }
 
 #filters .maxarea {
   font-size: 10px;
+  text-rendering: optimizeLegibility;
   fill: #777;
-  text-rendering: optimizeLegibility
 }
 
