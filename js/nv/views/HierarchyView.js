@@ -13,6 +13,7 @@ var HierarchyView = Backbone.View.extend({
       .text(function(d) { return d.target; });
 
     $('#hierarchy ul').sortable({
+      cursor: "move",
       stop: function(event, ui) {
         // loop through the list and make a new hierarchy
         var h = [];
