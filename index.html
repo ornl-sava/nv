@@ -30,144 +30,143 @@
         </div>
       </div>
 
-      <div id='file-page' class="row-fluid">
-        <div class="span8 offset2">
-          <div class="tab-instructions">Drag and drop a Nessus data file in the box below. Files must be in <em>.nbe</em> format. If you want to compare two scans, drop a second file after the first. <strong>No data is sent to a server; it is only parsed locally in the browser.</strong> </div>
-          <div id="file-status" class="alert">
-            <span id="file-status-msg"> </span>
-            <button type="button" class="close" data-dismiss="alert">x</button>
-          </div>
-          <div id="file-drop">
-            <i class="icon-download-alt"></i>
-          </div>
-          <div id="file-list">
-          </div>
-          <div class="file-reset">
-            <button id="file-reset-btn" class="btn btn-large btn-warning disabled pull-right" type="button">Reset</button>
-          </div>
-        </div>
-        <div class="span2">
-          <button id="file-continue-btn" class="btn btn-large btn-primary disabled" type="button">Continue</button>
-        </div>
-      </div>
-
-      <div id='groups-page' class="row-fluid">
+      <div class="row-fluid">
         <div class="span12">
-          <div class="row-fluid">
-            <div class="span8 offset1">
-              <div class="tab-instructions">Group IPs into groupings based on IP ranges. Optionally, provide criticality scores for any of the groups.</div>
-            </div>
-            <div class="span2 offset1">
-              <button id="group-continue" class="btn btn-large btn-primary" type="button">Continue</button>
-            </div>
-            
-          </div>
-          
-          <div class="row-fluid">
-            <div class="span5">
-              <h3>Add Group</h3>
-              <form id="addGroup" class="well form-horizontal">
-                <fieldset>
-                  <div class="control-group">
-                    <label class="control-label" for="groupName">Set group label</label>
-                    <div class="controls">
-                      <input type="text" id="groupName" placeholder="group name">
-                    </div>
-                  </div>
+          <div class="tabbable">
 
-                  <div class="control-group">
-                    <label class="control-label" for="groupName">Set group IP range</label>
-                    <div class="controls">
-                      <input type="text" id="ipStart" placeholder="start address">
-                      <input type="text" id="ipEnd" placeholder="end address">
-                    </div>
-                  </div>
+            <ul class="nav nav-pills" id="myTab">
+              <li id="dataTabNav" class="active"><a href="#dataTab1" id="dataTab1Link" data-toggle="tab">Data</a></li>
+              <li id="groupsTabNav" class="disabled"><a href="#groupsTab" id="groupsTabLink" data-toggle="tab">Groups</a></li>
+              <li id="visTabNav" class="disabled"><a href="#visTab" id="visTabLink"    data-toggle="tab">Visualization</a></li>
+            </ul>
 
-                  <div class="control-group">
-                    <label class="control-label" for="groupName">Set default criticality of members</label>
-                    <div class="controls">
-                      <select id="defaultWeight" class="weightSelect">
-                        <option value="1">1 (lowest)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10 (highest)</option>
-                      </select>
-                    </div>
+            <div class="tab-content">
+              <div class="tab-pane active" id="dataTab1">
+                <div class="span10 offset1">
+                  <div class="tab-instructions">Drag and drop a Nessus data file in the box below. Files must be in <em>.nbe</em> format. If you want to compare two scans, drop a second file after the first. <strong>No data is sent to a server; it is only parsed locally in the browser.</strong> </div>
+                  <div id="file-status" class="alert">
+                    <span id="file-status-msg"> </span>
+                    <button type="button" class="close" data-dismiss="alert">x</button>
                   </div>
-
-                  <div class="form-actions">
-                    <input id="addGroupBtn" class="btn btn-primary" type="button" value="Add Group">
+                  <div id="file-drop">
+                    <i class="icon-download-alt"></i>
                   </div>
-                </fieldset>
-              </form>
-            </div>
-            <div class="span4 offset1">
-              <h3>Current Group Settings</h3>
-              <table id="currentGroupTable">
-                <thead>
-                  <tr>
-                    <th class="header">Group Name</th>
-                    <th class="header">Machine</th>
-                    <th class="header">Criticality</th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </div>
-
-          </div>
-                
-                
-          <div id='vis-page' class="row-fluid">
-            <div class="span10">
-              
-              test page!
-              
-              
-            </div>
-            <div class="row-fluid">
-              <div id="vis"></div>
-            </div>
-            <div id="filters" class="row-fluid">
-              <div id="cvssHistogram" class="span3"></div>
-              <div id="vulnTypeHistogram" class="span3"></div>
-              <div id="topHoleHistogram" class="span3"></div>
-              <div id="topNoteHistogram" class="span3"></div>
-            </div>
-          </div>
-          <div id="sidepanel" class="span2">
-            <div class="row-fluid">
-              <div id="options">
-                <label>Size nodes by:</label>
-                <div id="sizeoptions" class="btn-group" data-toggle="buttons-radio">
-                  <button class="btn active" onclick="sizeBySeverity()">Severity</button>
-                  <button class="btn" onclick="sizeByCriticality()">Criticality</button>
-                  <button class="btn" onclick="sizeByCount()">Count</button>
+                  <div id="file-list">
+                  </div>
+                  <div class="file-reset">
+                    <button id="file-reset-btn" class="btn btn-large btn-warning disabled pull-right" type="button">Reset</button>
+                  </div>
                 </div>
-                <!--
-                <div id="changeoptions" class="btn-group">
-              <div id="changes">
-                <label for="changes">Modify node:</label>
-                  <button class="btn" onclick="fixed()" data-toggle="buttons">Fixed</button>
-                  <button class="btn" onclick="nonissue()" data-toggle="buttons">Non-Issue</button>
+              </div> <!-- close tab-pane -->
+
+              <div class="tab-pane" id="groupsTab">
+                <div class="tab-instructions">Group IPs into groupings based on IP ranges. Optionally, provide criticality scores for any of the groups.</div>
+                <div class="row-fluid">
+                  <div class="span5 offset1">
+                    <h3>Add Group</h3>
+                    <form id="addGroup" class="well form-horizontal">
+                      <fieldset>
+                        <div class="control-group">
+                          <label class="control-label" for="groupName">Set group label</label>
+                          <div class="controls">
+                            <input type="text" id="groupName" placeholder="group name">
+                          </div>
+                        </div>
+
+                        <div class="control-group">
+                          <label class="control-label" for="groupName">Set group IP range</label>
+                          <div class="controls">
+                            <input type="text" id="ipStart" placeholder="start address">
+                            <input type="text" id="ipEnd" placeholder="end address">
+                          </div>
+                        </div>
+
+                        <div class="control-group">
+                          <label class="control-label" for="groupName">Set default criticality of members</label>
+                          <div class="controls">
+                            <select id="defaultWeight" class="weightSelect">
+                              <option value="1">1 (lowest)</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10 (highest)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="form-actions">
+                          <input id="addGroupBtn" class="btn btn-large btn-primary" type="button" value="Add Group">
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+                  <div class="span5 offset1">
+                    <h3>Current Group Settings</h3>
+                    <table id="currentGroupTable">
+                      <thead>
+                        <tr>
+                          <th class="header">Group Name</th>
+                          <th class="header">Machine</th>
+                          <th class="header">Criticality</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+
                 </div>
-                </div> -->
-              </div>
-              <div id="edit"></div>
-              <div id="nessusinfo"></div>
-            </div>
-            
-          </div>
+              </div> <!-- close tab-pane -->
+              
+              <div class="tab-pane" id="visTab">
+                <div class="row-fluid">
+                  <div class="span10">
+                    <div class="row-fluid">
+                      <div id="vis"></div>
+                    </div>
+                    <div id="filters" class="row-fluid">
+                      <div id="cvssHistogram" class="span3"></div>
+                      <div id="vulnTypeHistogram" class="span3"></div>
+                      <div id="topHoleHistogram" class="span3"></div>
+                      <div id="topNoteHistogram" class="span3"></div>
+                    </div>
+                  </div>
+                  <div id="sidepanel" class="span2">
+                    <div class="row-fluid">
+                      <div id="options">
+                        <label for="sizeoptions">Size nodes by:</label>
+                        <div id="sizeoptions" class="btn-group" data-toggle="buttons-radio">
+                          <button class="btn active" onclick="sizeBySeverity()">Severity</button>
+                          <button class="btn" onclick="sizeByCriticality()">Criticality</button>
+                          <button class="btn" onclick="sizeByCount()">Count</button>
+                        </div>
+                        <!--
+                        <div id="changeoptions" class="btn-group">
+                      <div id="changes">
+                        <label for="changes">Modify node:</label>
+                          <button class="btn" onclick="fixed()" data-toggle="buttons">Fixed</button>
+                          <button class="btn" onclick="nonissue()" data-toggle="buttons">Non-Issue</button>
+                        </div>
+                        </div> -->
+                      </div>
+                      <div id="edit"></div>
+                      <div id="nessusinfo"></div>
+                    </div>
+                  </div>                  
+                </div>
+              </div> <!-- close tab-pane -->
+              
+            </div> <!-- close tab-content -->
+
+          </div> <!-- close tabbable -->
         
-        </div>
-      </div>
+        </div> <!-- close span12 -->
+      </div> <!-- close row -->
 
       <div class="row-fluid">
         <div class="span12">
@@ -201,4 +200,3 @@
     
   </body>
 </html>
-

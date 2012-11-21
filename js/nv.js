@@ -8,6 +8,7 @@ var isChangeVis = false;
 var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
+var groupList = [];
 
 
 // TODO Lane Mike the sizeBy functions are currently connected directly to 
@@ -32,8 +33,6 @@ function setNBEData(dataset){
 }
 
 
-var groupList = [];
-
 function handleGroupAdd(){
   //TODO make sure each IP is only in one group(?)
   //TODO should really be able to remove groups also ...
@@ -51,13 +50,33 @@ function handleGroupAdd(){
 // remove loaded data
 function clearData() {
   eventList = {};
+  groupList = [];
+  
+  // TODO: RESET THE VIS HERE!
+  
   $('#file-list').html('');
   $('#file-reset-btn').addClass('disabled');
-  $('#file-continue-btn').addClass('disabled');
+
+  $('#groupsTabNav').addClass('disabled');
+  $('#visTabNav').addClass('disabled');
+
 }
 
-function showLoadPage() {
+function showDataPage() {
+  console.log('show data page');
+  $('#file-status-msg').html('');
+  $('#file-status').alert('close')
+}
 
+function dataLoaded(fileName) {
+  $('#groupsTabNav').removeClass('disabled');
+  
+  $('#file-status').css('display', 'block');
+  $('#file-status').addClass('alert-success');
+  $('#file-status-msg').html('<i class="icon-file"></i> <strong>' + fileName + '</strong> loaded in browser.');
+  $('#file-list').append('<i class="icon-file"></i> ' + fileName);
+  $('#file-reset-btn').removeClass('disabled');
+  
 }
 
 function showGroupsPage(){
@@ -66,8 +85,7 @@ function showGroupsPage(){
     updateEventList();
   }
   updateCurrentGroupTable();
-  $('#file-page').css('display', 'none');
-  $('#groups-page').css('display', 'block');
+  $('#visTabNav').removeClass('disabled');
 }
 
 function showVisPage(){
@@ -76,11 +94,6 @@ function showVisPage(){
   if( ! eventList ) {
     updateEventList();
   }
-  $('#groups-page').css('display', 'none');
-  $('#vis-page').css('display', 'block');
-
-  // **vis is not being displayed**
-  
 }
 
 function updateEventList(){
@@ -329,12 +342,8 @@ var handleFileSelect = function (element) {
         nbeText2 = event.target.result;
       }
       console.log('Loaded file: ' + f.name);
-      $('#file-status').css('display', 'block');
-      $('#file-status').addClass('alert-success');
-      $('#file-status-msg').html('<i class="icon-file"></i> <strong>' + f.name + '</strong> loaded in browser.');
-      $('#file-continue-btn').removeClass('disabled');
-      $('#file-list').append('<i class="icon-file"></i> ' + f.name);
-      $('#file-reset-btn').removeClass('disabled');
+
+      dataLoaded(f.name);
     };
 
     reader.onerror = function() {
@@ -361,11 +370,14 @@ $().ready(function () {
     clearData();
   });  
 
-  // set up buttons for continuing for file load and groups
-  $('#file-continue-btn').click(function(event) {
+  // tab events
+  $('#dataTab1Link').click(function(event) {
+    showDataPage();
+  });
+  $('#groupsTabLink').click(function(event) {
     showGroupsPage();
   });
-  $('#group-continue').click(function(event) {
+  $('#visTabLink').click(function(event) {
     showVisPage();
   });  
 

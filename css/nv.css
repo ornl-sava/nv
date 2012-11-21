@@ -16,7 +16,7 @@ body{
 
 
 /* navigation */
-.nav-tabs > li a{
+.nav-pills > li a{
   padding: 5px 25px;
 }
 
@@ -54,9 +54,6 @@ footer{
 }
 
 /* groups tab */
-#groups-page {
-  display: none;
-}
 
 #groupsTab .header{
   width: 120px;
@@ -83,9 +80,6 @@ footer{
 }
 
 /* Treemap (from the original nv.css) */
-#vis-page {
-  display: none;
-}
 
 #vis {
 
