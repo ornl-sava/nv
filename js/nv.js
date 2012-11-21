@@ -67,7 +67,7 @@ function clearData() {
 
 function dataTabActive() {
   $('#file-status-msg').html('');
-  $('#file-status').alert('close')
+  $('#file-status').alert('close');
 }
 
 function dataLoaded(fileName) {
@@ -363,7 +363,6 @@ var handleFileSelect = function (element) {
   
 };
 
-var vulnIdInfo = {};
 
 // initialization
 $().ready(function () {
@@ -405,20 +404,4 @@ $().ready(function () {
     handleGroupAdd();
   });
   
-
-  //TODO kind of a dumb reason to need a server running...
-  // -- true, maybe we could just put the vulnids in a js file and include in the html?
-  $.get("data/vulnIDs.json", function(data) {
-    console.log("Got the vulnIDs JSON file!");
-    //console.log(data)
-    tempData = data;//JSON.parse(data);
-    tempKeys = Object.keys(tempData);
-    for(var i=0; i<tempKeys.length; i++){
-      //console.log( tempData[tempKeys[i]])
-      vulnIdInfo[tempKeys[i]] = tempData[tempKeys[i]];
-    }
-    //var resp = $(data); // Now you can do whatever you want with it
-    //$("#contentMain", resp).appendTo("#nessusinfo");
-  });
-
 });

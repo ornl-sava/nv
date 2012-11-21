@@ -1,4 +1,5 @@
 var NessusInfo = Backbone.Model.extend({
+    
   initialize: function() {
     this.get('app').on('nessusIDSelected', function(msg){
       this.updateData(msg);
@@ -15,7 +16,13 @@ var NessusInfo = Backbone.Model.extend({
       }
 
     }, this);
-
+    
+    var model = this;
+    // load vulnerability ids
+    $.get("data/vulnIDs.json", function(data) {
+      model.set('vulnIdInfo', data);
+    });
+    
   },
 
   updateData: function(info){
@@ -27,8 +34,7 @@ var NessusInfo = Backbone.Model.extend({
       group:  info.group
     };
 
-    var vulnInfo = vulnIdInfo[info.vulnid];
-
+    var vulnInfo = this.get('vulnIdInfo')[info.vulnid];
     this.set('data', {nodeInfo: nodeInfo, vulnInfo: vulnInfo});
   }
 });
