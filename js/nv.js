@@ -381,7 +381,7 @@ $().ready(function () {
 
   // tab events
   $('#dataTab1Link').click(function(event) {
-    e.preventDefault();
+    event.preventDefault();
     showDataPage();
   });
   $('#file-continue-btn').click(function(event) {
@@ -390,7 +390,7 @@ $().ready(function () {
   });
   
   $('#groupsTabLink').click(function(event) {
-    e.preventDefault();
+    event.preventDefault();
     showGroupsPage();
   });
   $('#groups-continue-btn').click(function(event) {
@@ -399,7 +399,7 @@ $().ready(function () {
   });
   
   $('#visTabLink').click(function(event) {
-    e.preventDefault();
+    event.preventDefault();
     showVisPage();
   });  
 
