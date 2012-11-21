@@ -17,64 +17,74 @@ module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     lint: {
-      files: ['js/nv/*.js',
-              'js/nv/models/*.js',
-              'js/nv/views/*.js',
-              'js/nv.js']
-    },
-    
+      files: [
+        'js/nv/*.js'
+      , 'js/nv/models/*.js'
+      , 'js/nv/views/*.js'
+      ]
+    }
+    ,
     mincss: {
       'css/style.min.css': [
         'css/nv.css'
       ]
-    },
-    
+    }
+    ,
     concat: {
       libs: {
-        src: ['js/lib/d3.v2.js',
-              'js/lib/underscore.js',
-              'js/lib/backbone.js',
-              'js/lib/crossfilter.js'],
-        dest: 'js/lib.min.js'
-      },
-      app: {
-        src: ['js/nv/util.js',
-              'js/nv/models/*.js',
-              'js/nv/views/*.js',
-              'js/nv/router.js',
-              'js/nv.js',
-              'js/parser/src/parser.js'],
-        dest: 'js/app.min.js'
+        src: [
+          'js/lib/d3.v2.js'
+        , 'js/lib/underscore.js'
+        , 'js/lib/backbone.js'
+        , 'js/lib/crossfilter.js'
+        ]
+      , dest: 'js/lib.min.js'
       }
-    },
-
+    , app: {
+        src: [
+          'js/nv/util.js'
+        , 'js/nv/models/*.js'
+        , 'js/nv/views/*.js'
+        , 'js/nv/router.js'
+        , 'js/nv.js'
+        , 'js/parser/src/parser.js'
+        ]
+      , dest: 'js/app.min.js'
+      }
+    }
+    ,
     min: {
       libs: {
-        src: ['js/lib/d3.v2.js',
-              'js/lib/underscore.js',
-              'js/lib/backbone.js',
-              'js/lib/crossfilter.js'],
-        dest: 'js/lib.min.js'
-      },
-      app: {
-        src: ['js/nv/util.js',
-              'js/nv/models/*.js',
-              'js/nv/views/*.js',
-              'js/nv/router.js',
-              'js/nv.js',
-              'js/parser/src/parser.js'],
-        dest: 'js/app.min.js'
+        src: [
+          'js/lib/d3.v2.js'
+        , 'js/lib/underscore.js'
+        , 'js/lib/backbone.js'
+        , 'js/lib/crossfilter.js'
+        ]
+      , dest: 'js/lib.min.js'
       }
-    },
-    
+    , app: {
+        src: [
+          'js/nv/util.js'
+        , 'js/nv/models/*.js'
+        , 'js/nv/views/*.js'
+        , 'js/nv/router.js'
+        , 'js/nv.js'
+        , 'js/parser/src/parser.js'
+        ]
+      , dest: 'js/app.min.js'
+      }
+    }
+    ,
     watch: { 
-      files:[ '<config:lint.files>',
-              'index.html',
-              'css/nv.css'
-            ],
-      tasks:  'development'
-    },
-    
+      files: [ 
+        '<config:concat.app.src>'
+      , 'index.html'
+      , 'css/nv.css'
+      ]
+    , tasks: 'devolopment'
+    }
+    ,
     jshint: {
       options: {
         browser: true,
@@ -95,6 +105,6 @@ module.exports = function (grunt) {
   grunt.registerTask('default', 'lint mincss min');
 
   // development - dont minify js
-  grunt.registerTask('devolopment', 'lint mincss concat');
+  grunt.registerTask('dev', 'lint mincss concat');
 
 };
