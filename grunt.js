@@ -82,7 +82,7 @@ module.exports = function (grunt) {
       , 'index.html'
       , 'css/nv.css'
       ]
-    , tasks: 'devolopment'
+    , tasks: 'dev'
     }
     ,
     jshint: {
