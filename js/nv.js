@@ -48,6 +48,17 @@ function handleGroupAdd(){
   updateCurrentGroupTable(); //why is this needed here?  Somehow affects table re-drawing?
 }
 
+// remove loaded data
+function clearData() {
+  eventList = {};
+  $('#file-list').html('');
+  $('#file-reset-btn').addClass('disabled');
+  $('#file-continue-btn').addClass('disabled');
+}
+
+function showLoadPage() {
+
+}
 
 function showGroupsPage(){
   console.log('show group page');
@@ -132,7 +143,15 @@ function updateCurrentGroupTable(){
 //this will be somewhat slow, O(n^2), no easy way around it.
 //note this will modify nbeItems2 and not modify nbeItems1.  Can change this if needed later.
 function mergeNBEs(nbeItems1, nbeItems2){
-  var result = [];
+
+  var result = []
+    , openItems = 0
+    , changedItems = 0
+    , found
+    , i
+    , j
+    , item;
+
   function compareEntries(a, b){ //true if equal, false if not
     if(a.ip === b.ip && a.vulnid === b.vulnid && a.vulntype === b.vulntype && a.cvss === b.cvss && a.port === b.port){
       return true;
@@ -141,13 +160,6 @@ function mergeNBEs(nbeItems1, nbeItems2){
       return false;
     }
   }
-
-  var openItems = 0
-    , changedItems = 0
-    , found
-    , i
-    , j
-    , item;
 
   //iterate through first list, find matching items in second list. mark them 'open' in result and remove from second list.
   //if no matching item is found, mark it as 'changed' in first.
@@ -259,14 +271,14 @@ function buildTable(groups){
   for( var j=0; j < groupNames.length; j++ ){
     var machines = groups[groupNames[j]];
     for( var i=0; i < machines.length; i++ ){
-      weightSelector = '<select class="weightSelect" id="weightSelect' + machines[i]["ip"].split('.').join('_') + '"';
+      weightSelector = '<select class="weightSelect" id="weightSelect' + machines[i].ip.split('.').join('_') + '"';
       weightSelector += '><option value="1">1 (lowest)</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10 (highest)</option></select>';
       row = '<tr>';
-      row += '<td>'+ groupNames[j] +'</td><td>'+ machines[i]["ip"] +'</td>';
+      row += '<td>'+ groupNames[j] +'</td><td>'+ machines[i].ip +'</td>';
       row += '<td>'+ weightSelector +'</td>';
       row += '</tr>';
       $('#currentGroupTable').select('tbody').append(row);
-      $('#weightSelect' + machines[i]["ip"].split('.').join('_') ).children().eq(machines[i]["weight"]-1).attr("selected","selected");
+      $('#weightSelect' + machines[i].ip.split('.').join('_') ).children().eq(machines[i].weight-1).attr("selected","selected");
       //console.log( $('#weightSelect' + machines[i]["ip"].split('.').join('_') ).select('option').eq(machines[i]["weight"]-1).html() );
     }
   }
@@ -319,20 +331,20 @@ var handleFileSelect = function (element) {
       console.log('Loaded file: ' + f.name);
       $('#file-status').css('display', 'block');
       $('#file-status').addClass('alert-success');
-      $('#file-status').html('<i class="icon-file"></i> <strong>' + f.name + '</strong> loaded in browser.');
-      $('#file-continue').removeClass('disabled');
+      $('#file-status-msg').html('<i class="icon-file"></i> <strong>' + f.name + '</strong> loaded in browser.');
+      $('#file-continue-btn').removeClass('disabled');
+      $('#file-list').append('<i class="icon-file"></i> ' + f.name);
+      $('#file-reset-btn').removeClass('disabled');
     };
 
     reader.onerror = function() {
       $('#file-status').css('display', 'block');
       $('#file-status').addClass('alert-error');
-      $('#file-status').html('could not parse file ' + f.name + ' as text');
+      $('#file-status-msg').html('could not parse file ' + f.name + ' as text');
     };
 
     return false;
   };
-  
-  
   
 };
 
@@ -344,8 +356,13 @@ $().ready(function () {
   // set up file drag and drop
   handleFileSelect('file-drop');
 
+  // reset the data
+  $('#file-reset-btn').click(function(event) {
+    clearData();
+  });  
+
   // set up buttons for continuing for file load and groups
-  $('#file-continue').click(function(event) {
+  $('#file-continue-btn').click(function(event) {
     showGroupsPage();
   });
   $('#group-continue').click(function(event) {

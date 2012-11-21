@@ -49,6 +49,10 @@ footer{
   color: #333;
 }
 
+.file-reset {
+  margin-top: 15px;
+}
+
 /* groups tab */
 #groups-page {
   display: none;

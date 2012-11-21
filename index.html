@@ -33,15 +33,21 @@
       <div id='file-page' class="row-fluid">
         <div class="span8 offset2">
           <div class="tab-instructions">Drag and drop a Nessus data file in the box below. Files must be in <em>.nbe</em> format. If you want to compare two scans, drop a second file after the first. <strong>No data is sent to a server; it is only parsed locally in the browser.</strong> </div>
-          <div id="file-status" class="alert"></div>
+          <div id="file-status" class="alert">
+            <span id="file-status-msg"> </span>
+            <button type="button" class="close" data-dismiss="alert">x</button>
+          </div>
           <div id="file-drop">
-            <div class="file-drop-icon">
-              <i class="icon-download-alt"></i>
-            </div>
+            <i class="icon-download-alt"></i>
+          </div>
+          <div id="file-list">
+          </div>
+          <div class="file-reset">
+            <button id="file-reset-btn" class="btn btn-large btn-warning disabled pull-right" type="button">Reset</button>
           </div>
         </div>
         <div class="span2">
-          <button id="file-continue" class="btn btn-large btn-primary disabled" type="button">Continue</button>
+          <button id="file-continue-btn" class="btn btn-large btn-primary disabled" type="button">Continue</button>
         </div>
       </div>
 
@@ -176,9 +182,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/lib/jquery-1.8.3.min.js"><\/script>')</script>
 
-    <!--
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    -->
 
     <!-- libs -->
     <script src="js/lib.min.js"></script>
