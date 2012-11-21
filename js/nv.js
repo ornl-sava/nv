@@ -65,8 +65,7 @@ function clearData() {
 
 }
 
-function showDataPage() {
-  console.log('show data page');
+function dataTabActive() {
   $('#file-status-msg').html('');
   $('#file-status').alert('close')
 }
@@ -85,8 +84,7 @@ function dataLoaded(fileName) {
 
 }
 
-function showGroupsPage(){
-  console.log('show group page');
+function groupsTabActive(){
   if( ! eventList ) {
     updateEventList();
   }
@@ -97,8 +95,7 @@ function showGroupsPage(){
   
 }
 
-function showVisPage(){
-  console.log('show vis page');
+function visTabActive(){
   //in case groups tab did not set it.
   if( ! eventList ) {
     updateEventList();
@@ -382,25 +379,25 @@ $().ready(function () {
   // tab events
   $('#dataTab1Link').click(function(event) {
     event.preventDefault();
-    showDataPage();
+    dataTabActive();
   });
   $('#file-continue-btn').click(function(event) {
     $('#groupsTabLink').tab('show');
-    showGroupsPage();
+    groupsTabActive();
   });
   
   $('#groupsTabLink').click(function(event) {
     event.preventDefault();
-    showGroupsPage();
+    groupsTabActive();
   });
   $('#groups-continue-btn').click(function(event) {
     $('#visTabLink').tab('show');
-    showVisPage();
+    visTabActive();
   });
   
   $('#visTabLink').click(function(event) {
     event.preventDefault();
-    showVisPage();
+    visTabActive();
   });  
 
   // set up button for adding new group
