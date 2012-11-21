@@ -56,36 +56,61 @@ var Treemap = Backbone.Model.extend({
 
   updateData: function(){
     var filterOptions   = this.get('filterOptions')
-      , attribute       = filterOptions.attribute;
+      , attribute       = filterOptions.attribute
+      , hierarchy       = this.get('hierarchy').get('data');
 
     var rawData = this.get('datasource').getData(filterOptions);
 
+    // check if our filters end up excluding everything
     if(rawData.length < 1){
       console.log('current filter yields no data, try another');
       return;
     }
 
-    var root;
-    if(isChangeVis){
-      root=d3.nest()
-      .key(function(d) {return 'groups';})
-      .key(function(d) {return d.group;})
-      .key(function(d) {return d.ip;})
-      .key(function(d) {return d.state;})
-      .key(function(d) {return ":"+d.port;})
-      .key(function(d) {return "id:"+d.vulnid;})
-      .sortKeys(d3.ascending)
-      .entries(rawData); 
-    } else {
-      root=d3.nest()
-      .key(function(d) {return 'groups';})
-      .key(function(d) {return d.group;})
-      .key(function(d) {return d.ip;})
-      .key(function(d) {return ":"+d.port;})
-      .key(function(d) {return "id:"+d.vulnid;})
-      .sortKeys(d3.ascending)
-      .entries(rawData); 
+    // TODO get hierarchy here
+
+    var root = applyhierarchy(hierarchy);
+
+    function applyhierarchy(hierarchy){
+      var nest = d3.nest();
+
+      // loop hierarchy and apply based on conditions
+      _.each(hierarchy, function(h){
+        nest.key(function(d){
+          if(h.useData){
+            if(h.prefix)
+              return h.prefix+d[h.target];
+            else
+              return d[h.target];
+          } else {
+            return h.target;
+          }
+        });
+      });
+
+      nest.sortKeys(d3.ascending);
+      return nest.entries(rawData);
     }
+
+//      .key(function(d) {return 'groups';})
+//      .key(function(d) {return d.group;})
+//      .key(function(d) {return d.ip;})
+//      .key(function(d) {return d.state;})
+//      .key(function(d) {return ":"+d.port;})
+//      .key(function(d) {return "id:"+d.vulnid;})
+//      .sortkeys(d3.ascending)
+//      .entries(rawdata); 
+//    }
+//        } else {
+//      root=d3.nest()
+//      .key(function(d) {return 'groups';})
+//      .key(function(d) {return d.group;})
+//      .key(function(d) {return d.ip;})
+//      .key(function(d) {return ":"+d.port;})
+//      .key(function(d) {return "id:"+d.vulnid;})
+//      .sortkeys(d3.ascending)
+//      .entries(rawdata); 
+//    }
 
     // free the root from its original array
     root = root[0];
@@ -96,10 +121,10 @@ var Treemap = Backbone.Model.extend({
     this.set('data', root);  
   }, 
 
-  // Aggregate the values for internal nodes. This is normally done by the
+  // aggregate the values for internal nodes. This is normally done by the
   // treemap layout, but not here because of our custom implementation.
   // 
-  // TODO: can we generalize the accumulate functions for multiple attributes?
+  // todo: can we generalize the accumulate functions for multiple attributes?
   accumulate: function(d) {
     var app = this;
 

@@ -114,11 +114,21 @@ var NV = new (Backbone.Router.extend({
                                      title: 'top holes'
                                 });
 
+    // treemap hierarchy
+    this.hierarchy    =   new Hierarchy({  
+                              app: this,
+                              datasource: this.nessus
+                          });
+
+
+    
+    // TODO treemap hierarchy view
 
     // treemap
     this.treemap    =   new Treemap({  
                                   app: this,
                                   datasource: this.nessus, 
+                                  hierarchy: this.hierarchy, 
                                   filterOptions: {
                                     attribute: 'vulnid'
                                   }
