@@ -167,6 +167,10 @@ rect.parent {
   shape-rendering: crispEdges;
 }
 
+#filters .bar:hover {
+  fill: orange;
+}
+
 #filters .histogramlabel {
   font-size: 10px;
   fill: #777;
