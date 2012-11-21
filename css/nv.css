@@ -36,12 +36,17 @@ footer{
 #file-drop {
   border: 10px dotted #ccc; 
   border-radius: 10px;
-  width: 150px; 
-  height: 150px; 
+  width: 200px;
+  height: 200px; 
   margin: 20px auto;
+  line-height: 200px;
+  text-align: center;
+  color: #ccc;
+  font-size: 160px;
 }
 #file-drop.hover {
   border-color: #333; 
+  color: #333;
 }
 
 /* groups tab */
