@@ -49,7 +49,7 @@ footer{
   color: #333;
 }
 
-.file-reset {
+.file-button-pane {
   margin-top: 15px;
 }
 
@@ -77,6 +77,10 @@ footer{
 
 #groupsTab td{
   border: 1px solid #ccc;
+}
+
+.groups-button-pane {
+  margin-top: 15px;
 }
 
 /* Treemap (from the original nv.css) */

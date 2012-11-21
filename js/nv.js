@@ -56,6 +56,9 @@ function clearData() {
   
   $('#file-list').html('');
   $('#file-reset-btn').addClass('disabled');
+  $('#file-continue-btn').addClass('disabled');
+
+  $('#groups-continue-btn').addClass('disabled');
 
   $('#groupsTabNav').addClass('disabled');
   $('#visTabNav').addClass('disabled');
@@ -74,9 +77,12 @@ function dataLoaded(fileName) {
   $('#file-status').css('display', 'block');
   $('#file-status').addClass('alert-success');
   $('#file-status-msg').html('<i class="icon-file"></i> <strong>' + fileName + '</strong> loaded in browser.');
-  $('#file-list').append('<i class="icon-file"></i> ' + fileName);
-  $('#file-reset-btn').removeClass('disabled');
   
+  $('#file-list').append('<i class="icon-file"></i> ' + fileName);
+
+  $('#file-reset-btn').removeClass('disabled');  
+  $('#file-continue-btn').removeClass('disabled');
+
 }
 
 function showGroupsPage(){
@@ -85,7 +91,10 @@ function showGroupsPage(){
     updateEventList();
   }
   updateCurrentGroupTable();
+  
   $('#visTabNav').removeClass('disabled');
+  $('#groups-continue-btn').removeClass('disabled');
+  
 }
 
 function showVisPage(){
@@ -372,12 +381,25 @@ $().ready(function () {
 
   // tab events
   $('#dataTab1Link').click(function(event) {
+    e.preventDefault();
     showDataPage();
   });
-  $('#groupsTabLink').click(function(event) {
+  $('#file-continue-btn').click(function(event) {
+    $('#groupsTabLink').tab('show');
     showGroupsPage();
   });
+  
+  $('#groupsTabLink').click(function(event) {
+    e.preventDefault();
+    showGroupsPage();
+  });
+  $('#groups-continue-btn').click(function(event) {
+    $('#visTabLink').tab('show');
+    showVisPage();
+  });
+  
   $('#visTabLink').click(function(event) {
+    e.preventDefault();
     showVisPage();
   });  
 
