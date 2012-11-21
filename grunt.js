@@ -17,11 +17,10 @@ module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     lint: {
-      files: ['js/nv/util.js',
-              'js/nv/main.js',
+      files: ['js/nv/*.js',
               'js/nv/models/*.js',
               'js/nv/views/*.js',
-              'js/nv/router.js']
+              'js/nv.js']
     },
     
     mincss: {
@@ -66,6 +65,14 @@ module.exports = function (grunt) {
               'js/parser/src/parser.js'],
         dest: 'js/app.min.js'
       }
+    },
+    
+    watch: { 
+      files:[ '<config:lint.files>',
+              'index.html',
+              'css/nv.css'
+            ],
+      tasks:  'development'
     },
     
     jshint: {
