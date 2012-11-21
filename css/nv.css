@@ -108,6 +108,7 @@ footer{
 
 text {
   pointer-events: none;
+  text-rendering: optimizeLegibility;
 }
 
 .grandparent text {
