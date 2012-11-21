@@ -9,8 +9,10 @@ module.exports = function (grunt) {
   Tasks:
   * lint - uses [jshint](https://github.com/jshint/jshint/)
   * min - uses [uglify-js](https://github.com/mishoo/UglifyJS)
+  * [mincss](https://github.com/gruntjs/grunt-contrib-mincss)
   */
 
+  grunt.loadNpmTasks('grunt-contrib-mincss');
 
   // Project configuration.
   grunt.initConfig({
@@ -21,13 +23,20 @@ module.exports = function (grunt) {
               'js/nv/views/*.js',
               'js/nv/router.js']
     },
+    
+    mincss: {
+      'css/style.min.css': [
+        'css/nv.css'
+      ]
+    },
+    
     concat: {
       libs: {
         src: ['js/lib/d3.v2.js',
               'js/lib/underscore.js',
               'js/lib/backbone.js',
               'js/lib/crossfilter.js'],
-        dest: 'js/lib.js'
+        dest: 'js/lib.min.js'
       },
       app: {
         src: ['js/nv/util.js',
@@ -35,10 +44,30 @@ module.exports = function (grunt) {
               'js/nv/views/*.js',
               'js/nv/router.js',
               'js/nv.js',
-              'parser/src/parser.js'],
-        dest: 'js/app.js'
+              'js/parser/src/parser.js'],
+        dest: 'js/app.min.js'
       }
     },
+
+    min: {
+      libs: {
+        src: ['js/lib/d3.v2.js',
+              'js/lib/underscore.js',
+              'js/lib/backbone.js',
+              'js/lib/crossfilter.js'],
+        dest: 'js/lib.min.js'
+      },
+      app: {
+        src: ['js/nv/util.js',
+              'js/nv/models/*.js',
+              'js/nv/views/*.js',
+              'js/nv/router.js',
+              'js/nv.js',
+              'js/parser/src/parser.js'],
+        dest: 'js/app.min.js'
+      }
+    },
+    
     jshint: {
       options: {
         browser: true,
@@ -55,7 +84,10 @@ module.exports = function (grunt) {
     }
   });
 
-  // Default task will be invoked when grunt is called without any argument
-  // run everything except copy
-  grunt.registerTask('default', 'lint concat');
+  // production, run when grunt is run with no arguments
+  grunt.registerTask('default', 'lint mincss min');
+
+  // development - dont minify js
+  grunt.registerTask('devolopment', 'lint mincss concat');
+
 };

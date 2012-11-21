@@ -45,6 +45,10 @@ footer{
 }
 
 /* groups tab */
+#groups-page {
+  display: none;
+}
+
 #groupsTab .header{
   width: 120px;
 }
@@ -70,6 +74,9 @@ footer{
 }
 
 /* Treemap (from the original nv.css) */
+#vis-page {
+  display: none;
+}
 
 #vis {
 
