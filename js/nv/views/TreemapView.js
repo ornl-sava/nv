@@ -3,6 +3,7 @@ var TreemapView = Backbone.View.extend({
   initialize: function() {
     // listen for model changes
     this.model.on('change:data', this.render, this);
+    this.options.app.on('hierarchyChange', this.render, this);
 
     // globals
     this.margin = {top: 20, right: 20, bottom: 0, left: 0};

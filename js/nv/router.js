@@ -120,6 +120,12 @@ var NV = new (Backbone.Router.extend({
                               datasource: this.nessus
                           });
 
+    this.hierarchyView    =   new HierarchyView({
+                                     app: this,
+                                     model: this.hierarchy,
+                                     target:'#hierarchy'
+                                });
+
 
     
     // TODO treemap hierarchy view

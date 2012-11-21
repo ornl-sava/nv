@@ -20,6 +20,9 @@ var Hierarchy = Backbone.Model.extend({
 
 
     // TODO respond to events swapping portions of the hieararchy
+    this.get('app').on('hierarchyChange', function(h){
+      this.set('data', h);
+    }, this);
   },
 
   swap: function(i, j){
