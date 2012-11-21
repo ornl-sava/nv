@@ -33,8 +33,7 @@ var TreemapView = Backbone.View.extend({
         .style('margin-left', -this.margin.left + 'px')
         .style('margin-right', -this.margin.right + 'px')
       .append('g')
-        .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
-        .style('shape-rendering', 'crispEdges');
+        .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
     
     this.grandparent = this.svg.append('g')
         .attr('class', 'grandparent');
