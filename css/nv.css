@@ -89,6 +89,19 @@ footer{
   shape-rendering: crispEdges;
 }
 
+#hierarchy ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0px; 
+}
+
+#hierarchy li {
+  margin: 2px;
+  padding: 1px 10px;
+  float: left;
+  cursor: pointer;
+}
+
 #options,
 #edit,
 #nessusinfo {

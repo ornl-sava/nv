@@ -16,6 +16,8 @@ var HierarchyView = Backbone.View.extend({
     // make the list sortable
     $('#hierarchy ul').sortable({
 
+      cursor: "move",
+
       // on drop (stop), emit the new hierarchy
       stop: function(event, ui) {
         var h = [];
