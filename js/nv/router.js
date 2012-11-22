@@ -46,119 +46,119 @@ var NV = new (Backbone.Router.extend({
           .domain(['hole', 'port', 'note'])
           .range([1,2,3]);
 
-      this.vulnTypeHistogram  =   new Histogram({  
-                                  app: this,
-                                  datasource: this.nessus, 
-                                  bins: 3, 
-                                  datamap: vulnTypeMap,
-                                  filterOptions: {
-                                    attribute: 'vulntype'
-                                  }
-                              });
+      this.vulnTypeHistogram        =   new Histogram({  
+                                        app: this,
+                                        datasource: this.nessus, 
+                                        bins: 3, 
+                                        datamap: vulnTypeMap,
+                                        filterOptions: {
+                                          attribute: 'vulntype'
+                                        }
+                                    });
 
       this.vulnTypeHistogramView    =   new HistogramView({
-                                 app: this,
-                                 model: this.vulnTypeHistogram,
-                                 target:'#vulnTypeHistogram',
-                                 barwidth: 20,
-                                 w: 100,
-                                 h: 165,
-                                 title: 'vuln type'
-                              });
+                                        app: this,
+                                        model: this.vulnTypeHistogram,
+                                        target:'#vulnTypeHistogram',
+                                        barwidth: 20,
+                                        w: 100,
+                                        h: 165,
+                                        title: 'vuln type'
+                                    });
 
     // top notes histogram
 
-    this.topNoteHistogram    =   new Histogram({  
-                                  app: this,
-                                  datasource: this.nessus, 
-                                  limit: 5,
-                                  filterOptions: {
-                                    attribute: 'vulnid',
-                                    filters: [
-                                      { attribute:'vulntype', exact:'note' }
-                                    ]
-                                  }
-                               });
+    this.topNoteHistogram        =   new Histogram({  
+                                     app: this,
+                                     datasource: this.nessus, 
+                                     limit: 5,
+                                     filterOptions: {
+                                       attribute: 'vulnid',
+                                       filters: [
+                                         { attribute:'vulntype', exact:'note' }
+                                       ]
+                                     }
+                                 });
 
-    this.topNoteHistogramView    =   new HistogramView({
-                                  app: this,
-                                  model: this.topNoteHistogram,
-                                  target:'#topNoteHistogram',
-                                  barwidth: 30,
-                                  w: 180,
-                                  h: 165,
-                                  title: 'top notes'
-                               });
+    this.topNoteHistogramView    =  new HistogramView({
+                                    app: this,
+                                    model: this.topNoteHistogram,
+                                    target:'#topNoteHistogram',
+                                    barwidth: 30,
+                                    w: 180,
+                                    h: 165,
+                                    title: 'top notes'
+                                });
  
     // top holes histogram
 
-    this.topHoleHistogram    =   new Histogram({  
-                                  app: this,
-                                  datasource: this.nessus, 
-                                  limit: 5,
-                                  filterOptions: {
-                                    attribute: 'vulnid',
-                                    filters: [
-                                      { attribute:'vulntype', exact:'hole' }
-                                    ]
-                                  }
-                              });
+    this.topHoleHistogram       =   new Histogram({  
+                                    app: this,
+                                    datasource: this.nessus, 
+                                    limit: 5,
+                                    filterOptions: {
+                                      attribute: 'vulnid',
+                                      filters: [
+                                        { attribute:'vulntype', exact:'hole' }
+                                      ]
+                                    }
+                                });
 
-    this.topHoleHistogramView    =   new HistogramView({
-                                     app: this,
-                                     barwidth: 30,
-                                     model: this.topHoleHistogram,
-                                     target:'#topHoleHistogram',
-                                     w: 180,
-                                     h: 165,
-                                     title: 'top holes'
+    this.topHoleHistogramView   =   new HistogramView({
+                                    app: this,
+                                    barwidth: 30,
+                                    model: this.topHoleHistogram,
+                                    target:'#topHoleHistogram',
+                                    w: 180,
+                                    h: 165,
+                                    title: 'top holes'
                                 });
 
     // treemap hierarchy
-    this.hierarchy    =   new Hierarchy({  
-                              app: this,
-                              datasource: this.nessus
-                          });
+    this.hierarchy      =   new Hierarchy({  
+                            app: this,
+                            datasource: this.nessus
+                        });
 
-    this.hierarchyView    =   new HierarchyView({
-                                     app: this,
-                                     model: this.hierarchy,
-                                     target:'#hierarchy'
-                                });
+    this.hierarchyView  =   new HierarchyView({
+                            app: this,
+                            model: this.hierarchy,
+                            target:'#hierarchy'
+                        });
 
 
     
     // TODO treemap hierarchy view
 
     // treemap
-    this.treemap    =   new Treemap({  
-                                  app: this,
-                                  datasource: this.nessus, 
-                                  hierarchy: this.hierarchy, 
-                                  filterOptions: {
-                                    attribute: 'vulnid'
-                                  }
-                              });
+    this.treemap        =   new Treemap({  
+                            app: this,
+                            datasource: this.nessus, 
+                            hierarchy: this.hierarchy, 
+                            filterOptions: {
+                              attribute: 'vulnid'
+                            }
+                        });
 
     this.treemapView    =   new TreemapView({
-                                     app: this,
-                                     model: this.treemap,
-                                     target:'#vis'
-                                });
+                            app: this,
+                            model: this.treemap,
+                            target:'#vis'
+                        });
 
 
 
     // info view
-    this.nessusInfo    =   new NessusInfo({  
-                                  app: this,
-                                  datasource: this.nessus
-                              });
+    this.nessusInfo       =   new NessusInfo({  
+                              app: this,
+                              datasource: this.nessus
+                          });
 
-    this.nessusInfoView    =   new NessusInfoView({
-                                     app: this,
-                                     model: this.nessusInfo,
-                                     target:'#nessusinfo'
-                                });
+    this.nessusInfoView   =   new NessusInfoView({
+                              app: this,
+                              model: this.nessusInfo,
+                              target:'#nessusinfo'
+                          });
 
   },
 

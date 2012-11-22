@@ -1,29 +1,34 @@
 var HierarchyView = Backbone.View.extend({
 
   initialize: function() {
-    var vis   = d3.select(this.options.target).append('ul')
-      , data  = this.model.get('data')
-      , that   = this;
+    var list       = d3.select(this.options.target).append('ul')
+      , hierarchy  = this.model.get('data')
+      , self       = this;
 
   
-    vis.selectAll('li')
-      .data(data, function(d) { return d.target; })
+    // build the list based on the initial hierarchy
+    list.selectAll('li')
+      .data(hierarchy, function(d) { return d.target; })
       .enter().append('li')
       .classed('hierarchyNode', true)
       .text(function(d) { return d.target; });
 
+    // make the list sortable
     $('#hierarchy ul').sortable({
+
+      // on drop (stop), emit the new hierarchy
       stop: function(event, ui) {
-        // loop through the list and make a new hierarchy
         var h = [];
+
+        // get each data item in the list (in order)
         $("#hierarchy li").each(function(i, el){
           h.push( d3.select(el).datum() );
         });
-        // emit an event with the new hierarchy
-        that.options.app.trigger('hierarchyChange', h);
+
+        self.options.app.trigger('hierarchyChange', h);
       }
-    }
-    );
+
+    });
   }
 
 });

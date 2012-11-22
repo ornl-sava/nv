@@ -11,7 +11,6 @@
 */
 
 // handle window resizes
-// TODO Lane make this an event that views can respond to
 $(window).resize(function() {
   NV.treemapView.resize();
 });

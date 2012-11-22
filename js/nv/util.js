@@ -7,8 +7,6 @@ d3.selection.prototype.moveToFront = function() {
 }; 
 
 // taken from https://groups.google.com/forum/?fromgroups=#!topic/d3-js/pTVgFuEgCfY
-//I usually prototype directly on string in m jquery version
-//String.prototype.width = function(svg, string, font, aclass) {
 d3.stringWidth = function(svg, string, font, aclass) {
     var f = font || '12px arial';
 
