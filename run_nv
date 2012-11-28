@@ -40,19 +40,19 @@ launch.local(function(err, local) {
   if (safari) {
       console.log('launching safari')
       local.safari('http://localhost:8000/', function(err, instance) {
-        if (err) console.error('unable to launch safari')
+        if (err) console.error('unable to launch safari: ' + err)
       })
     }
   else if (chrome) {
     console.log('launching chrome')
     local.chrome('http://localhost:8000/', function(err, instance) {
-      if (err) console.error('unable to launch chrome')
+      if (err) console.error('unable to launch chrome: ' + err)
     })
   }
   else if (firefox) {
     console.log('launching firefox')
     local.firefox('http://localhost:8000/', function(err, instance) {
-      if (err) console.error('unable to launch firefox')
+      if (err) console.error('unable to launch firefox: ' + err)
     })
   }
   else {
