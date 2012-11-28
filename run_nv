@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+
+var launch = require('launchpad')
+  , webserver = require('node-static')
+
+// Create a node-static server instance to serve the './public' folder
+
+var file = new(webserver.Server)('./')
+require('http').createServer(function (request, response) {
+  request.addListener('end', function () {
+    file.serve(request, response)
+  })
+}).listen(8000)
+
+
+// Launch a local browser
+launch.local(function(err, local) {
+  var browsers = local.browsers
+    , chrome = false
+    , safari = false
+    , firefox = false
+  for (var i = 0 ; i < browsers.length; i++) {
+    if (browsers[i].browser === 'chrome') chrome = true
+    if (browsers[i].browser === 'safari') safari = true
+    if (browsers[i].browser === 'firefox') firefox = true
+  }
+  if (safari) {
+      console.log('launching safari')
+      local.safari('http://localhost:8000/', function(err, instance) {
+        if (err) console.error('unable to launch safari')
+      })
+    }
+  else if (chrome) {
+    console.log('launching chrome')
+    local.chrome('http://localhost:8000/', function(err, instance) {
+      if (err) console.error('unable to launch chrome')
+    })
+  }
+  else if (firefox) {
+    console.log('launching firefox')
+    local.firefox('http://localhost:8000/', function(err, instance) {
+      if (err) console.error('unable to launch firefox')
+    })
+  }
+  else {
+    console.warn('no appropriate browsers found; get chrome: http://chrome.com')
+  }
+})
