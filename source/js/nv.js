@@ -42,8 +42,8 @@ function handleGroupAdd(){
   var weight = $("#defaultWeight").val();
   var newGroup = {"start":start, "end":end, "groupName":groupName, "weight":weight};
   groupList.push(newGroup);
-  console.log("added group: " + JSON.stringify(newGroup));
-  console.log("group list now contains: " + JSON.stringify(groupList));
+//  console.log("added group: " + JSON.stringify(newGroup));
+//  console.log("group list now contains: " + JSON.stringify(groupList));
   updateCurrentGroupTable(); //why is this needed here?  Somehow affects table re-drawing?
 }
 
@@ -53,6 +53,7 @@ function clearData() {
   groupList = [];
   
   // TODO: RESET THE VIS HERE!
+  // TODO: Ensure the groups page updates on new file
   
   $('#file-list').html('');
   $('#file-reset-btn').addClass('disabled');
@@ -100,6 +101,8 @@ function visTabActive(){
   if( ! eventList ) {
     updateEventList();
   }
+ 
+  NV.treemapView.render();
 }
 
 function updateEventList(){
@@ -139,7 +142,7 @@ function updateCurrentGroupTable(){
       }
     }
     var entry = {"ip": ips[i], "weight": weight};
-    console.log("found that ip " + ips[i] + " is in group " + groupName);
+//    console.log("found that ip " + ips[i] + " is in group " + groupName);
     if( !groups[groupName] ){
       groups[groupName] = [];
     }
@@ -253,8 +256,8 @@ function findGroupName(ip){
     if( end.length !== 4){
       throw "end address of " + groupList[i].end + " is invalid";
     }
-    console.log(groupList[i].groupName + ": isAfter(" + groupList[i].start + ", " + ip + ") returned " + isAfter(start, testAddr) );
-    console.log(groupList[i].groupName + ": isBefore(" + groupList[i].end  + ", " + ip + ") returned " + isBefore(end, testAddr) );
+    //console.log(groupList[i].groupName + ": isAfter(" + groupList[i].start + ", " + ip + ") returned " + isAfter(start, testAddr) );
+    //console.log(groupList[i].groupName + ": isBefore(" + groupList[i].end  + ", " + ip + ") returned " + isBefore(end, testAddr) );
     if( isAfter(start, testAddr) && isBefore(end, testAddr) ){
       return groupList[i].groupName;
     }
@@ -375,11 +378,13 @@ $().ready(function () {
     clearData();
   });  
 
-  // tab events
+  // data tab events
   $('#dataTab1Link').click(function(event) {
     event.preventDefault();
     dataTabActive();
   });
+
+  // group tab events
   $('#file-continue-btn').click(function(event) {
     $('#groupsTabLink').tab('show');
     groupsTabActive();
@@ -389,19 +394,28 @@ $().ready(function () {
     event.preventDefault();
     groupsTabActive();
   });
-  $('#groups-continue-btn').click(function(event) {
-    $('#visTabLink').tab('show');
-    visTabActive();
-  });
-  
-  $('#visTabLink').click(function(event) {
-    event.preventDefault();
-    visTabActive();
-  });  
 
   // set up button for adding new group
   $('#addGroupBtn').click(function(event) {
     handleGroupAdd();
   });
+ 
+  // vis tab events
+  $('#visTabLink').on('show', function(){
+    // TODO the timeout can be removed when we can trigger visTabActive _after_ the tab loads (see $('#visTabLink')... below)
+    setTimeout(function() {
+      visTabActive();
+    }, 100); 
+  });
+
+  $('#groups-continue-btn').click(function(event) {
+    $('#visTabLink').tab('show');
+  });
   
+  // auto-triggers the 'show' event
+  $('#visTabLink').click(function(event) {
+    event.preventDefault();
+  });  
+
+ 
 });

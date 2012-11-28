@@ -133,7 +133,7 @@ var TreemapView = Backbone.View.extend({
             transition(d);
         })
         .on('mouseover', function(d) {
-          // TODO instead, emit an event with the info, and respond to it if it's a vulnid
+          // TODO remove atTheBottom, instead emit an event with the info, and respond to it if it's a vulnid
           
           // note: d is the treemap node, d.values contains the actual events
           if(atTheBottom(d)){
@@ -146,6 +146,9 @@ var TreemapView = Backbone.View.extend({
             d3.select(this).select('text')
             .style('font-weight', 'bold'); 
           }
+
+          // move this element to front (ensures highlight is visible)
+          d3.select(this).moveToFront();
             
           d3.select(this).select('.parent')
             .style('stroke', 'black')
