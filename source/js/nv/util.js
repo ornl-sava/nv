@@ -22,3 +22,20 @@ d3.stringWidth = function(svg, string, font, aclass) {
 
     return width;
 };
+
+// color for treemap nodes
+var nodeColor = d3.scale.linear()
+  .domain([0.0, 2.0, 10.0])
+  .range([d3.hsl("#F1EEF6"), d3.hsl("#BDC9E1"), d3.hsl("#2B8CBE")]); 
+
+var nodeColorFixed = d3.scale.linear()
+  .domain([0.0, 10.0])
+  .range([d3.hsl("#AAAAAA"), d3.hsl("#405E50")]); 
+
+var nodeColorNew = d3.scale.linear()
+  .domain([0.0, 10.0])
+  .range([d3.hsl("#AAAAAA"), d3.hsl("#AD009F")]); 
+
+var nodeColorOpen = d3.scale.linear()
+  .domain([0.0, 10.0])
+  .range([d3.hsl("#AAAAAA"), d3.hsl("#FFCF40")]); 

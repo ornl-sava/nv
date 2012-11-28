@@ -20,13 +20,8 @@ $(window).resize(function() {
    Document Ready
 */
 $(function(){
-
   // start the router history
   NV.start({pushState: true});
-
-  // button actions
-  // $('#homeButton').click(reset);
-
 });
 
 
