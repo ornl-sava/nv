@@ -41,6 +41,8 @@
             </ul>
 
             <div class="tab-content">
+
+              <!-- DATA TAB -->
               <div class="tab-pane active" id="dataTab1">
                 <div class="span10 offset1">
                   <div class="tab-instructions">Drag and drop a Nessus data file in the box below. Files must be in <em>.nbe</em> format. If you want to compare two scans, drop a second file after the first. <strong>No data is sent to a server; it is only parsed locally in the browser.</strong> </div>
@@ -60,72 +62,63 @@
                 </div>
               </div> <!-- close tab-pane -->
 
+              <!-- GROUPS TAB -->
               <div class="tab-pane" id="groupsTab">
-                <div class="tab-instructions">Group IPs into groupings based on IP ranges. Optionally, provide criticality scores for any of the groups.</div>
-                <div class="row-fluid">
-                  <div class="span5 offset1">
-                    <h3>Add Group</h3>
-                    <form id="addGroup" class="well form-horizontal">
-                      <fieldset>
-                        <div class="control-group">
-                          <label class="control-label" for="groupName">Set group label</label>
-                          <div class="controls">
-                            <input type="text" id="groupName" placeholder="group name">
-                          </div>
-                        </div>
+                <div class="span10 offset1">
+                  <div class="tab-instructions">Group IPs into groupings based on IP ranges. Optionally, provide criticality scores for any of the groups.</div>
+                  <div class="row-fluid">
+                    <div class="span4">
+                      <form id="addGroup" class="well">
+                        <fieldset>
+                          <legend>Add Group</legend>
+                          <label for="groupName">Set group label</label>
+                          <input type="text" id="groupName" placeholder="group name">
 
-                        <div class="control-group">
-                          <label class="control-label" for="groupName">Set group IP range</label>
-                          <div class="controls">
-                            <input type="text" id="ipStart" placeholder="start address">
-                            <input type="text" id="ipEnd" placeholder="end address">
-                          </div>
-                        </div>
+                          <label for="groupName">Set group IP range</label>
+                          <input type="text" id="ipStart" placeholder="start address">
+                          <input type="text" id="ipEnd" placeholder="end address">
 
-                        <div class="control-group">
                           <label class="control-label" for="groupName">Set default criticality of members</label>
-                          <div class="controls">
-                            <select id="defaultWeight" class="weightSelect">
-                              <option value="1">1 (lowest)</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10 (highest)</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div class="form-actions">
-                          <input id="addGroupBtn" class="btn btn-large btn-primary" type="button" value="Add Group">
-                        </div>
-                      </fieldset>
-                    </form>
-                  </div>
-                  <div class="span4 offset1">
-                    <h3>Current Group Settings</h3>
-                    <table id="currentGroupTable">
-                      <thead>
-                        <tr>
-                          <th class="header">Group Name</th>
-                          <th class="header">Machine</th>
-                          <th class="header">Criticality</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      </tbody>
-                    </table>
-                    <div class="groups-button-pane">
-                      <button id="groups-continue-btn" class="btn btn-large btn-primary disabled pull-right" type="button">Continue</button>
+                          <select id="defaultWeight" class="weightSelect">
+                            <option value="1">1 (lowest)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10 (highest)</option>
+                          </select>
+                          <br />
+                          <br />
+                          <input id="addGroupBtn" class="btn btn-large btn-primary pull-right" type="button" value="Add Group" />
+                        </fieldset>
+                      </form>
+                    </div>
+                    <div class="span5 offset1">
+                      <h3>Current Group Settings</h3>
+                      <table id="currentGroupTable">
+                        <thead>
+                          <tr>
+                            <th class="header">Group Name</th>
+                            <th class="header">Machine</th>
+                            <th class="header">Criticality</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                      <div class="groups-button-pane">
+                        <button id="groups-continue-btn" class="btn btn-large btn-primary disabled pull-right" type="button">Continue</button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div> <!-- close tab-pane -->
               
+              <!-- VIS TAB -->
               <div class="tab-pane" id="visTab">
                 <div class="row-fluid">
                   <div class="span10">

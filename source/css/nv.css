@@ -76,6 +76,7 @@ footer{
 }
 
 #groupsTab td{
+  padding: 1px 12px;
   border: 1px solid #ccc;
 }
 
