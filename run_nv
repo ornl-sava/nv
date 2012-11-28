@@ -2,12 +2,13 @@
 
 var launch = require('launchpad')
   , webserver = require('node-static')
+  , directory = './public'
   , port = 8000
   , url = 'http://localhost:' + port + '/'
 
 // Create a node-static server instance to serve the './public' folder
 console.log('starting web server')
-var file = new(webserver.Server)('./')
+var file = new(webserver.Server)(directory)
 require('http').createServer(function (request, response) {
   request.addListener('end', function () {
     file.serve(request, response)

@@ -18,71 +18,84 @@ module.exports = function (grunt) {
   grunt.initConfig({
     lint: {
       files: [
-        'js/nv/*.js'
-      , 'js/nv/models/*.js'
-      , 'js/nv/views/*.js'
+        'source/js/nv/*.js'
+      , 'source/js/nv/models/*.js'
+      , 'source/js/nv/views/*.js'
       ]
     }
     ,
     mincss: {
-      'css/style.min.css': [
-        'css/nv.css'
+      'public/css/style.min.css': [
+        'source/css/nv.css'
       ]
     }
     ,
     concat: {
       libs: {
         src: [
-          'js/lib/d3.v2.js'
-        , 'js/lib/underscore.js'
-        , 'js/lib/backbone.js'
-        , 'js/lib/crossfilter.js'
-        , 'js/lib/jquery-ui-1.9.1.custom.js'
+          'source/js/lib/d3.v2.js'
+        , 'source/js/lib/underscore.js'
+        , 'source/js/lib/backbone.js'
+        , 'source/js/lib/crossfilter.js'
+        , 'source/js/lib/jquery-ui-1.9.1.custom.js'
         ]
-      , dest: 'js/lib.min.js'
+      , dest: 'public/js/lib.min.js'
       }
     , app: {
         src: [
-          'js/nv/util.js'
-        , 'js/nv/models/*.js'
-        , 'js/nv/views/*.js'
-        , 'js/nv/router.js'
-        , 'js/nv.js'
-        , 'js/parser/src/parser.js'
+          'source/js/nv/main.js'
+        , 'source/js/nv/util.js'
+        , 'source/js/nv/models/*.js'
+        , 'source/js/nv/views/*.js'
+        , 'source/js/nv/router.js'
+        , 'source/js/nv.js'
+        , 'source/js/parser/src/parser.js'
         ]
-      , dest: 'js/app.min.js'
+      , dest: 'public/js/app.min.js'
       }
     }
     ,
     min: {
       libs: {
         src: [
-          'js/lib/d3.v2.js'
-        , 'js/lib/underscore.js'
-        , 'js/lib/backbone.js'
-        , 'js/lib/crossfilter.js'
-        , 'js/lib/jquery-ui-1.9.1.custom.js'
+          'source/js/lib/d3.v2.js'
+        , 'source/js/lib/underscore.js'
+        , 'source/js/lib/backbone.js'
+        , 'source/js/lib/crossfilter.js'
+        , 'source/js/lib/jquery-ui-1.9.1.custom.js'
         ]
-      , dest: 'js/lib.min.js'
+      , dest: 'public/js/lib.min.js'
       }
     , app: {
         src: [
-          'js/nv/util.js'
-        , 'js/nv/models/*.js'
-        , 'js/nv/views/*.js'
-        , 'js/nv/router.js'
-        , 'js/nv.js'
-        , 'js/parser/src/parser.js'
+          'source/js/nv/main.js'
+        , 'source/js/nv/util.js'
+        , 'source/js/nv/models/*.js'
+        , 'source/js/nv/views/*.js'
+        , 'source/js/nv/router.js'
+        , 'source/js/nv.js'
+        , 'source/js/parser/src/parser.js'
         ]
-      , dest: 'js/app.min.js'
+      , dest: 'public/js/app.min.js'
+      }
+    }
+    ,
+    copy: {
+      html: {
+        src: [ 'source/index.html']
+      , dest: 'public/'
+      }
+    , jquery: {
+        src: [ 'source/assets/js/jquery-1.8.3.min.js' ]
+      , dest: 'public/js/'
       }
     }
     ,
     watch: { 
       files: [ 
         '<config:concat.app.src>'
-      , 'index.html'
-      , 'css/nv.css'
+      , 'source/index.html'
+      , 'source/css/nv.css'
       ]
     , tasks: 'dev'
     }
@@ -104,9 +117,22 @@ module.exports = function (grunt) {
   });
 
   // production, run when grunt is run with no arguments
-  grunt.registerTask('default', 'lint mincss min');
+  grunt.registerTask('default', 'lint mincss min copy');
 
   // development - dont minify js
-  grunt.registerTask('dev', 'lint mincss concat');
+  grunt.registerTask('dev', 'lint mincss concat copy');
+
+  grunt.registerMultiTask('copy', 'Copy static files to deployment directory', function () {
+    var path = require("path"),
+        files = grunt.file.expand(this.file.src),
+        dest = this.file.dest;
+
+    grunt.log.writeln('Copying files for ' + this.target + '.');
+        
+    files.forEach(function (file) {      
+      grunt.file.copy(file, path.join(dest, path.basename(file)), {noProcess: true});
+      grunt.log.writeln('File "' + file + '" copied to "' + dest + '".');
+    });
+  });
 
 };
