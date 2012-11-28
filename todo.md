@@ -4,6 +4,7 @@ NV Issues
 ### externalizing hierarchy
 - If the user does not define groups, do not add groups to the hierarchy 
 - Fix the root ("nv") node in the breadcrumbs, make clicking on it redraw the treemap from the root (basically showing the next level in the hierarchy).
+- Hierarchy list elements need some kind of visual indication that they can be dragged
 
 ### legend
 - Add a color legend that changes based on if we're looking single or comparing nbe files
