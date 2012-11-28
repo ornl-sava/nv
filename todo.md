@@ -14,13 +14,11 @@ NV Issues
 
 ### aesthetics
 - On mouseover, use fill instead of stroke 
-- Trigger text-fix on any redraw (for some reason only is applied during transitions now).
 
 ### interaction
 - on treemap mouseover, emit the id/port/ip label; this means removing the 'at the bottom' function in the treemap view 
 
 ### bugs
-- if you're low in the hierarchy (e.g. IP level) and you click the treemap resize, artifacts (looks like an extra div?) appear to the right of the treemap. 
 - assigning a criticality/weight to individual machines has no effect.
 - IPs should be in order on 'groups' tab
 - some way to remove groups
