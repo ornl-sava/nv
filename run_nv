@@ -2,6 +2,8 @@
 
 var launch = require('launchpad')
   , webserver = require('node-static')
+  , port = 8000
+  , url = 'http://localhost:' + port + '/'
 
 // Create a node-static server instance to serve the './public' folder
 console.log('starting web server')
@@ -10,7 +12,7 @@ require('http').createServer(function (request, response) {
   request.addListener('end', function () {
     file.serve(request, response)
   })
-}).listen(8000)
+}).listen(port)
 
 
 // Try to launch a local browser
@@ -21,6 +23,7 @@ launch.local(function(err, local) {
     , firefox = false
   if (typeof browsers === null || browsers.length <= 0) {
     console.warn('no browsers found; get chrome: http://chrome.com')
+    console.log('open a web browser at ' + url)
     return
   }
   for (var i = 0 ; i < browsers.length; i++) {
@@ -48,5 +51,6 @@ launch.local(function(err, local) {
   }
   else {
     console.warn('no appropriate browsers found; get chrome: http://chrome.com')
+    console.log('open a web browser at ' + url)
   }
 })
