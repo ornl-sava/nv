@@ -17,6 +17,11 @@ require('http').createServer(function (request, response) {
 
 // Try to launch a local browser
 launch.local(function(err, local) {
+  if (err) {
+    console.error('error launching browser: ' + err)
+    console.log('open a web browser at ' + url)
+    return
+  }
   var browsers = local.browsers
     , chrome = false
     , safari = false
