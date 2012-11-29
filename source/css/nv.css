@@ -121,6 +121,11 @@ footer{
   margin-bottom: 5px;
 }
 
+#colorlegend {
+  margin-top: 60px;
+  margin-left: 20px;
+}
+
 text {
   text-rendering: optimizeLegibility;
   pointer-events: none;

@@ -136,7 +136,7 @@ var Treemap = Backbone.Model.extend({
     }
 
     d.cvss = accumulateCVSS(d);
-    if(isChangeVis){
+    if( this.get('datasource').get('isChangeVis') ){
       d.state = accumulateState(d);
       d.fixedCount = accumulateFixedCounts(d);
       d.openCount = accumulateOpenCounts(d);

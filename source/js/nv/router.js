@@ -160,6 +160,19 @@ var NV = new (Backbone.Router.extend({
                               target:'#nessusinfo'
                           });
 
+    // info view
+    this.colorLegend      =   new ColorLegend({  
+                              app: this,
+                              datasource: this.nessus
+                          });
+
+    this.colorLegendView   =   new ColorLegendView({
+                              app: this,
+                              model: this.colorLegend,
+                              target:'#colorlegend'
+                          });
+
+
   },
 
   // called from outside the app

@@ -1,8 +1,5 @@
 // NOTE: in comments 'bb' === 'backbone'
 
-// TODO Lane move this to the nessus bb model
-var isChangeVis = false;
-
 
 // TODO Mike do we need these? -Lane
 var eventList;
@@ -112,7 +109,7 @@ function updateEventList(){
   nbeItems1 = parseNBEFile( nbeText1 );
   eventList = nbeItems1;
   if(nbeText2.trim() !== ""){
-    isChangeVis = true;
+    NV.nessus.set('isChangeVis', true);
     nbeItems2 = parseNBEFile( nbeText2 );
     eventList = mergeNBEs(nbeItems1, nbeItems2);
   }

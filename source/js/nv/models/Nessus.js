@@ -11,6 +11,8 @@ var Nessus = Backbone.Model.extend({
       app["by"+v] = app.logs.dimension( function(d) { return d[v]; } );
     });
 
+    // is this a comparison vis? this is modified by others
+    this.isChangeVis = false;
   },
 
 // data query functions

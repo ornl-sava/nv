@@ -14,7 +14,7 @@ var Hierarchy = Backbone.Model.extend({
 
     // if we're not comparing nbes, remove the state element
     // TODO isChangeVis should be not be set globally
-    if(!isChangeVis)
+    if( this.get('datasource').get('isChangeVis') )
       hierarchy.splice(3, 1);
 
     // set the data
