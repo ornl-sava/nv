@@ -16,7 +16,7 @@ NV Issues
 - On mouseover, use fill instead of stroke 
 
 ### interaction
-- on treemap mouseover, emit the id/port/ip label; this means removing the 'at the bottom' function in the treemap view 
+- the reset button on the data page should reload the page (until groups is ported to backbone)
 
 ### bugs
 - assigning a criticality/weight to individual machines has no effect.
