@@ -100,7 +100,7 @@ footer{
   margin: 2px;
   padding: 1px 10px;
   float: left;
-  cursor: pointer;
+  cursor: move;
 }
 
 #options,
