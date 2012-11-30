@@ -39,8 +39,11 @@ function handleGroupAdd(){
   var weight = $("#defaultWeight").val();
   var newGroup = {"start":start, "end":end, "groupName":groupName, "weight":weight};
   groupList.push(newGroup);
-//  console.log("added group: " + JSON.stringify(newGroup));
-//  console.log("group list now contains: " + JSON.stringify(groupList));
+
+  // TODO needed to notify hierarchy model of groups changes, will be removed 
+  //  in backbone rewrite of groups
+  NV.nessus.trigger('change:groups');
+
   updateCurrentGroupTable(); //why is this needed here?  Somehow affects table re-drawing?
 }
 

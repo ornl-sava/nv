@@ -15,6 +15,9 @@ var HierarchyView = Backbone.View.extend({
     var list = d3.select(this.options.target).select('ul')
       , hierarchy  = this.model.get('data')
       , self       = this;
+
+    // remove all old
+    list.selectAll('li').remove();
   
     // build the list based on the initial hierarchy
     var listItems = list.selectAll('li')
