@@ -24,13 +24,25 @@ var HierarchyView = Backbone.View.extend({
       .data(hierarchy, function(d) { return d.target; });
 
     listItems.enter().append('li')
-      .classed('hierarchyNode', true)
-      .text(function(d) { return d.target; });
+      .attr('class', function(d){
+        if(d.target === 'nv')
+          return 'hierarchyNode ui-state-disabled';
+        else
+          return 'hierarchyNode';
+      })
+      .text(function(d) { return d.target; })
+      .append('i')
+      .attr('class', function(d){
+        if(d.target !== 'nv')
+          return 'icon-resize-horizontal';
+      });
 
     listItems.exit().remove();
 
     // make the list sortable
     $('#hierarchy ul').sortable({
+      items: "li:not(.ui-state-disabled)",
+
       cursor: "move",
 
       // on drop (stop), emit the new hierarchy
