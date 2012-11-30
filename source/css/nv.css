@@ -141,12 +141,14 @@ text {
 
 rect {
   fill: none;
-  stroke: #fff;
+  stroke-width: 1px;
+  stroke: #666;
 }
 
 rect.parent,
 .grandparent rect {
   stroke-width: 2px;
+  stroke: #fff;
 }
 
 .grandparent rect {
