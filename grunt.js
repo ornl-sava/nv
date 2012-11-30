@@ -9,43 +9,104 @@ module.exports = function (grunt) {
   Tasks:
   * lint - uses [jshint](https://github.com/jshint/jshint/)
   * min - uses [uglify-js](https://github.com/mishoo/UglifyJS)
+  * [mincss](https://github.com/gruntjs/grunt-contrib-mincss)
   */
 
+  grunt.loadNpmTasks('grunt-contrib-mincss');
 
   // Project configuration.
   grunt.initConfig({
     lint: {
-      files: ['js/nv/util.js',
-              'js/nv/main.js',
-              'js/nv/models/*.js',
-              'js/nv/views/*.js',
-              'js/nv/router.js']
-    },
+      files: [
+        'source/js/nv/*.js'
+      , 'source/js/nv/models/*.js'
+      , 'source/js/nv/views/*.js'
+      ]
+    }
+    ,
+    mincss: {
+      'public/css/style.min.css': [
+        'source/css/nv.css'
+      ]
+    }
+    ,
     concat: {
       libs: {
-        src: ['js/lib/d3.v2.js',
-              'js/lib/underscore.js',
-              'js/lib/backbone.js',
-              'js/lib/crossfilter.js'],
-        dest: 'js/lib.js'
-      },
-      app: {
-        src: ['js/nv/util.js',
-              'js/nv/models/*.js',
-              'js/nv/views/*.js',
-              'js/nv/router.js',
-              'js/nv.js',
-              'parser/src/parser.js'],
-        dest: 'js/app.js'
+        src: [
+          'source/js/lib/d3.v2.js'
+        , 'source/js/lib/underscore.js'
+        , 'source/js/lib/backbone.js'
+        , 'source/js/lib/crossfilter.js'
+        , 'source/js/lib/jquery-ui-1.9.1.custom.js'
+        ]
+      , dest: 'public/js/lib.min.js'
       }
-    },
+    , app: {
+        src: [
+          'source/js/nv/main.js'
+        , 'source/js/nv/util.js'
+        , 'source/js/nv/models/*.js'
+        , 'source/js/nv/views/*.js'
+        , 'source/js/nv/router.js'
+        , 'source/js/nv.js'
+        , 'source/js/parser/src/parser.js'
+        ]
+      , dest: 'public/js/app.min.js'
+      }
+    }
+    ,
+    min: {
+      libs: {
+        src: [
+          'source/js/lib/d3.v2.js'
+        , 'source/js/lib/underscore.js'
+        , 'source/js/lib/backbone.js'
+        , 'source/js/lib/crossfilter.js'
+        , 'source/js/lib/jquery-ui-1.9.1.custom.js'
+        ]
+      , dest: 'public/js/lib.min.js'
+      }
+    , app: {
+        src: [
+          'source/js/nv/main.js'
+        , 'source/js/nv/util.js'
+        , 'source/js/nv/models/*.js'
+        , 'source/js/nv/views/*.js'
+        , 'source/js/nv/router.js'
+        , 'source/js/nv.js'
+        , 'source/js/parser/src/parser.js'
+        ]
+      , dest: 'public/js/app.min.js'
+      }
+    }
+    ,
+    copy: {
+      html: {
+        src: [ 'source/index.html']
+      , dest: 'public/'
+      }
+    , jquery: {
+        src: [ 'source/assets/js/jquery-1.8.3.min.js' ]
+      , dest: 'public/js/'
+      }
+    }
+    ,
+    watch: { 
+      files: [ 
+        '<config:concat.app.src>'
+      , 'source/index.html'
+      , 'source/css/nv.css'
+      ]
+    , tasks: 'dev'
+    }
+    ,
     jshint: {
       options: {
         browser: true,
         laxcomma: true,
         maxparams: 5,
         maxdepth: 5,
-        maxstatements: 25,
+        maxstatements: 30,
         maxcomplexity: 10
       },
       globals: {
@@ -55,7 +116,23 @@ module.exports = function (grunt) {
     }
   });
 
-  // Default task will be invoked when grunt is called without any argument
-  // run everything except copy
-  grunt.registerTask('default', 'lint concat');
+  // production, run when grunt is run with no arguments
+  grunt.registerTask('default', 'lint mincss min copy');
+
+  // development - dont minify js
+  grunt.registerTask('dev', 'lint mincss concat copy');
+
+  grunt.registerMultiTask('copy', 'Copy static files to deployment directory', function () {
+    var path = require("path"),
+        files = grunt.file.expand(this.file.src),
+        dest = this.file.dest;
+
+    grunt.log.writeln('Copying files for ' + this.target + '.');
+        
+    files.forEach(function (file) {      
+      grunt.file.copy(file, path.join(dest, path.basename(file)), {noProcess: true});
+      grunt.log.writeln('File "' + file + '" copied to "' + dest + '".');
+    });
+  });
+
 };
