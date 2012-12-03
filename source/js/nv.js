@@ -375,7 +375,8 @@ $().ready(function () {
 
   // reset the data
   $('#file-reset-btn').click(function(event) {
-    clearData();
+    window.location.reload();
+    //clearData();
   });  
 
   // data tab events
