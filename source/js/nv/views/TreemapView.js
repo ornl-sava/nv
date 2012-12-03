@@ -182,10 +182,9 @@ var TreemapView = Backbone.View.extend({
             }
 
 
-            // TODO could color treemap nodes by other properties (count, criticality) here
-            //return nodeColor(d.count);
-            //return nodeColor(d.criticality);
-            return nodeColor(d.cvss);
+            // color treemap nodes by other properties (count, criticality) here
+            var opt = self.model.get('colorOption');
+            return nodeColor(d[opt]);
         })
       .call(rect);
   

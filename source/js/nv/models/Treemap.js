@@ -1,12 +1,14 @@
 var Treemap = Backbone.Model.extend({
   initialize: function() {
 
-    // set our default size option
+    // set our default size and color option
     this.set('sizeOption', 'cvss');
+    this.set('colorOption', 'cvss');
 
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
     this.on('change:sizeOption', this.updateData, this);
+    this.on('change:colorOption', this.updateData, this);
     this.on('change:filterOptions', this.updateData, this);
     this.get('hierarchy').on('change', this.updateData, this);
 

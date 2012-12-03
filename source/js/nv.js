@@ -23,6 +23,18 @@ function sizeByCount() {
    NV.treemap.set('sizeOption', 'value'); 
 }
 
+// TODO these would be better in a bb view
+function colorBySeverity() {
+   NV.treemap.set('colorOption', 'cvss'); 
+}
+
+function colorByCriticality() {
+   NV.treemap.set('colorOption', 'criticality'); 
+}
+
+function colorByCount() {
+   NV.treemap.set('colorOption', 'count'); 
+}
 
 // Sets the main Backbone data model
 function setNBEData(dataset){
