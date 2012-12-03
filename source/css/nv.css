@@ -109,12 +109,11 @@ footer{
 #options,
 #edit,
 #nessusinfo {
-  margin-bottom: 20px;
   font-size: 11px;
 }
 
 #nessusinfo {
-  height: 435px;
+  height: 425px;
   overflow: auto;
   word-wrap: break-word;
 }
