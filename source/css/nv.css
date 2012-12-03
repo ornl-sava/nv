@@ -85,6 +85,9 @@ footer{
 }
 
 /* Treemap (from the original nv.css) */
+.icon-resize-horizontal {
+  color: #999999;
+}
 
 #vis svg {
   shape-rendering: crispEdges;
