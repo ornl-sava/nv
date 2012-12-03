@@ -111,6 +111,8 @@ var TreemapView = Backbone.View.extend({
     }
    
     function display(d) {
+      var data = d;
+
       self.grandparent
         .datum(d.parent)
         .on('click', transition)
@@ -184,6 +186,12 @@ var TreemapView = Backbone.View.extend({
 
             // color treemap nodes by other properties (count, criticality) here
             var opt = self.model.get('colorOption');
+            // modify scale domain based on opt
+            if( opt === 'count' ){
+              nodeColor.domain([0.0, data.values.length]);
+            } else {
+              nodeColor.domain([0.0, 10.0]);
+            }
             return nodeColor(d[opt]);
         })
       .call(rect);
