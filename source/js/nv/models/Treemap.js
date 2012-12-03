@@ -105,10 +105,22 @@ var Treemap = Backbone.Model.extend({
   accumulate: function(d) {
     var app = this;
 
+    function accumulateCount(d){
+      return d.values ? 
+        d.count = d.values.reduce(function(p, v) { return p + accumulateCount(v); }, 0) :
+        d.value;
+    }
+
     function accumulateCVSS(d){
       return d.values ? 
         d.cvss = d.values.reduce(function(p, v) { return Math.max(p, accumulateCVSS(v)); }, 0) :
         d.cvss;
+    }
+
+    function accumulateCriticality(d){
+      return d.values ? 
+        d.criticality = d.values.reduce(function(p, v) { return Math.max(p, accumulateCriticality(v)); }, 0) :
+        d.criticality;
     }
 
     function accumulateState(d){
@@ -136,6 +148,9 @@ var Treemap = Backbone.Model.extend({
     }
 
     d.cvss = accumulateCVSS(d);
+    d.count = accumulateCount(d);
+    d.criticality = accumulateCriticality(d);
+
     if( this.get('datasource').get('isChangeVis') ){
       d.state = accumulateState(d);
       d.fixedCount = accumulateFixedCounts(d);

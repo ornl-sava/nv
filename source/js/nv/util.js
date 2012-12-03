@@ -23,19 +23,25 @@ d3.stringWidth = function(svg, string, font, aclass) {
     return width;
 };
 
+var lowColor    = d3.hsl('#F1EEF6');
+var highColor   = d3.hsl('#2B8CBE');
+var fixedColor  = d3.hsl('#405E50');
+var newColor    = d3.hsl('#AD009F');
+var openColor   = d3.hsl('#FFCF40');
+
 // color for treemap nodes
 var nodeColor = d3.scale.linear()
   .domain([0.0, 10.0])
-  .range([d3.hsl("#F1EEF6"), d3.hsl("#2B8CBE")]); 
+  .range([lowColor, highColor]); 
 
 var nodeColorFixed = d3.scale.linear()
   .domain([0.0, 10.0])
-  .range([d3.hsl("#AAAAAA"), d3.hsl("#405E50")]); 
+  .range([lowColor, fixedColor]); 
 
 var nodeColorNew = d3.scale.linear()
   .domain([0.0, 10.0])
-  .range([d3.hsl("#AAAAAA"), d3.hsl("#AD009F")]); 
+  .range([lowColor, newColor]); 
 
 var nodeColorOpen = d3.scale.linear()
   .domain([0.0, 10.0])
-  .range([d3.hsl("#AAAAAA"), d3.hsl("#FFCF40")]); 
+  .range([lowColor, openColor]); 

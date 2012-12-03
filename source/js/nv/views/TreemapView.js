@@ -180,7 +180,11 @@ var TreemapView = Backbone.View.extend({
               if(d.state === 'fixed')
                 return nodeColorFixed(d.cvss);
             }
-  
+
+
+            // TODO could color treemap nodes by other properties (count, criticality) here
+            //return nodeColor(d.count);
+            //return nodeColor(d.criticality);
             return nodeColor(d.cvss);
         })
       .call(rect);
