@@ -1,7 +1,17 @@
+# nv: nessus vulnerability visualization
+
 nv is a tool for visualizing vulnerabilities reported in [Nessus](http://www.tenable.com/products/nessus) scans. 
 
+<img src="/ornl-situ/nv/support/screenshots/nv.png" width="960" height="500" alt="nessus vulnerability visualization">
 
-# Running
+nv consists of four main views:
+
+- Zoomable treemap with nodes sized and colored according to their attributes (max CVSS severity, max machine criticality, or accumulated vulnerability count)
+- Histograms that summarize scan statistics and act as clickable filters to modify the data shown in the treemap
+- Hierarchy view (above the treemap) where items can be dragged and dropped to re-arrange the treemap hierarchy
+- Nessus info that shows vulnerability info and possible solutions (updates when a Nessus id is moused over in the treemap or histograms)
+
+## Running
 
 To run nv, you can use the built in script or use your own web server.
 
@@ -10,7 +20,7 @@ To run using the built in script, have [node.js](http://nodejs.org) installed an
 To run using your own web server, just start in the current directory. For example, to use [Python's http server](http://docs.python.org/2/library/simplehttpserver.html), run `python -m SimpleHTTPServer 8000` and go to http://localhost:8000/ in a browser.
 
 
-# License 
+## License 
 
 nv is freely distributable under the terms of the MIT License.
 
