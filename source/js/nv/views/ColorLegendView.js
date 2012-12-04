@@ -2,14 +2,14 @@ var ColorLegendView = Backbone.View.extend({
 
   initialize: function() {
     // render on model update
-    this.model.on('change:activeColors', this.render, this);
+//    this.model.on('change:activeColors', this.render, this);
+    this.model.on('change', this.render, this);
 
     this.render();
   },
 
   render: function(){
-    // TODO domain labels
-    
+
     var activeColors = this.model.get('activeColors')
       , div = d3.select(this.options.target)
       , self = this;
@@ -40,7 +40,7 @@ var ColorLegendView = Backbone.View.extend({
         return scale(i); 
       });
 
-    // TODO text should be aligned left, right, center as needed; google this
+    // append labels
     svgs.append('text')
       .attr('x', 150/2)
       .attr('y', 26)
@@ -51,14 +51,21 @@ var ColorLegendView = Backbone.View.extend({
       .attr('x', 0)
       .attr('y', 26)
       .attr('text-anchor', 'start')
-      .text( function(d) { 
-        return self.model.get(d).domain()[0];
-      });
+      .classed('legend_min', true);
 
     svgs.append('text')
       .attr('x', 150)
       .attr('y', 26)
       .attr('text-anchor', 'end')
+      .classed('legend_max', true);
+
+    // update labels
+    entries.select('.legend_min')
+      .text( function(d) { 
+        return self.model.get(d).domain()[0];
+      });
+
+    entries.select('.legend_max')
       .text( function(d) { 
         return self.model.get(d).domain()[1];
       });

@@ -33,19 +33,23 @@ var ColorLegend = Backbone.Model.extend({
     // define scales
     var severityScale = d3.scale.linear()
       .domain([0.0, high])
-      .range([lowColor, highColor]); 
+      .range([lowColor, highColor])
+      .clamp(true);
     
     var fixedScale = d3.scale.linear()
       .domain([0.0, high])
-      .range([lowColor, fixedColor]); 
+      .range([lowColor, fixedColor])
+      .clamp(true);
     
     var openScale = d3.scale.linear()
       .domain([0.0, high])
-      .range([lowColor, openColor]); 
+      .range([lowColor, openColor])
+      .clamp(true);
 
     var newScale = d3.scale.linear()
       .domain([0.0, high])
-      .range([lowColor, newColor]); 
+      .range([lowColor, newColor])
+      .clamp(true);
 
     this.set('severity', severityScale);
     this.set('fixed', fixedScale);
