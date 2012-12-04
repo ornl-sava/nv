@@ -48,7 +48,7 @@ module.exports = function (grunt) {
         , 'source/js/nv/models/*.js'
         , 'source/js/nv/views/*.js'
         , 'source/js/nv/router.js'
-        , 'source/js/nv.js'
+        , 'source/js/legacy.js'
         , 'source/js/parser/src/parser.js'
         ]
       , dest: 'public/js/app.min.js'
@@ -73,7 +73,7 @@ module.exports = function (grunt) {
         , 'source/js/nv/models/*.js'
         , 'source/js/nv/views/*.js'
         , 'source/js/nv/router.js'
-        , 'source/js/nv.js'
+        , 'source/js/legacy.js'
         , 'source/js/parser/src/parser.js'
         ]
       , dest: 'public/js/app.min.js'
