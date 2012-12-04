@@ -56,6 +56,10 @@ function handleGroupAdd(){
   //  in backbone rewrite of groups
   NV.nessus.trigger('change:groups');
 
+  // if group added, enabled all buttons
+//  d3.select('#coloroptions').selectAll('button').attr('disabled', false);
+//  d3.select('#sizeoptions').selectAll('button').attr('disabled', false);
+
   updateCurrentGroupTable(); //why is this needed here?  Somehow affects table re-drawing?
 }
 
