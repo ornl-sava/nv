@@ -23,6 +23,8 @@ var NessusInfo = Backbone.Model.extend({
 
   updateData: function(vulnid){
     var vulnInfo = this.get('vulnIdInfo')[vulnid];
+    // add vulnid to data
+    vulnInfo.vulnid = vulnid;
     this.set('data', vulnInfo);
   }
 });

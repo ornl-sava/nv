@@ -12,6 +12,8 @@ var NessusInfoView = Backbone.View.extend({
 
     div.html('<hr><p>');
 
+    div.append("ID: " + data.vulnid + '<br>');
+
     div.append("Title: " + data.title + '<br>');
 
     if(data.family && data.family !== "")
