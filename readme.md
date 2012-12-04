@@ -2,7 +2,9 @@
 
 nv is a tool for visualizing vulnerabilities reported in [Nessus](http://www.tenable.com/products/nessus) scans. 
 
+<!--
 <img src="/ornl-situ/nv/support/nv.png" width="960" height="500" alt="nessus vulnerability visualization">
+-->
 
 nv consists of four main views:
 
