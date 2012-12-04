@@ -10,6 +10,7 @@ NV Issues
 - Create a github page for nv 
 
 ### aesthetics
+- add click pointer when mousing over histogram
 
 ### interaction
 

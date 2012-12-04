@@ -42,20 +42,23 @@ var ColorLegendView = Backbone.View.extend({
 
     // TODO text should be aligned left, right, center as needed; google this
     svgs.append('text')
-      .attr('x', 150/2 - 5)
+      .attr('x', 150/2)
       .attr('y', 26)
+      .attr('text-anchor', 'middle')
       .text( function(d) { return d; } );
 
     svgs.append('text')
       .attr('x', 0)
       .attr('y', 26)
+      .attr('text-anchor', 'start')
       .text( function(d) { 
         return self.model.get(d).domain()[0];
       });
 
     svgs.append('text')
-      .attr('x', 150-15)
+      .attr('x', 150)
       .attr('y', 26)
+      .attr('text-anchor', 'end')
       .text( function(d) { 
         return self.model.get(d).domain()[1];
       });
