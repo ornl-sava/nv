@@ -124,7 +124,10 @@ footer{
 }
 
 #colorlegend {
-  margin-top: 60px;
+  margin-top: 15px;
+  font-size: 10px;
+  text-rendering: optimizeLegibility;
+  fill: #777;
 }
 
 text {

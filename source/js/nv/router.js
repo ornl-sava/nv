@@ -126,6 +126,17 @@ var NV = new (Backbone.Router.extend({
                             target:'#hierarchy'
                         });
 
+    // color view
+    this.colorLegend      =   new ColorLegend({  
+                              app: this,
+                              datasource: this.nessus
+                          });
+
+    this.colorLegendView   =   new ColorLegendView({
+                              app: this,
+                              model: this.colorLegend,
+                              target:'#colorlegend'
+                          });
 
     
     // TODO treemap hierarchy view
@@ -143,6 +154,7 @@ var NV = new (Backbone.Router.extend({
     this.treemapView    =   new TreemapView({
                             app: this,
                             model: this.treemap,
+                            color: this.colorLegend, 
                             target:'#vis'
                         });
 
@@ -158,18 +170,6 @@ var NV = new (Backbone.Router.extend({
                               app: this,
                               model: this.nessusInfo,
                               target:'#nessusinfo'
-                          });
-
-    // info view
-    this.colorLegend      =   new ColorLegend({  
-                              app: this,
-                              datasource: this.nessus
-                          });
-
-    this.colorLegendView   =   new ColorLegendView({
-                              app: this,
-                              model: this.colorLegend,
-                              target:'#colorlegend'
                           });
 
 

@@ -164,35 +164,37 @@ var TreemapView = Backbone.View.extend({
         .enter().append('rect')
         .attr('class', 'child')
         .style('fill', function(d) { 
-            // if status, use appropriate color scale
-            if(d.state){
-              // reset d.state here according to max counts
-              // TODO can probably do this inline
-              var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
-  
-              d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
-  
-              // choose which scale to use
-              if(d.state === 'new')
-                return nodeColorNew(d.cvss);
-  
-              if(d.state === 'open')
-                return nodeColorOpen(d.cvss);
-  
-              if(d.state === 'fixed')
-                return nodeColorFixed(d.cvss);
-            }
+          var opt = self.model.get('colorOption');
+          var type = 'severity';
+          var scale = self.options.color.get(type);
 
+          // if status, use appropriate color scale
+          if(d.state){
 
-            // color treemap nodes by other properties (count, criticality) here
-            var opt = self.model.get('colorOption');
-            // modify scale domain based on opt
-            if( opt === 'count' ){
-              nodeColor.domain([0.0, data.values.length]);
-            } else {
-              nodeColor.domain([0.0, 10.0]);
-            }
-            return nodeColor(d[opt]);
+            // reset d.state here according to max counts
+            var maxStateIndex = maxIndex([d.fixedCount, d.newCount, d.openCount]);
+  
+            d.state = maxStateIndex === 0 ? 'fixed' : maxStateIndex === 1 ? 'new' : 'open';
+  
+            // choose which scale to use
+            if(d.state === 'new')
+              scale = self.options.color.get('new');
+  
+            if(d.state === 'open')
+              scale = self.options.color.get('open');
+  
+            if(d.state === 'fixed')
+              scale = self.options.color.get('fixed');
+          }
+
+          // if count, change scale
+          if( opt === 'count' ){
+            self.options.color.makeScales(data.values.length);
+          } else {
+            self.options.color.makeScales(10.0);
+          }
+
+          return scale(d[opt]);
         })
       .call(rect);
   
