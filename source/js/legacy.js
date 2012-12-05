@@ -57,8 +57,11 @@ function handleGroupAdd(){
   NV.nessus.trigger('change:groups');
 
   // if group added, enabled all buttons
-//  d3.select('#coloroptions').selectAll('button').attr('disabled', false);
-//  d3.select('#sizeoptions').selectAll('button').attr('disabled', false);
+  d3.select('#coloroptions').selectAll('button').attr('disabled', null);
+  d3.select('#sizeoptions').selectAll('button').attr('disabled', null);
+  // also remove title
+  d3.select('#coloroptions').selectAll('button').attr('title', null);
+  d3.select('#sizeoptions').selectAll('button').attr('title', null);
 
   updateCurrentGroupTable(); //why is this needed here?  Somehow affects table re-drawing?
 }

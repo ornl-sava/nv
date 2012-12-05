@@ -139,14 +139,14 @@
                         <label for="sizeoptions">Size nodes by:</label>
                         <div id="sizeoptions" class="btn-group" data-toggle="buttons-radio">
                           <button class="btn active btn-mini" onclick="sizeBySeverity()">Severity</button>
-                          <button disabled="false" class="btn btn-mini" onclick="sizeByCriticality()">Criticality</button>
+                          <button disabled="true" title="criticality is set via groups" class="btn btn-mini" onclick="sizeByCriticality()">Criticality</button>
                           <button class="btn btn-mini" onclick="sizeByCount()">Count</button>
                         </div>
 
                         <label for="coloroptions">Color nodes by:</label>
                         <div id="coloroptions" class="btn-group" data-toggle="buttons-radio">
                           <button class="btn active btn-mini" onclick="colorBySeverity()">Severity</button>
-                          <button disabled="false" class="btn btn-mini" onclick="colorByCriticality()">Criticality</button>
+                          <button disabled="true" title="criticality is set via groups" class="btn btn-mini" onclick="colorByCriticality()">Criticality</button>
                           <button class="btn btn-mini" onclick="colorByCount()">Count</button>
                         </div>
 
