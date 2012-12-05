@@ -190,6 +190,7 @@ rect.parent {
 #filters .bar {
   stroke: white;
   shape-rendering: crispEdges;
+  cursor: pointer;
 }
 
 #filters .bar:hover {
