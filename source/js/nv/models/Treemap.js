@@ -17,6 +17,9 @@ var Treemap = Backbone.Model.extend({
       if(msg.state === "off"){
         updateFilter('remove');
       } else if(msg.chart === "cvss"){
+        // labels are 1 higher than actual
+        msg.label = msg.label-1;
+        // coerce things to work with crossfilter queries
         updateFilter('cvss', msg.label+0.0, msg.label+1.01);
       } else if(msg.chart === "vuln type"){
         updateFilter('vulntype', msg.label);

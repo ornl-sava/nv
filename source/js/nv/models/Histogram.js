@@ -49,7 +49,7 @@ var Histogram = Backbone.Model.extend({
 
       labels = data.map( function(d, i) { 
         // if we have a datamap, access the domain to get the labels correct
-        return datamap ? datamap.domain()[i] : i; 
+        return datamap ? datamap.domain()[i] : i+1; 
       });
 
     } else {

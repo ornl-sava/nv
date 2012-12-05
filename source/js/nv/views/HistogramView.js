@@ -73,6 +73,7 @@ var HistogramView = Backbone.View.extend({
         chart: title,
         label: d3.select(d).data()[0].label
       };
+
       that.options.app.trigger('histogramMouseover', msg);
     };
 
@@ -91,6 +92,12 @@ var HistogramView = Backbone.View.extend({
         length: data.length,
         chart: that.options.title
       };
+
+      // if cvss histogram, decrease label by 1 to get correct selection
+      // if( msg.chart.indexOf('cvss') !== 1 ){
+      //     console.log(msg);
+      //     msg.label = msg.label-1;
+      // }
 
       // make all bars inactive
       d3.selectAll('.bar').classed('active', false);
