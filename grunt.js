@@ -37,7 +37,7 @@ module.exports = function (grunt) {
         , 'source/js/lib/underscore.js'
         , 'source/js/lib/backbone.js'
         , 'source/js/lib/crossfilter.js'
-        , 'source/js/lib/jquery-ui-1.9.1.custom.js'
+        , 'source/js/lib/jquery-ui-1.9.2.custom.js'
         ]
       , dest: 'public/js/lib.min.js'
       }
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
         , 'source/js/lib/underscore.js'
         , 'source/js/lib/backbone.js'
         , 'source/js/lib/crossfilter.js'
-        , 'source/js/lib/jquery-ui-1.9.1.custom.js'
+        , 'source/js/lib/jquery-ui-1.9.2.custom.js'
         ]
       , dest: 'public/js/lib.min.js'
       }
