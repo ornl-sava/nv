@@ -3,7 +3,7 @@ var ColorLegend = Backbone.Model.extend({
   initialize: function() {
     this.makeScales(10.0);
 
-    // these colors are defined in util.js for the treemap
+    // color palettes
     var change    = [ 'fixed', 'open', 'new' ]
       , nochange  = [ 'severity' ];
     
