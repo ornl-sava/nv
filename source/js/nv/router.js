@@ -31,8 +31,8 @@ var NV = new (Backbone.Router.extend({
                                  app: this,
                                  model: this.cvssHistogram,
                                  target:'#cvssHistogram',
-                                 barwidth: 15,
-                                 w: 180,
+                                 barwidth: 20,
+                                 w: 220,
                                  h: 165,
                                  title: 'cvss'
                               });
@@ -61,7 +61,7 @@ var NV = new (Backbone.Router.extend({
                                         model: this.vulnTypeHistogram,
                                         target:'#vulnTypeHistogram',
                                         barwidth: 20,
-                                        w: 100,
+                                        w: 66,
                                         h: 165,
                                         title: 'vuln type'
                                     });
@@ -71,7 +71,7 @@ var NV = new (Backbone.Router.extend({
     this.topNoteHistogram        =   new Histogram({  
                                      app: this,
                                      datasource: this.nessus, 
-                                     limit: 5,
+                                     limit: 10,
                                      filterOptions: {
                                        attribute: 'vulnid',
                                        filters: [
@@ -95,7 +95,7 @@ var NV = new (Backbone.Router.extend({
     this.topHoleHistogram       =   new Histogram({  
                                     app: this,
                                     datasource: this.nessus, 
-                                    limit: 5,
+                                    limit: 10,
                                     filterOptions: {
                                       attribute: 'vulnid',
                                       filters: [

@@ -33,13 +33,13 @@ var Histogram = Backbone.Model.extend({
 
     // if a limit is specified, sort and cut the data
     if( this.get('limit') ){
-      var limit = this.get('limit');
 
       // sort the data by length (ascending) and reverse
       data = _.sortBy(data, function(d){ return d.length; }).reverse();
 
       // cut off after limit
-      data = _.first(data, limit);
+      if ( data.length > this.get('limit') )
+        data = _.first(data, this.get('limit'));
     } 
 
     // set labels. if bins are specified, use numbers
@@ -55,13 +55,15 @@ var Histogram = Backbone.Model.extend({
     } else {
 
       labels = data.map( function(d) { 
-        return d[0][attribute]; 
+        // TODO some NOTES have no data, not sure why, this is a workaround
+        if (d[0])
+          return d[0][attribute]; 
       });
 
     }
 
     // TODO combine label and length in data attribute
-    this.set('data', data.map(function(d, i) { 
+    this.set('data', data.map(function(d, i) {
       return {
         length: d.length,
         label: labels[i]

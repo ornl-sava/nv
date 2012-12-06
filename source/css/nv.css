@@ -201,6 +201,25 @@ rect.parent {
   fill: orange;
 }
 
+#filters #cvssHistogram {
+  float: left;
+  padding-right: 30px;
+}
+
+#filters #vulnTypeHistogram {
+  float: left;
+  padding-right: 30px;
+}
+
+#filters #topHoleHistogram {
+  float: left;
+  padding-right: 20px;
+}
+
+#filters #topNoteHistogram {
+  float: left;
+}
+
 #filters .histogramlabel {
   font-size: 10px;
   text-rendering: optimizeLegibility;

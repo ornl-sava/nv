@@ -7,7 +7,6 @@ var HistogramView = Backbone.View.extend({
     // init a d3 histogram
     d3.select(this.options.target)
       .append('svg')
-      .attr('width', this.options.w)
       .attr('height', this.options.h);
   },
 
@@ -19,16 +18,21 @@ var HistogramView = Backbone.View.extend({
       , range       = this.options.range
       , attribute   = this.model.get('attribute')
       , view        = this
-      , w           = this.options.w
       , h           = this.options.h
       , barwidth    = this.options.barwidth
       , title       = this.options.title
       , that        = this
       , numBins     = data.length
-      , barspace    = Math.floor( w/data.length - barwidth )
+      , barspace    = 2
       , rect        = vis.selectAll('.bar')
       , rectLabels  = vis.selectAll('.histogramLabel')
       , titleLabel  = vis.selectAll('.histogramtitle');
+
+    var containerWidth = $(document).innerWidth();
+    console.log('width ' + containerWidth);
+    
+    var w = (barwidth + barspace) * numBins;
+    vis.attr('width', w);
 
     // y scale for bars
     var y = d3.scale.linear()
