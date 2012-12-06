@@ -2,7 +2,8 @@ nv issues
 ==============
 ### bugs
 - treemap will not transition in firefox
-- bounding box check does not work in firefox
+  - this may be because the text bounding box check does not work in firefox
+  - (this also leads to the longer labels not getting changed to "...")
 
 ### deployment
 - identify the best way to update gh-pages on new versions of master
@@ -11,9 +12,10 @@ nv issues
 
 ### aesthetics
 - guide user in finding sample files from the start page 
+- add cvss score to nessus info
 
 ### feedback
-- set up a feedback mechanism
+- set up a feedback mechanism for users (maybe a short survey with comments?)
 
 nv 1.0 list
 --------------
