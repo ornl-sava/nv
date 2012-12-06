@@ -4,6 +4,7 @@ nv issues
 - treemap will not transition in firefox
   - this may be because the text bounding box check does not work in firefox
   - (this also leads to the longer labels not getting changed to "...")
+- on testNetworkOpen.nbe, in Top holes there is a bin that gets no data. There should be a temporary workaround in the histogram model.
 
 ### deployment
 - identify the best way to update gh-pages on new versions of master
