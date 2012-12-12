@@ -28,5 +28,6 @@ nv 1.0 list
 - rewrite all the buttons using backbone
 - run-nv does not work on ubuntu
 - on color scale click, cycle a different scale
+- rewrite width like this: http://groups.google.com/forum/?fromgroups=#!topic/d3-js/n-UDJQfuHlI 
 
 
