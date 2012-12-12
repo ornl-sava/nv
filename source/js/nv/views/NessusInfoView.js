@@ -34,6 +34,9 @@ var NessusInfoView = Backbone.View.extend({
     if(data.family && data.family !== '')
       div.append('Family: ' + data.family + '<br />');
       
+    if(data.otherInfoList.length > 0)
+      div.append(data.otherInfoList[0] + '<br />');
+
     div.append('<br />');
 
     if(data.synopsis && data.synopsis !== '')
