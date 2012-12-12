@@ -59,7 +59,7 @@ var ColorLegendView = Backbone.View.extend({
       .classed('legend_min', true);
 
     svgs.append('text')
-      .attr('x', legendWidth)
+      .attr('x', legendWidth - boxSize)
       .attr('y', labelY)
       .attr('text-anchor', 'end')
       .classed('legend_max', true);
