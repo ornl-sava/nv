@@ -10,13 +10,15 @@ d3.selection.prototype.moveToFront = function() {
 d3.stringWidth = function(svg, string, font, aclass) {
     var f = font || '12px arial';
 
-    var text = svg.append("text")
+    var text = svg.append('text')
         .attr('class', aclass)
-        .style("font", f)
-        .style("opacity", 0)
+        .style('font', f)
+        .style('opacity', 0)
+        .style('visibility', 'hidden')
+        .style('display', 'inline')
         .text(string);
 
-    var width = text.node().getBBox().width;
+    var width = text.node().getComputedTextLength();
 
     d3.select(text).remove();
 

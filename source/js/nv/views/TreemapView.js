@@ -291,10 +291,10 @@ var TreemapView = Backbone.View.extend({
         .transition()
         .text(function(d) { 
           // note: stringWidth is a custom d3 function defined in util.js
-          var nodeWidth   = d3.stringWidth(d3.select(this.parentNode), d.key, null, 'rectlabel')
-          , parentWidth = d3.select(this.parentNode).select('.parent').attr('width');
+          var parentWidth = d3.select(this.parentNode).select('.parent').attr('width')
+            , nodeWidth   = d3.stringWidth(d3.select(this.parentNode), d.key, null, 'rectlabel');
 
-        return nodeWidth < parentWidth ? d.key : "..."; 
+          return nodeWidth < parentWidth ? d.key : "..."; 
         });
     }
       
