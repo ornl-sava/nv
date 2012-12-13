@@ -97,7 +97,7 @@ function dataLoaded(fileName) {
   $('#file-status').addClass('alert-success');
   $('#file-status-msg').html('<i class="icon-file"></i> <strong>' + fileName + '</strong> loaded in browser.');
   
-  $('#file-list').append('<i class="icon-file"></i> ' + fileName);
+  $('#file-list').append(' <i class="icon-file"></i> ' + fileName);
 
   $('#file-reset-btn').removeClass('disabled');  
   $('#file-continue-btn').removeClass('disabled');

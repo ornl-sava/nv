@@ -29,7 +29,6 @@ var HistogramView = Backbone.View.extend({
       , titleLabel  = vis.selectAll('.histogramtitle');
 
     var containerWidth = $(document).innerWidth();
-    console.log('width ' + containerWidth);
     
     var w = (barwidth + barspace) * numBins;
     vis.attr('width', w);
