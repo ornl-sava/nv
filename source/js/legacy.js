@@ -395,23 +395,13 @@ var handleFileSelect = function (element) {
 };
 
 
-// the file to load is data/testNetworkOpen.nbe
-$( '#sampleDataLink' )
-.click(function() {
-
-  // TODO this is what we need to do.
-//  handleFileSelect.holder.loadFile('data/testNetworkOpen.nbe');
-
-  $.get('data/testNetworkOpen.nbe', function(d){
-    console.log(d);
-    $('#file-drop').trigger('loadFile', d);
-  });
-
-
-  console.log('loaded sample data');
+// load a sample data file
+$( '#sampleDataLink' ).click(function() {
+  $.get('data/testNetworkOpen.nbe', function (data) {
+    nbeText1 = data;
+    dataLoaded('Sample data file loaded.');
+  });  
 });
-
-
 
 
 // initialization
