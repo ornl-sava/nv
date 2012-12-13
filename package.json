@@ -1,6 +1,6 @@
 {
     "name": "nv"
-  , "version": "0.0.2"
+  , "version": "0.2"
   , "description": "Nessus Vulnerability visualization for the web"
   , "author": {
       "name":"John Goodall"
@@ -21,15 +21,15 @@
       }
     ]
   , "dist-tags": { 
-      "latest": "0.0.2" 
+      "latest": "0.2" 
     }
-  , "versions":
-    [ "0.0.1"
-    , "0.0.2"
+  , "versions": [
+      "0.1"
+    , "0.2"
     ]
-  , "time":
-    { "0.0.1": "2012-10-25T15:00:00.000Z"
-    , "0.0.2": "2012-12-13T16:00:00.000Z"
+  , "time": {
+      "0.1": "2012-10-25T15:00:00.000Z"
+    , "0.2": "2012-12-13T16:00:00.000Z"
   }
   , "private": true
   , "main": "./run_nv"
