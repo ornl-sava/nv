@@ -363,6 +363,8 @@ var handleFileSelect = function (element) {
   }; 
 
   holder.loadFile = function(f) {
+    console.log('called loadFile');
+
     var reader = new FileReader();
                       
     reader.readAsText(f); //utf-8 encoding is default
@@ -399,6 +401,12 @@ $( '#sampleDataLink' )
 
   // TODO this is what we need to do.
 //  handleFileSelect.holder.loadFile('data/testNetworkOpen.nbe');
+
+  $.get('data/testNetworkOpen.nbe', function(d){
+    console.log(d);
+    $('#file-drop').trigger('loadFile', d);
+  });
+
 
   console.log('loaded sample data');
 });
