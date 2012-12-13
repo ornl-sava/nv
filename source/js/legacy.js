@@ -397,9 +397,10 @@ var handleFileSelect = function (element) {
 
 // load a sample data file
 $( '#sampleDataLink' ).click(function() {
-  $.get('data/testNetworkOpen.nbe', function (data) {
+  var file = 'data/testNetworkOpen.nbe';
+  $.get(file, function (data) {
     nbeText1 = data;
-    dataLoaded('Sample data file loaded.');
+    dataLoaded('Sample file: ' + file);
   });  
 });
 
