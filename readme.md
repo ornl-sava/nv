@@ -15,7 +15,7 @@ nv consists of four main views:
 
 ## Running
 
-To run nv, you can use the built in script or use your own web server.
+To run nv, you can use the public site, [http://ornl-situ.github.com/nv/](http://ornl-situ.github.com/nv/) or you can use the built in script or use your own web server.
 
 To run using the built in script, have [node.js](http://nodejs.org) installed and simply run `run_nv`. If a browser is not launched automatically, go to http://localhost:8000/ in a browser.
 
