@@ -1,6 +1,5 @@
 // NOTE: in comments 'bb' === 'backbone'
 
-
 // TODO Mike do we need these? -Lane
 var eventList;
 var nbeText1 = "";
