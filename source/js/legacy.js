@@ -355,8 +355,15 @@ var handleFileSelect = function (element) {
     e.preventDefault();
 
     var files = e.dataTransfer.files,
-        f = files[0],
-        reader = new FileReader();
+        f = files[0];
+
+    holder.loadFile(f);
+                      
+    return false;
+  }; 
+
+  holder.loadFile = function(f) {
+    var reader = new FileReader();
                       
     reader.readAsText(f); //utf-8 encoding is default
 
@@ -384,6 +391,19 @@ var handleFileSelect = function (element) {
   };
   
 };
+
+
+// the file to load is data/testNetworkOpen.nbe
+$( '#sampleDataLink' )
+.click(function() {
+
+  // TODO this is what we need to do.
+//  handleFileSelect.holder.loadFile('data/testNetworkOpen.nbe');
+
+  console.log('loaded sample data');
+});
+
+
 
 
 // initialization
