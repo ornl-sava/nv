@@ -415,7 +415,7 @@ $( '#sampleDataLink' ).click(function() {
 $().ready(function () {
 
   // help tooltips
-  $('.hierarchyHelp').tipsy({trigger: 'manual', fade: true, gravity: 'w', offset: -675});
+  $('.hierarchyHelp').tipsy({trigger: 'manual', fade: true, gravity: 'w', offset: -60});
   $('.treemapHelp').tipsy({trigger: 'manual', fade: true, gravity: 's', offset: -250});
   $('.nessusHelp').tipsy({trigger: 'manual', fade: true, gravity: 'e'});
   $('.filterHelp').tipsy({trigger: 'manual', fade: true, gravity: 's'});
