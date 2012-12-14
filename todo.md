@@ -2,8 +2,6 @@ nv issues
 ==============
 ### bugs
 - on testNetworkOpen.nbe, in Top holes there is a bin that gets no data. There should be a temporary workaround in the histogram model.
-- header 404s (change link to #)
-- should be able to skip from data tab to vis tab (without groups in between)
 
 ### deployment
 
