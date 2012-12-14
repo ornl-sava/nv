@@ -118,8 +118,9 @@ function visTabActive(){
   //in case groups tab did not set it.
   if( ! eventList ) {
     updateEventList();
+    updateCurrentGroupTable();
   }
- 
+
   NV.treemapView.render();
 }
 
