@@ -415,13 +415,13 @@ $( '#sampleDataLink' ).click(function() {
 $().ready(function () {
 
   // help tooltips
-  $('.hierarchyHelp').tipsy({trigger: 'manual', fade: true, gravity: 'w', offset: -650});
+  $('.hierarchyHelp').tipsy({trigger: 'manual', fade: true, gravity: 'w', offset: -675});
   $('.treemapHelp').tipsy({trigger: 'manual', fade: true, gravity: 's', offset: -250});
   $('.nessusHelp').tipsy({trigger: 'manual', fade: true, gravity: 'e'});
   $('.filterHelp').tipsy({trigger: 'manual', fade: true, gravity: 's'});
 
   // help tooltips trigger
-  $('#helpIcon').tipsy({trigger: 'manual', fade: true, gravity: 'w'});
+  $('#helpIcon').tipsy({trigger: 'manual', fade: true, gravity: 'e'});
 
   $('#helpIcon').on('mouseover', function(){
     $('.help').tipsy('show'); 
