@@ -118,16 +118,20 @@
                   </div>
                 </div>
               </div> <!-- close tab-pane -->
-              
+ 
               <!-- VIS TAB -->
               <div class="tab-pane" id="visTab">
-                <div class="row-fluid">
                   <div class="span10">
                     <div class="row-fluid">
-                      <div id="hierarchy"></div>
-                      <div id="vis"></div>
+
+                      <div id="hierarchy" class="help hierarchyHelp" title="drag and drop to rearrange the hierarchy"></div>
+
+              <!-- TODO John make pretty -->
+              <span id="helpIcon" title="Hover here for quick start." style="float:right">?</span>
+
+                      <div id="vis" class="help treemapHelp" title="click nodes in the treemap to zoom to the next level in the hierarchy"></div>
                     </div>
-                    <div id="filters" class="row-fluid">
+                    <div id="filters" class="row-fluid help filterHelp" title="click any bar to filter the treemap view">
                       <div id="cvssHistogram"></div>
                       <div id="vulnTypeHistogram"></div>
                       <div id="topHoleHistogram"></div>
@@ -161,7 +165,7 @@
                         </div> -->
                       </div>
                       <div id="edit"></div>
-                      <div id="nessusinfo"></div>
+                      <div id="nessusinfo" class="help nessusHelp" title="updates when you mouseover a Nessus id in the treemap or histograms"></div>
                       <div id="colorlegend"></div>
                     </div>
                   </div>                  

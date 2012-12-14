@@ -27,6 +27,7 @@ module.exports = function (grunt) {
     mincss: {
       'public/css/style.min.css': [
         'source/css/nv.css'
+      , 'source/css/tipsy.css'
       ]
     }
     ,
@@ -38,6 +39,7 @@ module.exports = function (grunt) {
         , 'source/js/lib/backbone.js'
         , 'source/js/lib/crossfilter.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
+        , 'source/js/lib/jquery.tipsy.js'
         ]
       , dest: 'public/js/lib.min.js'
       }
@@ -63,6 +65,7 @@ module.exports = function (grunt) {
         , 'source/js/lib/backbone.js'
         , 'source/js/lib/crossfilter.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
+        , 'source/js/lib/jquery.tipsy.js'
         ]
       , dest: 'public/js/lib.min.js'
       }
@@ -96,6 +99,7 @@ module.exports = function (grunt) {
         '<config:concat.app.src>'
       , 'source/index.html'
       , 'source/css/nv.css'
+      , 'source/css/tipsy.css'
       ]
     , tasks: 'dev'
     }

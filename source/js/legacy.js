@@ -121,6 +121,12 @@ function visTabActive(){
     updateCurrentGroupTable();
   }
 
+  // show tooltip intro
+  $('#helpIcon').tipsy('show');
+  setTimeout(function() {
+    $('#helpIcon').tipsy('hide');
+  }, 2500);
+
   NV.treemapView.render();
 }
 
@@ -407,6 +413,23 @@ $( '#sampleDataLink' ).click(function() {
 
 // initialization
 $().ready(function () {
+
+  // help tooltips
+  $('.hierarchyHelp').tipsy({trigger: 'manual', fade: true, gravity: 'w', offset: -650});
+  $('.treemapHelp').tipsy({trigger: 'manual', fade: true, gravity: 's', offset: -250});
+  $('.nessusHelp').tipsy({trigger: 'manual', fade: true, gravity: 'e'});
+  $('.filterHelp').tipsy({trigger: 'manual', fade: true, gravity: 's'});
+
+  // help tooltips trigger
+  $('#helpIcon').tipsy({trigger: 'manual', fade: true, gravity: 'w'});
+
+  $('#helpIcon').on('mouseover', function(){
+    $('.help').tipsy('show'); 
+  });
+  $('#helpIcon').on('mouseout', function(){
+    $('.help').tipsy('hide'); 
+  });
+
 
   // set up file drag and drop
   handleFileSelect('file-drop');
