@@ -1,19 +1,16 @@
 nv issues
 ==============
 ### bugs
-- treemap will not transition in firefox
-  - this may be because the text bounding box check does not work in firefox
-  - (this also leads to the longer labels not getting changed to "...")
 - on testNetworkOpen.nbe, in Top holes there is a bin that gets no data. There should be a temporary workaround in the histogram model.
+- header 404s (change link to #)
+- should be able to skip from data tab to vis tab (without groups in between)
 
 ### deployment
-- identify the best way to update gh-pages on new versions of master
-- make script and instructions to install this beside Nessus
-- consider a post on using grep with nv
 
 ### aesthetics
-- guide user in finding sample files from the start page 
-- add cvss score to nessus info
+- add mouseover help as in jgoodall.github.com/cinevis
+  - for legacy.js: https://github.com/jgoodall/cinevis/blob/master/web/js/script.js#L456
+  - for index.html: https://github.com/jgoodall/cinevis/blob/master/web/index.html#L51 
 
 ### feedback
 - set up a feedback mechanism for users (maybe a short survey with comments?)
@@ -29,5 +26,5 @@ nv 1.0 list
 - run-nv does not work on ubuntu
 - on color scale click, cycle a different scale
 - rewrite width like this: http://groups.google.com/forum/?fromgroups=#!topic/d3-js/n-UDJQfuHlI 
-
-
+- make script and instructions to install this beside Nessus
+- consider a post on using grep with nv
