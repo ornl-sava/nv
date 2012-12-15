@@ -6,9 +6,6 @@ nv issues
 ### deployment
 
 ### aesthetics
-- add mouseover help as in jgoodall.github.com/cinevis
-  - for legacy.js: https://github.com/jgoodall/cinevis/blob/master/web/js/script.js#L456
-  - for index.html: https://github.com/jgoodall/cinevis/blob/master/web/index.html#L51 
 
 ### feedback
 - set up a feedback mechanism for users (maybe a short survey with comments?)
