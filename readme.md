@@ -8,10 +8,10 @@ nv is a tool for visualizing vulnerabilities reported in [Nessus](http://www.ten
 
 nv consists of four main views:
 
-- Zoomable treemap with nodes sized and colored according to their attributes (max CVSS severity, max machine criticality, or accumulated vulnerability count)
+- A zoomable treemap with nodes sized and colored according to their attributes (max CVSS severity, max machine criticality, or total vulnerability count)
 - Histograms that summarize scan statistics and act as clickable filters to modify the data shown in the treemap
-- Hierarchy view (above the treemap) where items can be dragged and dropped to re-arrange the treemap hierarchy
-- Nessus info that shows vulnerability info and possible solutions (updates when a Nessus id is moused over in the treemap or histograms)
+- An editable hierarchy (above the treemap) where items can be dragged and dropped to re-arrange the treemap hierarchy
+- A Nessus info area that shows vulnerability info and possible solutions
 
 ## Running
 
