@@ -6,6 +6,7 @@ nv issues
 ### deployment
 
 ### aesthetics
+- histograms should be evenly distributed throughout the width of their div
 
 ### feedback
 - set up a feedback mechanism for users (maybe a short survey with comments?)
