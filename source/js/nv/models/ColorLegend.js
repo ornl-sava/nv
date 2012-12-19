@@ -22,11 +22,10 @@ var ColorLegend = Backbone.Model.extend({
     }, this);
   },
 
+  // makes scales with domains: [0, high]
   makeScales: function(high){
     // define colors
     var multihue = ['#F1EEF6', '#E5E7FF', '#DFE0F7', '#CAD5ED', '#A6BDDB', '#74A9CF', '#3690C0', '#0570B0', '#045A8D', '#3578A0'];
-//      var multihue = ['#FFF7FB', '#F7FCF0', '#E0F3DB', '#CCEBC5', '#A8DDB5', '#7BCCC4', '#4EB3D3', '#2B8CBE', '#0868AC', '#084081'];
-
 
     var lowColor    = d3.hsl('#F1EEF6');
     var highColor   = d3.hsl('#2B8CBE');
@@ -39,11 +38,6 @@ var ColorLegend = Backbone.Model.extend({
       .domain([0.0, high])
       .range(multihue);
 
-//     var severityScale = d3.scale.linear()
-//      .domain([0.0, high])
-//      .range([lowColor, highColor])
-//      .clamp(true);
-//    
     var fixedScale = d3.scale.linear()
       .domain([0.0, high])
       .range([lowColor, fixedColor])
