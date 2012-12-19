@@ -202,8 +202,21 @@ var TreemapView = Backbone.View.extend({
       g.append('rect')
         .attr('class', 'parent')
         .call(rect)
-        .text(function(d) { return self.formatNumber(d.value); });
-//        .append('title').text(function(d) { return d.key; });
+        .text(function(d) { return self.formatNumber(d.value); })
+        .append('title').text(function(d) { return d.key; });
+
+      $('.parent').tipsy({ 
+        fade: true, 
+        delayIn: 777,
+        gravity: $.fn.tipsy.autoNS,
+        html: true,
+        title: function() {
+          var d = this.__data__;
+          return d.key + 
+                 '<br /> max cvss: ' + d.cvss + 
+                 '<br /> vuln count: ' + d.count; 
+        }
+      });
   
       // append label for this node
       g.append('text')
