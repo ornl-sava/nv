@@ -202,8 +202,8 @@ var TreemapView = Backbone.View.extend({
       g.append('rect')
         .attr('class', 'parent')
         .call(rect)
-        .text(function(d) { return self.formatNumber(d.value); });
-//        .append('title').text(function(d) { return d.key; });
+        .text(function(d) { return self.formatNumber(d.value); })
+        .append('title').text(function(d) { return d.key; });
   
       // append label for this node
       g.append('text')
