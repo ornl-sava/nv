@@ -1,5 +1,7 @@
 var Histogram = Backbone.Model.extend({
   initialize: function() {
+    this.on('change:limit', this.updateData, this);
+
     // respond to app-level events
     this.get('datasource').on('dataset updated', this.updateData, this);
   },
@@ -8,7 +10,7 @@ var Histogram = Backbone.Model.extend({
     var filterOptions   = this.get('filterOptions')
       , attribute       = filterOptions.attribute
       , bins            = this.get('bins') || ""
-      , range            = this.get('range') || ""
+      , range           = this.get('range') || ""
       , datamap         = this.get('datamap') || "";
 
     var rawData = this.get('datasource').getData(filterOptions);

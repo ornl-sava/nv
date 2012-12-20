@@ -12,7 +12,7 @@
 
 // handle window resizes
 $(window).resize(function() {
-  NV.treemapView.resize();
+  NV.resize();
 });
 
 

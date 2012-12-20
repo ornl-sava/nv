@@ -71,7 +71,7 @@ var NV = new (Backbone.Router.extend({
     this.topNoteHistogram        =   new Histogram({  
                                      app: this,
                                      datasource: this.nessus, 
-                                     limit: 8,
+                                     limit: 6,
                                      filterOptions: {
                                        attribute: 'vulnid',
                                        filters: [
@@ -95,7 +95,7 @@ var NV = new (Backbone.Router.extend({
     this.topHoleHistogram       =   new Histogram({  
                                     app: this,
                                     datasource: this.nessus, 
-                                    limit: 8,
+                                    limit: 6,
                                     filterOptions: {
                                       attribute: 'vulnid',
                                       filters: [
@@ -178,6 +178,10 @@ var NV = new (Backbone.Router.extend({
   // called from outside the app
   start: function(){
     Backbone.history.start();
+  },
+
+  resize: function(){
+    this.trigger('resize');
   }
 
 }))();

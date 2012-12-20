@@ -1,8 +1,14 @@
 var HistogramView = Backbone.View.extend({
 
   initialize: function() {
+    
     // listen for model changes
     this.model.on('change:data', this.render, this);
+    this.options.app.on('resize', this.resize, this);
+
+    // set bootstrap span sizes
+    d3.select(this.options.target)
+      .attr('class', 'span3');
 
     // init a d3 histogram
     d3.select(this.options.target)
@@ -20,10 +26,10 @@ var HistogramView = Backbone.View.extend({
       , view        = this
       , h           = this.options.h
       , barwidth    = this.options.barwidth
+      , barspace    = 2
       , title       = this.options.title
       , that        = this
       , numBins     = data.length
-      , barspace    = 2
       , rect        = vis.selectAll('.bar')
       , rectLabels  = vis.selectAll('.histogramLabel')
       , titleLabel  = vis.selectAll('.histogramtitle');
@@ -118,5 +124,22 @@ var HistogramView = Backbone.View.extend({
       // trigger an event and attach the message
       that.options.app.trigger('histogramClick', msg);
     };
+  },
+
+  // TODO Instead of this, programmatically set limit in render
+  resize: function(){
+    var divWidth    = $(this.options.target).width()
+      , svgWidth    = $(this.options.target + ' svg').width()
+      , barWidth    = this.options.barwidth
+      , barSpace    = 2
+      , limit       = this.model.get('limit') || "";
+
+    if(limit === 0)
+      return;
+
+    if( divWidth > svgWidth + barWidth + barSpace )
+      this.model.set('limit', limit+1);
+    else if ( divWidth < svgWidth )
+      this.model.set('limit', limit-1);
   }
 });
