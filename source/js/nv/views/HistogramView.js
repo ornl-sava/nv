@@ -14,6 +14,7 @@ var HistogramView = Backbone.View.extend({
     d3.select(this.options.target)
       .append('svg')
       .attr('height', this.options.h);
+
   },
 
   render: function(){
@@ -32,6 +33,7 @@ var HistogramView = Backbone.View.extend({
       , rect        = vis.selectAll('.bar')
       , rectLabels  = vis.selectAll('.histogramLabel')
       , titleLabel  = vis.selectAll('.histogramtitle');
+
 
     var containerWidth = $(document).innerWidth();
     
@@ -133,12 +135,18 @@ var HistogramView = Backbone.View.extend({
       , barWidth    = this.options.barwidth
       , barSpace    = 2;
 
-    if(limit === 0)
+    if(!limit)
       return;
 
-    if( divWidth > svgWidth + barWidth + barSpace )
-      this.model.set('limit', limit+1);
-    else if ( divWidth < svgWidth )
-      this.model.set('limit', limit-1);
+    while( divWidth > (barWidth + barSpace)*limit ){
+      limit = limit + 1;
+      this.model.set('limit', limit);
+    }
+    while ( divWidth < (barWidth + barSpace)*limit ){
+      limit = limit - 1;
+      this.model.set('limit', limit);
+    }
+
+
   }
 });

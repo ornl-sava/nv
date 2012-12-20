@@ -127,7 +127,7 @@ function visTabActive(){
     $('#helpIcon').tipsy('hide');
   }, 2500);
 
-  NV.treemapView.render();
+  NV.resize();
 }
 
 function updateEventList(){
