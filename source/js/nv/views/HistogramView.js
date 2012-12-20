@@ -6,9 +6,10 @@ var HistogramView = Backbone.View.extend({
     this.model.on('change:data', this.render, this);
     this.options.app.on('resize', this.resize, this);
 
-    // set bootstrap span sizes
+    // add float left style
     d3.select(this.options.target)
-      .attr('class', 'span3');
+      .style('float', 'left')
+      .style('margin-right', '40px'); // TODO margin should be an option
 
     // init a d3 histogram
     d3.select(this.options.target)
@@ -38,8 +39,29 @@ var HistogramView = Backbone.View.extend({
 
     var containerWidth = $(document).innerWidth();
     
-    var w = (barwidth + barspace) * numBins;
-    vis.attr('width', w);
+    // set svg and parent width
+    // TODO here we should calculate extra bins
+    var w;
+    if(this.options.target === '#topHoleHistogram' || this.options.target === '#topNoteHistogram'){
+      var filterWidth =   $('#filters').width()
+        , cvssWidth   =   $('#cvssHistogram').width()
+        , typeWidth   =   $('#vulnTypeHistogram').width()
+        , margin      =   40;
+
+      // div width
+      openSpace = filterWidth - cvssWidth - typeWidth - margin*2;
+      $(this.options.target).width(openSpace/2 - margin);
+
+      // svg width
+      // TODO calculate limits here
+      w = (barwidth + barspace) * numBins;
+      vis.attr('width', w);
+    } else {
+      // same width (svg and bar)
+      w = (barwidth + barspace) * numBins;
+      $(this.options.target).width(w);
+      vis.attr('width', w);
+    }
 
     // y scale for bars
     var y = d3.scale.linear()
@@ -130,24 +152,24 @@ var HistogramView = Backbone.View.extend({
 
   // TODO Instead of this, programmatically set limit in render
   resize: function(){
-    var divWidth    = $(this.options.target).width()
-      , svgWidth    = $(this.options.target + ' svg').width()
-      , barWidth    = this.options.barwidth
-      , barSpace    = 2
-      , limit       = this.model.get('limit') || "";
-
-    if(!limit)
-      return;
-
-    while( divWidth > (barWidth + barSpace)*limit ){
-      limit = limit + 1;
-      this.model.set('limit', limit);
-    }
-    while ( divWidth < (barWidth + barSpace)*limit ){
-      limit = limit - 1;
-      this.model.set('limit', limit);
-    }
-
-
+//    var divWidth    = $(this.options.target).width()
+//      , svgWidth    = $(this.options.target + ' svg').width()
+//      , barWidth    = this.options.barwidth
+//      , barSpace    = 2
+//      , limit       = this.model.get('limit') || "";
+//
+//    if(!limit)
+//      return;
+//
+//    while( divWidth > (barWidth + barSpace)*limit ){
+//      limit = limit + 1;
+//      this.model.set('limit', limit);
+//    }
+//    while ( divWidth < (barWidth + barSpace)*limit ){
+//      limit = limit - 1;
+//      this.model.set('limit', limit);
+//    }
+//
+//
   }
 });
