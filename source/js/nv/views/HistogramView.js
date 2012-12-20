@@ -16,7 +16,6 @@ var HistogramView = Backbone.View.extend({
       .attr('height', this.options.h);
   },
 
-  // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
   render: function(){
     var vis         = d3.select(this.options.target).select('svg')
       , app         = this.model.get('app')
