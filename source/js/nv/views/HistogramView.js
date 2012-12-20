@@ -14,6 +14,7 @@ var HistogramView = Backbone.View.extend({
     d3.select(this.options.target)
       .append('svg')
       .attr('height', this.options.h);
+
   },
 
   // TODO implement @mbostock's margins (http://bl.ocks.org/3019563)
@@ -33,6 +34,7 @@ var HistogramView = Backbone.View.extend({
       , rect        = vis.selectAll('.bar')
       , rectLabels  = vis.selectAll('.histogramLabel')
       , titleLabel  = vis.selectAll('.histogramtitle');
+
 
     var containerWidth = $(document).innerWidth();
     
@@ -134,12 +136,18 @@ var HistogramView = Backbone.View.extend({
       , barSpace    = 2
       , limit       = this.model.get('limit') || "";
 
-    if(limit === 0)
+    if(!limit)
       return;
 
-    if( divWidth > svgWidth + barWidth + barSpace )
-      this.model.set('limit', limit+1);
-    else if ( divWidth < svgWidth )
-      this.model.set('limit', limit-1);
+    while( divWidth > (barWidth + barSpace)*limit ){
+      limit = limit + 1;
+      this.model.set('limit', limit);
+    }
+    while ( divWidth < (barWidth + barSpace)*limit ){
+      limit = limit - 1;
+      this.model.set('limit', limit);
+    }
+
+
   }
 });
