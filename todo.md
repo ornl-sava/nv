@@ -2,6 +2,7 @@ nv issues
 ==============
 ### bugs
 - on testNetworkOpen.nbe, in Top holes there is a bin that gets no data. There should be a temporary workaround in the histogram model.
+- currently you can go from data to vis without loading a datafile. this causes a crash.
 
 ### deployment
 
