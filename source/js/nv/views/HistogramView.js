@@ -128,10 +128,10 @@ var HistogramView = Backbone.View.extend({
   // TODO Instead of this, programmatically set limit in render
   resize: function(){
     var divWidth    = $(this.options.target).width()
+      , limit       = this.model.get('limit') || ""
       , svgWidth    = $(this.options.target + ' svg').width()
       , barWidth    = this.options.barwidth
-      , barSpace    = 2
-      , limit       = this.model.get('limit') || "";
+      , barSpace    = 2;
 
     if(limit === 0)
       return;
