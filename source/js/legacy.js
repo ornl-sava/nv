@@ -1,15 +1,8 @@
-// NOTE: in comments 'bb' === 'backbone'
-
-// TODO Mike do we need these? -Lane
 var eventList;
 var nbeText1 = "";
 var nbeText2 = "";
 var groupList = [];
 
-
-// TODO Lane Mike the sizeBy functions are currently connected directly to 
-// buttons in index.html. We should create a bb view for the div id="sizeoptions" 
-// so we can handle these via bb events.
 function sizeBySeverity() {
    NV.treemap.set('sizeOption', 'cvss'); 
 }
@@ -22,7 +15,6 @@ function sizeByCount() {
    NV.treemap.set('sizeOption', 'value'); 
 }
 
-// TODO these would be better in a bb view
 function colorBySeverity() {
    NV.treemap.set('colorOption', 'cvss'); 
 }
@@ -42,8 +34,6 @@ function setNBEData(dataset){
 
 
 function handleGroupAdd(){
-  //TODO make sure each IP is only in one group(?)
-  //TODO should really be able to remove groups also ...
   var start = $("#ipStart").val();
   var end = $("#ipEnd").val();
   var groupName = $("#groupName").val();
@@ -51,8 +41,7 @@ function handleGroupAdd(){
   var newGroup = {"start":start, "end":end, "groupName":groupName, "weight":weight};
   groupList.push(newGroup);
 
-  // TODO needed to notify hierarchy model of groups changes, will be removed 
-  //  in backbone rewrite of groups
+  // notify hierarchy model of groups changes
   NV.nessus.trigger('change:groups');
 
   // if group added, enabled all buttons
@@ -70,9 +59,6 @@ function clearData() {
   eventList = {};
   groupList = [];
   
-  // TODO: RESET THE VIS HERE!
-  // TODO: Ensure the groups page updates on new file
-  
   $('#file-list').html('');
   $('#file-reset-btn').addClass('disabled');
   $('#file-continue-btn').addClass('disabled');
@@ -81,7 +67,6 @@ function clearData() {
 
   $('#groupsTabNav').addClass('disabled');
   $('#visTabNav').addClass('disabled');
-
 }
 
 function dataTabActive() {
@@ -91,6 +76,7 @@ function dataTabActive() {
 
 function dataLoaded(fileName) {
   $('#groupsTabNav').removeClass('disabled');
+  $('#visTabNav').removeClass('disabled');
   
   $('#file-status').css('display', 'block');
   $('#file-status').addClass('alert-success');
@@ -100,7 +86,6 @@ function dataLoaded(fileName) {
 
   $('#file-reset-btn').removeClass('disabled');  
   $('#file-continue-btn').removeClass('disabled');
-
 }
 
 function groupsTabActive(){
@@ -111,7 +96,6 @@ function groupsTabActive(){
   
   $('#visTabNav').removeClass('disabled');
   $('#groups-continue-btn').removeClass('disabled');
-  
 }
 
 function visTabActive(){
@@ -156,7 +140,7 @@ function updateCurrentGroupTable(){
   //console.log("have these IPs: " + JSON.stringify(ips));
 
   //add to the default group.
-  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table.  TODO might be cleaner to just do this in buildTable?  No other fns need this list currently.
+  //NOTE we are building this list of groups:ips, instead of the two seperate lists we already have, so that all machines in a group are next to each other in the table. 
   groups = {};
   for( var i=0; i < ips.length; i++ ){
     var groupName = findGroupName(ips[i]);
@@ -186,7 +170,6 @@ function updateCurrentGroupTable(){
   setNBEData(eventList);
 }
 
-//TODO
 //this will be somewhat slow, O(n^2), no easy way around it.
 //note this will modify nbeItems2 and not modify nbeItems1.  Can change this if needed later.
 function mergeNBEs(nbeItems1, nbeItems2){
@@ -331,7 +314,6 @@ function buildTable(groups){
   }
 }
 
-//TODO has to be on a server for this to work?  Go figure.
 //rather loosely based on these examples http://www.html5rocks.com/en/tutorials/file/dndfiles/
 var handleFileSelect = function (element) {
   
@@ -464,7 +446,6 @@ $().ready(function () {
  
   // vis tab events
   $('#visTabLink').on('show', function(){
-    // TODO the timeout can be removed when we can trigger visTabActive _after_ the tab loads (see $('#visTabLink')... below)
     setTimeout(function() {
       visTabActive();
     }, 100); 
@@ -479,5 +460,4 @@ $().ready(function () {
     event.preventDefault();
   });  
 
- 
 });
