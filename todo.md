@@ -23,3 +23,7 @@ nv 1.0 list
 - consider a post on using grep with nv
 - when merging with gh pages, force it, don't check for conflicts
 - add more tooltip info on bar charts 
+- change ? to button so it is easier to hit
+- add 'go back' text to parent bar so it's more discoverable
+- when a filter is active, display 'filtered to show n cases'
+- add tooltip on the criticality button about the need to create groups
