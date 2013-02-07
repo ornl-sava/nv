@@ -2,7 +2,7 @@
 
 nv is a tool for visualizing vulnerabilities reported in [Nessus](http://www.tenable.com/products/nessus) scans. 
 
-<a href="http://ornl-situ.github.com/nv/"><img src="/ornl-situ/nv/wiki/nv_readme.png" width="960" height="500" alt="nessus visualization"></a>
+<a href="http://ornl-situ.github.com/nv/"><img src="https://raw.github.com/wiki/ornl-situ/nv/nv_readme.png" width="960" height="500" alt="nessus visualization"></a>
 <!--
 -->
 
