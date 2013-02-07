@@ -35,8 +35,6 @@ module.exports = function (grunt) {
       libs: {
         src: [
           'source/js/lib/d3.v2.js'
-        , 'source/js/lib/underscore.js'
-        , 'source/js/lib/backbone.js'
         , 'source/js/lib/crossfilter.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
         , 'source/js/lib/jquery.tipsy.js'
@@ -61,8 +59,6 @@ module.exports = function (grunt) {
       libs: {
         src: [
           'source/js/lib/d3.v2.js'
-        , 'source/js/lib/underscore.js'
-        , 'source/js/lib/backbone.js'
         , 'source/js/lib/crossfilter.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
         , 'source/js/lib/jquery.tipsy.js'
