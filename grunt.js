@@ -40,7 +40,7 @@ module.exports = function (grunt) {
         src: [
           'source/js/lib/d3.v2.js'
         , 'source/js/lib/crossfilter.js'
-        , 'source/js/lib/underscore-min.js'
+        , 'source/js/lib/lodash.underscore.js'
         , 'source/js/lib/backbone-min.js'
         , 'source/js/lib/bootstrap.min.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
         src: [
           'source/js/lib/d3.v2.js'
         , 'source/js/lib/crossfilter.js'
-        , 'source/js/lib/underscore-min.js'
+        , 'source/js/lib/lodash.underscore.js'
         , 'source/js/lib/backbone-min.js'
         , 'source/js/lib/bootstrap.min.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
