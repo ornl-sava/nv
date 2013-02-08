@@ -12,6 +12,7 @@ module.exports = function (grunt) {
   * [mincss](https://github.com/gruntjs/grunt-contrib-mincss)
   */
 
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-mincss');
 
   // Project configuration.
@@ -26,8 +27,11 @@ module.exports = function (grunt) {
     ,
     mincss: {
       'public/css/style.min.css': [
-        'source/css/nv.css'
+        'source/css/bootstrap.css'
+      , 'source/css/bootstrap-responsive.css'
+      , 'source/css/font-awesome.css'
       , 'source/css/tipsy.css'
+      , 'source/css/nv.css'
       ]
     }
     ,
@@ -36,6 +40,9 @@ module.exports = function (grunt) {
         src: [
           'source/js/lib/d3.v2.js'
         , 'source/js/lib/crossfilter.js'
+        , 'source/js/lib/underscore-min.js'
+        , 'source/js/lib/backbone-min.js'
+        , 'source/js/lib/bootstrap.min.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
         , 'source/js/lib/jquery.tipsy.js'
         ]
@@ -60,6 +67,9 @@ module.exports = function (grunt) {
         src: [
           'source/js/lib/d3.v2.js'
         , 'source/js/lib/crossfilter.js'
+        , 'source/js/lib/underscore-min.js'
+        , 'source/js/lib/backbone-min.js'
+        , 'source/js/lib/bootstrap.min.js'
         , 'source/js/lib/jquery-ui-1.9.2.custom.js'
         , 'source/js/lib/jquery.tipsy.js'
         ]
@@ -80,15 +90,15 @@ module.exports = function (grunt) {
     }
     ,
     copy: {
-      html: {
-        src: [ 'source/index.html']
-      , dest: 'public/'
+      main: {
+        files: [
+          {src: ['source/index.html'], dest: 'public/'},
+          {src: ['source/js/lib/jquery-1.8.3.min.js'], dest: 'public/js/'},
+          {src: ['source/font/*'], dest: 'public/font/', expand: true},
+          {src: ['source/data/*'], dest: 'public/data/', expand: true}
+        ]
       }
-    , jquery: {
-        src: [ 'source/assets/js/jquery-1.8.3.min.js' ]
-      , dest: 'public/js/'
-      }
-    }
+    }    
     ,
     watch: { 
       files: [ 
@@ -121,18 +131,5 @@ module.exports = function (grunt) {
 
   // development - dont minify js
   grunt.registerTask('dev', 'lint mincss concat copy');
-
-  grunt.registerMultiTask('copy', 'Copy static files to deployment directory', function () {
-    var path = require("path"),
-        files = grunt.file.expand(this.file.src),
-        dest = this.file.dest;
-
-    grunt.log.writeln('Copying files for ' + this.target + '.');
-        
-    files.forEach(function (file) {      
-      grunt.file.copy(file, path.join(dest, path.basename(file)), {noProcess: true});
-      grunt.log.writeln('File "' + file + '" copied to "' + dest + '".');
-    });
-  });
 
 };
