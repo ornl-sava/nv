@@ -10,8 +10,6 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" />
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" />
     <link rel="stylesheet" media="all" href="css/style.min.css" />
   </head>
   
@@ -23,7 +21,7 @@
 
           <div class="hero-unit">
             <div class="row-fluid">
-              <h1><a href='/'>nv <small>Nessus Vulnerability visualization</small></a></h1>
+              <h1><a href='#'>nv <small>Nessus Vulnerability visualization</small></a></h1>
             </div>
           </div>
 
@@ -66,7 +64,7 @@
               <!-- GROUPS TAB -->
               <div class="tab-pane" id="groupsTab">
                 <div class="span10 offset1">
-                  <div class="tab-instructions">Group IPs into groupings based on IP ranges. Optionally, provide criticality scores for any of the groups.</div>
+                  <div class="tab-instructions"><strong>Optional:</strong> Group IPs based on IP ranges and specify group criticality scores.</div>
                     <div class="groups-button-pane">
                       <button id="groups-continue-btn" class="btn btn-large btn-primary disabled pull-right" type="button">Continue</button>
                     </div>
@@ -118,16 +116,23 @@
                   </div>
                 </div>
               </div> <!-- close tab-pane -->
-              
+ 
               <!-- VIS TAB -->
               <div class="tab-pane" id="visTab">
-                <div class="row-fluid">
                   <div class="span10">
                     <div class="row-fluid">
-                      <div id="hierarchy"></div>
-                      <div id="vis"></div>
+
+                      <!-- help tooltip for hierarchy is set in code  -->
+                      <div id="hierarchy">
+                      </div>
+                      <span class="span1 help hierarchyHelp" title="drag and drop to rearrange the hierarchy"></span>
+
+              <!-- TODO John make pretty -->
+              <span id="helpIcon" title="Hover here for quick start." style="float:right">?</span>
+
+                      <div id="vis" class="help treemapHelp" title="click nodes in the treemap to zoom to the next level in the hierarchy"></div>
                     </div>
-                    <div id="filters" class="row-fluid">
+                    <div id="filters" class="row-fluid help filterHelp" title="click any bar to filter the treemap view">
                       <div id="cvssHistogram"></div>
                       <div id="vulnTypeHistogram"></div>
                       <div id="topHoleHistogram"></div>
@@ -161,7 +166,7 @@
                         </div> -->
                       </div>
                       <div id="edit"></div>
-                      <div id="nessusinfo"></div>
+                      <div id="nessusinfo" class="help nessusHelp" title="updates when you mouseover a Nessus id in the treemap or histograms"></div>
                       <div id="colorlegend"></div>
                     </div>
                   </div>                  
@@ -179,17 +184,16 @@
         <div class="span12">
           <footer>
             <div>Situational Understanding Team / Computational Sciences and Engineering Division / Oak Ridge National Laboratory</div>
-            <div>Download the <a href="https://github.com/ornl-situ/nv">source code</a> from github to run locally: <a href="https://github.com/ornl-situ/nv">https://github.com/ornl-situ/nv<a></div>
+            <div>Download the <a href="https://github.com/ornl-situ/nv">source code</a> from github to run locally: <a href="https://github.com/ornl-situ/nv">https://github.com/ornl-situ/nv</a></div>
+            <div>Send feedback to <a href="mailto:LaneTHarrison@gmail.com">Lane Harrison</a> or <a href="https://github.com/ornl-situ/nv/issues">create a GitHub issue</a></div>
           </footer>
         </div>
       </div>
 
     </div>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/lib/jquery-1.8.3.min.js"><\/script>')</script>
-
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.9.1.min.js"><\/script>')</script>
 
     <!-- libs -->
     <script src="js/lib.min.js"></script>
@@ -198,12 +202,15 @@
     <script src="js/app.min.js"></script>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <script>
-      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-      s.parentNode.insertBefore(g,s)}(document,'script'));
-    </script>
-    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-38299153-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>    
   </body>
 </html>
