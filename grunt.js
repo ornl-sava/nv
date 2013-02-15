@@ -93,7 +93,7 @@ module.exports = function (grunt) {
       main: {
         files: [
           {src: ['source/index.html'], dest: 'public/'},
-          {src: ['source/js/lib/jquery-1.9.0.min.js'], dest: 'public/js/'},
+          {src: ['source/js/lib/jquery-1.9.1.min.js'], dest: 'public/js/'},
           {src: ['source/font/*'], dest: 'public/font/', expand: true},
           {src: ['source/data/*'], dest: 'public/data/', expand: true}
         ]
