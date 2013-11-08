@@ -2,7 +2,7 @@
 
 nv is a tool for visualizing vulnerabilities reported in [Nessus](http://www.tenable.com/products/nessus) scans. 
 
-<a href="http://ornl-situ.github.com/nv/"><img src="https://raw.github.com/wiki/ornl-situ/nv/nv_readme.png" width="960" height="500" alt="nessus visualization"></a>
+<a href="http://ornl-sava.github.com/nv/"><img src="https://raw.github.com/wiki/ornl-sava/nv/nv_readme.png" width="960" height="500" alt="nessus visualization"></a>
 <!--
 -->
 
@@ -15,7 +15,7 @@ nv consists of four main views:
 
 ## Running
 
-To run nv, you can use the public site, [http://ornl-situ.github.com/nv/](http://ornl-situ.github.com/nv/) or you can use the built in script or use your own web server.
+To run nv, you can use the public site, [http://ornl-sava.github.com/nv/](http://ornl-sava.github.com/nv/) or you can use the built in script or use your own web server.
 
 To run using the built in script, have [node.js](http://nodejs.org) installed and simply run `run_nv`. If a browser is not launched automatically, go to http://localhost:8000/ in a browser.
 
