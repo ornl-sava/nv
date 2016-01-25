@@ -4,34 +4,15 @@
 module.exports = function (grunt) {
 
   'use strict';
-
-  /*
-  Tasks:
-  * lint - uses [jshint](https://github.com/jshint/jshint/)
-  * min - uses [uglify-js](https://github.com/mishoo/UglifyJS)
-  * [mincss](https://github.com/gruntjs/grunt-contrib-mincss)
-  */
-
-
-  // Project configuration.
   grunt.initConfig({
     jshint: {
-      files: [
-        'source/js/nv/*.js'
-      , 'source/js/nv/models/*.js'
-      , 'source/js/nv/views/*.js'
-      ],
+      files: ['Gruntfile.js', 'source/js/nv/*.js', 'source/js/nv/**/*.js'],
       options: {
-        browser: true,
-        laxcomma: true,
-        maxparams: 5,
-        maxdepth: 5,
-        maxstatements: 30,
-        maxcomplexity: 10
-      },
-      globals: {
-        jQuery: true,
-        console: false
+        jshintrc: true,
+        globals: {
+          jQuery: true,
+          console: false
+        }
       }
     }
     ,
@@ -108,10 +89,10 @@ module.exports = function (grunt) {
           {src: ['source/data/*'], dest: 'public/data/', expand: true}
         ]
       }
-    }    
+    }
     ,
-    watch: { 
-      files: [ 
+    watch: {
+      files: [
         '<config:concat.app.src>'
       , 'source/index.html'
       , 'source/css/nv.css'
@@ -129,5 +110,7 @@ module.exports = function (grunt) {
   // production, run when grunt is run with no arguments
   grunt.registerTask('default', ['jshint', 'cssmin', 'uglify', 'copy']);
   // development - dont minify js
-  grunt.registerTask('dev', 'lint cssmin concat copy');
+  grunt.registerTask('dev', 'jshint cssmin concat copy');
+
+  grunt.registerTask('lint', 'jshint');
 };

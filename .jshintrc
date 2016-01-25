@@ -1,0 +1,8 @@
+{
+  "browser": true,
+  "laxcomma": true,
+  "maxparams": 5,
+  "maxdepth": 5,
+  "maxstatements": 30,
+  "maxcomplexity": 10
+}

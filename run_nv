@@ -1,20 +1,19 @@
 #!/usr/bin/env node
 
 var launch = require('launchpad')
-  , webserver = require('node-static')
+  , static = require('node-static')
   , directory = './public'
   , port = 8000
   , url = 'http://localhost:' + port + '/'
 
 // Create a node-static server instance to serve the './public' folder
-console.log('starting web server')
-var file = new(webserver.Server)(directory)
+var file = new static.Server(directory)
 require('http').createServer(function (request, response) {
   request.addListener('end', function () {
     file.serve(request, response)
-  })
+  }).resume()
 }).listen(port)
-
+console.log('Server listening on port', port)
 
 // Try to launch a local browser
 launch.local(function(err, local) {
@@ -28,8 +27,8 @@ launch.local(function(err, local) {
     , safari = false
     , firefox = false
   if (typeof browsers === null || browsers.length <= 0) {
-    console.warn('no browsers found; get chrome: http://chrome.com')
-    console.log('open a web browser at ' + url)
+    console.warn('No browsers found; get chrome: http://chrome.com')
+    console.log('Open a web browser at ' + url)
     return
   }
   for (var i = 0 ; i < browsers.length; i++) {
@@ -38,25 +37,25 @@ launch.local(function(err, local) {
     if (browsers[i].browser === 'firefox') firefox = true
   }
   if (safari) {
-      console.log('launching safari')
+      console.log('Launching safari')
       local.safari(url, function(err, instance) {
         if (err) console.error('unable to launch safari: ' + err)
       })
     }
   else if (chrome) {
-    console.log('launching chrome')
+    console.log('Launching chrome')
     local.chrome(url, function(err, instance) {
       if (err) console.error('unable to launch chrome: ' + err)
     })
   }
   else if (firefox) {
-    console.log('launching firefox')
+    console.log('Launching firefox')
     local.firefox(url, function(err, instance) {
       if (err) console.error('unable to launch firefox: ' + err)
     })
   }
   else {
-    console.warn('no appropriate browsers found; get chrome: http://chrome.com')
-    console.log('open a web browser at ' + url)
+    console.warn('No appropriate browsers found; get chrome: http://chrome.com')
+    console.log('Open a web browser at ' + url)
   }
 })
