@@ -1,6 +1,7 @@
 .DS_Store
 *.swp
 *.swo
+npm-debug.log
 
 # the following are built by grunt
 css/style.min.css
